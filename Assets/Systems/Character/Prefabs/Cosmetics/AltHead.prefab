@@ -1,0 +1,307 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5814056814778335812
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3792606597495709758}
+  - component: {fileID: 1577521750621410358}
+  - component: {fileID: 3992418088511435995}
+  m_Layer: 0
+  m_Name: AltHead
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3792606597495709758
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5814056814778335812}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: -0.000000030908623, z: -0.000000030908623, w: 0.7071068}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &1577521750621410358
+SkinnedMeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5814056814778335812}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f45f2e4adfed35041a4a63c29c1e6367, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  serializedVersion: 2
+  m_Quality: 0
+  m_UpdateWhenOffscreen: 0
+  m_SkinnedMotionVectors: 1
+  m_Mesh: {fileID: -3454488661479427797, guid: 1329da175fdf5e2429dfed879738e168, type: 3}
+  m_Bones:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  m_BlendShapeWeights: []
+  m_RootBone: {fileID: 0}
+  m_AABB:
+    m_Center: {x: 0, y: 0.76365554, z: -0.17281011}
+    m_Extent: {x: 0.099577084, y: 0.18977058, z: 0.16760337}
+  m_DirtyAABB: 0
+--- !u!114 &3992418088511435995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5814056814778335812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17d435a84843dc143b74d138a4732fc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cosmeticSlot: 1
+  skm: {fileID: 1577521750621410358}
+  skmBones:
+  - spine
+  - spine.001
+  - spine.002
+  - spine.003
+  - spine.004
+  - spine.005
+  - spine.006
+  - shoulder.L
+  - upper_arm.L
+  - forearm.L
+  - hand.L
+  - palm.01.L
+  - f_index.01.L
+  - f_index.02.L
+  - f_index.03.L
+  - thumb.01.L
+  - thumb.02.L
+  - thumb.03.L
+  - palm.02.L
+  - f_middle.01.L
+  - f_middle.02.L
+  - f_middle.03.L
+  - palm.03.L
+  - f_ring.01.L
+  - f_ring.02.L
+  - f_ring.03.L
+  - palm.04.L
+  - f_pinky.01.L
+  - f_pinky.02.L
+  - f_pinky.03.L
+  - forearm.twist.L
+  - shoulder.R
+  - upper_arm.R
+  - forearm.R
+  - hand.R
+  - palm.01.R
+  - f_index.01.R
+  - f_index.02.R
+  - f_index.03.R
+  - thumb.01.R
+  - thumb.02.R
+  - thumb.03.R
+  - palm.02.R
+  - f_middle.01.R
+  - f_middle.02.R
+  - f_middle.03.R
+  - palm.03.R
+  - f_ring.01.R
+  - f_ring.02.R
+  - f_ring.03.R
+  - palm.04.R
+  - f_pinky.01.R
+  - f_pinky.02.R
+  - f_pinky.03.R
+  - forearm.twist.R
+  - breast.L
+  - breast.R
+  - pelvis.L
+  - pelvis.R
+  - thigh.L
+  - shin.L
+  - foot.L
+  - toe.L
+  - thigh.R
+  - shin.R
+  - foot.R
+  - toe.R
+  - IK.knee.L
+  - IK.knee.R
+  - IK.foot.controller.main.L
+  - IK.foot.controller.L
+  - IK.foot.yaw.L
+  - IK.foot.roll.L.001
+  - IK.foot.roll.L
+  - IK.heel.pivot.L.001
+  - IK.heel.pivot.L
+  - IK.foot.L
+  - IK.foot.controller.main.R
+  - IK.foot.controller.R
+  - IK.foot.yaw.R
+  - IK.foot.roll.R.001
+  - IK.foot.roll.R
+  - IK.heel.pivot.R.001
+  - IK.heel.pivot.R
+  - IK.foot.R
+  - IK.Upper.Root
+  - IK.hand.L
+  - IK.hand.R
+  - IK.SpineAim
+  - IK.HeadAim
+  - WeaponRoot
+  - WeaponTarget
+  - WeaponRotationInvert
+  - WeaponHand_L
+  - WeaponHand_R
+  - IK.ViewmodelCam
+  - IK.Torso.Lower
+  - IK.elbow.L
+  - IK.elbow.R
+  - IK.hips
+  buildBones: 0
