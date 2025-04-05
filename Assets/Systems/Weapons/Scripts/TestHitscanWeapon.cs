@@ -3,8 +3,8 @@ using UnityEngine;
 public class TestHitscanWeapon : RangedWeapon
 {
     public bool primaryInputValue;
-    public float raysPerShot = 1;
-
+    public int raysPerShot = 1;
+    public float shotDivergence = 0.1f;
     protected override void ProcessInput()
     {
         primaryInput = primaryInputValue;
@@ -19,7 +19,15 @@ public class TestHitscanWeapon : RangedWeapon
         {
             for (int i = 0; i < raysPerShot; i++)
             {
-                BulletScheduler.ScheduleBullet(transform.position, transform.TransformDirection(new Vector3(Random.value * 0.1f, Random.value * 0.1f, 1).normalized), 100);
+                if(shotDivergence > 0)
+                {
+                    Vector2 randCirc = Random.insideUnitCircle * shotDivergence;
+                    BulletScheduler.ScheduleBullet(transform.position, transform.TransformDirection((Vector3)randCirc + Vector3.forward).normalized, 100);
+                }
+                else
+                {
+                    BulletScheduler.ScheduleBullet(transform.position, transform.TransformDirection(Vector3.forward), 100);
+                }
             }
         }
     }

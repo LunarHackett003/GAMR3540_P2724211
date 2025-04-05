@@ -11,7 +11,7 @@ public class BulletScheduler : LunarScript
 
 
     [System.Serializable]
-    public struct BulletData
+    public struct RaycastData
     {
         public Vector3 start, dir;
         public float distance;
@@ -19,11 +19,12 @@ public class BulletScheduler : LunarScript
     }
     
     public static BulletScheduler Instance { get; private set; }
+    public int maxRaycastsPerStep = 350;
+    public RaycastData[] raycastData = new RaycastData[0];
 
-    public List<BulletData> movingBullets = new();
-    public List<BulletData> bulletData = new();
-
-    float timeNow;
+    public int raycastsWaiting;
+    int raycastsHit;
+    long timeNow;
 
     private void Awake()
     {
@@ -37,6 +38,7 @@ public class BulletScheduler : LunarScript
             Destroy(gameObject);
             return;
         }
+        raycastData = new RaycastData[maxRaycastsPerStep];
     }
     private void OnDestroy()
     {
@@ -49,10 +51,9 @@ public class BulletScheduler : LunarScript
     public override void LTimestep()
     {
         base.LTimestep();
-        if(bulletData.Count > 0 )
+        if(raycastsWaiting > 0)
         {
-            timeNow = Time.time;
-            movingBullets = bulletData.FindAll(x => x.moving);
+            timeNow = System.DateTime.Now.Millisecond;
             //Can't use jobs themselves, have to use RaycastCommands. Unity refuses to allow Raycasts to be called from other threads.
             //bulletJob = new BulletJob(new NativeArray<BulletData>(movingBullets.ToArray(), Allocator.TempJob), bulletMask);
             //bulletJob.Run(movingBullets.Count);
@@ -62,10 +63,10 @@ public class BulletScheduler : LunarScript
                 layerMask = bulletMask,
                 hitTriggers = QueryTriggerInteraction.Ignore,
             };
-            commands = new(movingBullets.Count, Allocator.TempJob);
-            for (int i = 0; i < movingBullets.Count; i++)
+            commands = new(raycastsWaiting, Allocator.TempJob);
+            for (int i = 0; i < raycastsWaiting; i++)
             {
-                BulletData bd = movingBullets[i];
+                RaycastData bd = raycastData[i];
                 
                 commands[i] = new(bd.start, bd.dir, qp, bd.distance);
             }
@@ -75,34 +76,38 @@ public class BulletScheduler : LunarScript
 
             for (int i = 0; i < hits.Length; i++)
             {
+                raycastsHit = i + 1;
                 if (hits[i].collider == null)
                 {
                     //RaycastCommands return un-written hit results so the data might not even be accessible after this point.
                     //We will break to avoid any potential problems.
                     break;
                 }
-                Debug.DrawLine(commands[i].from, hits[i].point, Random.ColorHSV(0, 1, 0, 1, 0, 1, 1, 1), 0.1f);
+                //Lets just... ignore that old "don't use null propagation" thingy, yeah? Ain't important. Trust me
+                hits[i].collider.attachedRigidbody?.AddForceAtPosition(hits[i].normal, hits[i].point);
+                Debug.DrawLine(commands[i].from, hits[i].point, Random.ColorHSV());
             }
             commands.Dispose();
             hits.Dispose();
-            bulletData.Clear();
-            print($"time to complete: {Time.time - timeNow}");
+            //print($"time to complete: {System.DateTime.Now.Millisecond - timeNow}, expected {raycastsWaiting} shots, fired {raycastsHit} times this tick.");
+            raycastsWaiting = 0;
         }
-        else if(movingBullets.Count > 0)
-        {
-            movingBullets.Clear();
-        }
+
     }
 
     public static void ScheduleBullet(Vector3 start, Vector3 direction, float distance)
     {
-        BulletData bd = new()
+        if (Instance.raycastsWaiting < Instance.maxRaycastsPerStep)
         {
-            start = start,
-            dir = direction,
-            distance = distance,
-            moving = true
-        };
-        Instance.bulletData.Add(bd);
+            RaycastData bd = new()
+            {
+                start = start,
+                dir = direction,
+                distance = distance,
+                moving = true
+            };
+            Instance.raycastData[Instance.raycastsWaiting] = bd;
+            Instance.raycastsWaiting++;
+        }
     }
 }

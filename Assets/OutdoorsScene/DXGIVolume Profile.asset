@@ -164,7 +164,7 @@ MonoBehaviour:
   active: 1
   enable:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 0
   layerMask:
     m_OverrideState: 0
     m_Value:
@@ -290,7 +290,7 @@ MonoBehaviour:
     m_Value: 50
   m_ClampValue:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 0.8
   mode:
     m_OverrideState: 0
     m_Value: 2
@@ -311,7 +311,7 @@ MonoBehaviour:
     m_Value: 0
   m_DenoiserRadius:
     m_OverrideState: 0
-    m_Value: 0.6
+    m_Value: 0.66
   m_SecondDenoiserPass:
     m_OverrideState: 0
     m_Value: 1
@@ -368,7 +368,7 @@ MonoBehaviour:
     m_Value: 1
   tracing:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 4
   m_MinSmoothness:
     m_OverrideState: 0
     m_Value: 0.9
