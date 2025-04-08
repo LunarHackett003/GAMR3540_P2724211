@@ -27,7 +27,7 @@ public class DestructibleWall : MonoBehaviour
         render.enabled = !value;
         for (int i = 0; i < damageables.Length; i++)
         {
-            damageables[i].render.enabled = value;
+            //damageables[i].render.enabled = value;
             if (!value)
             {
                 damageables[i].onHit -= ChildHit;    

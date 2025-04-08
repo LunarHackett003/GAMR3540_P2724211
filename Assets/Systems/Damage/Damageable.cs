@@ -8,33 +8,38 @@ public class Damageable : LunarScript
 
     public delegate void DamageableHit(Damageable d);
     public DamageableHit onHit;
-    public MeshRenderer render;
-    public Collider collide;
+
+    public bool CanTakeDamage => CheckTakeDamage();
+
     private void Awake()
     {
         CurrentHealth = maxHealth;
     }
 
-    public bool CanDamage()
+    public bool CheckTakeDamage()
     {
         return false;
     }
 
-    public void ModifyHealth(float deltaHealth)
+    public void ReceiveHit(float deltaHealth)
     {
-        CurrentHealth += deltaHealth;
-        onHit?.Invoke(this);
-        if(CurrentHealth <= 0)
+        if (CanTakeDamage)
         {
-            render.enabled = false;
-            collide.enabled = false;
+            onHit?.Invoke(this);
+            ModifyHealth(deltaHealth);
         }
     }
-    private void OnValidate()
+    public virtual void ModifyHealth(float deltaHealth)
     {
-        if(render == null)
-            render = GetComponent<MeshRenderer>();
-        if(collide == null)
-            collide = GetComponent<Collider>();
+        CurrentHealth += deltaHealth;
+
+        if (CurrentHealth <= 0)
+        {
+            DamageableDied();
+        }
+    }
+    public virtual void DamageableDied()
+    {
+
     }
 }
