@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public abstract class BaseWeapon : LunarScript
 {
-    protected bool primaryInput, secondaryInput, primaryPressedFirst, secondaryPressedFirst;
+    protected bool primaryInput, secondaryInput, primaryPressedFirst, secondaryPressedFirst, primaryPressed, secondaryPressed;
     [SerializeField] protected bool attackOnPrimary, attackOnSecondary, primaryBlocksSecondary, secondaryBlocksPrimary;
     public override void LTimestep()
     {

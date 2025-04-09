@@ -17,9 +17,6 @@ public class TestHitscanWeapon : HitscanWeapon
     protected override void PrimaryBehaviour()
     {
         base.PrimaryBehaviour();
-
-        FireHitscan();
-
     }
 
 

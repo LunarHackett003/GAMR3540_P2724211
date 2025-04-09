@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 81786487b4148bc4487765c6a9fedf58, type: 2}
+  - {fileID: 2100000, guid: 6398b7b12d927d945982aec1e3cb2129, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -134,19 +134,24 @@ MonoBehaviour:
   attackOnSecondary: 0
   primaryBlocksSecondary: 0
   secondaryBlocksPrimary: 0
-  baseSpreadPerUnit: 0.05
+  baseSpreadPerUnit: 0.1
   maxInfluencedSpreadPerUnit: 0
   currentMovementInfluence: 0
+  allowedFireModes: 01000000
+  fireModeIndex: 0
   roundsPerMinute: 600
+  roundsInBurst: 0
   timeBetweenRounds: 0.1
+  burstCooldown: 0
+  fired: 0
   poolStartCapacity: 50
   poolMaxCapacity: 500
-  fireIterations: 1
-  shotsCanRichochet: 1
+  fireIterations: 15
+  shotsCanRichochet: 0
   shotsCanPenetrate: 0
-  shotMaxRange: 30
-  shotRicochetRangeLoss: 0.5
-  shotPenetrateRangeLoss: 0.2
+  shotMaxRange: 50
+  shotRicochetRangeLoss: 0.9
+  shotPenetrateRangeLoss: 0.9
   maxRicochetNormal: 1
   minRicochetNormal: -1
   minPenetrateNormal: 0.5
@@ -179,7 +184,7 @@ MonoBehaviour:
   fireOrigin: {fileID: 246576255046488326}
   tracerPrefab: {fileID: 3937423659732281253, guid: c23d85e845ad20e4198880685d105867,
     type: 3}
-  tracerSpeed: 60
+  tracerSpeed: 40
   primaryInputValue: 0
   trySingleShot: 0
 --- !u!1 &8645465308904364308
@@ -274,7 +279,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 81786487b4148bc4487765c6a9fedf58, type: 2}
+  - {fileID: 2100000, guid: 6398b7b12d927d945982aec1e3cb2129, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

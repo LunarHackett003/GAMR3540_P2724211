@@ -2,6 +2,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BulletScheduler : LunarScript
@@ -114,7 +115,7 @@ public class BulletScheduler : LunarScript
             {
                 if (raycastData[flipflop, i].tracer != null)
                 {
-                    raycastData[flipflop, i].tracer.AddNextPoint(commands[i].from + (commands[i].direction * commands[i].distance));
+                    raycastData[flipflop, i].tracer.AddNextPoint(commands[i].from + (commands[i].direction * commands[i].distance), false);
                 }
                 else
                 {
@@ -159,18 +160,6 @@ public class BulletScheduler : LunarScript
                     hits = 1
                 });
             }
-            if(data.owner.tracerPrefab != null)
-            {
-                if(data.tracer == null)
-                {
-                    data.owner.SendTracer(commands[i].from, hit.point, out HitscanTracer t);
-                    data.tracer = t;
-                }
-                else
-                {
-                    data.tracer.AddNextPoint(hit.point);
-                }
-            }
             bool bulletAffected = false;
             {
                 if (data.owner.shotsCanRichochet)
@@ -189,14 +178,27 @@ public class BulletScheduler : LunarScript
                 {
                     if(data.owner.ShouldPenetrate(hit, commands[i].direction))
                     {
-                        data.baseDistance += hit.distance;
                         float distanceLeft = (data.owner.shotMaxRange - (hit.distance + data.baseDistance)) * data.owner.shotPenetrateRangeLoss;
+                        bulletAffected = true;
                         if( distanceLeft > 0)
                         {
-                            ScheduleBullet(hit.point, commands[i].direction, distanceLeft, data.baseDistance + hit.distance, data.owner, data.tracer);
+                            ScheduleBullet(hit.point + commands[i].direction * 0.01f, commands[i].direction, distanceLeft, data.baseDistance + hit.distance, data.owner, data.tracer);
                         }
                     }
                 }
+            }
+            if (data.tracer != null)
+            {
+                //if(data.tracer == null)
+                //{
+                //    data.owner.SendTracer(commands[i].from, hit.point, out HitscanTracer t);
+                //    data.tracer = t;
+                //}
+                //else
+                //{
+                //    data.tracer.AddNextPoint(hit.point);
+                //}
+                data.tracer.AddNextPoint(hit.point, !bulletAffected);
             }
             Debug.DrawLine(commands[i].from, hits[i].point, Random.ColorHSV(), raycastDebugDisplayTime);
         }
@@ -225,6 +227,8 @@ public class BulletScheduler : LunarScript
     {
         if (Instance.raycastsWaiting < Instance.maxRaycastsPerStep)
         {
+            if (tracer == null && owner.tracerPrefab != null)
+                owner.SendTracer(start, start, out tracer);
             RaycastData bd = new()
             {
                 start = start,

@@ -88,7 +88,7 @@ public class HitscanWeapon : RangedWeapon
     }
     public bool ShouldPenetrate(RaycastHit hit, Vector3 direction)
     {
-        return Vector3.Dot(hit.normal, direction) > minPenetrateNormal;
+        return Vector3.Dot(hit.normal, -direction) > minPenetrateNormal;
     }
     public float GetDamageDealt(float range)
     {
@@ -111,6 +111,11 @@ public class HitscanWeapon : RangedWeapon
             }
         }
     }
+    protected override void FireWeapon()
+    {
+        base.FireWeapon();
+        FireHitscan();
+    }
     public void SendTracer(Vector3 start, Vector3 end, out HitscanTracer t)
     {
         tracerPool.Get(out t);
@@ -120,9 +125,9 @@ public class HitscanWeapon : RangedWeapon
             t.owner = this;
         }
     }
-    public void AddEndToTracer(HitscanTracer t, Vector3 end)
+    public void AddEndToTracer(HitscanTracer t, Vector3 end, bool hardStop)
     {
-        t.AddNextPoint(end);
+        t.AddNextPoint(end, hardStop);
     }
     protected override void OnValidate()
     {

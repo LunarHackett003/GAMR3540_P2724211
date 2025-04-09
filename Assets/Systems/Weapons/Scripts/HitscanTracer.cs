@@ -17,6 +17,8 @@ public class HitscanTracer : LunarScript
     float speed;
     bool expiring;
     Vector3 direction;
+    
+    bool freeFlyStopped;
     public void SendTracer(Vector3 s, Vector3 e, float speed)
     {
         transform.position = s;
@@ -29,10 +31,13 @@ public class HitscanTracer : LunarScript
         this.speed = speed;
         CalculateTracer(s, e, speed);
         expiring = false;
+        freeFlyStopped = false;
+        expirationTrailSpeed = speed;
     }
-    public void AddNextPoint(Vector3 point)
+    public void AddNextPoint(Vector3 point, bool hardStop)
     {
         ends.Add(point);
+        freeFlyStopped = hardStop;
     }
     public override void LTimestep()
     {
@@ -61,10 +66,17 @@ public class HitscanTracer : LunarScript
                 }
                 
             }
-            else
+            else 
             {
-                direction += Time.fixedDeltaTime * Time.fixedDeltaTime * expirationGravityMultiplier * Physics.gravity;
-                transform.position += (expirationTrailSpeed * Time.fixedDeltaTime * direction);
+                if (!freeFlyStopped)
+                {
+                    direction += Time.fixedDeltaTime * Time.fixedDeltaTime * expirationGravityMultiplier * Physics.gravity;
+                    transform.position += (expirationTrailSpeed * Time.fixedDeltaTime * direction);
+                    if (Physics.Raycast(transform.position, direction, expirationTrailSpeed * Time.fixedDeltaTime))
+                    {
+                        freeFlyStopped = true;
+                    }
+                }
                 if (progress >= 1 + (aliveTimeAfterEnd * 0.8f))
                 {
                     trail.emitting = false;
