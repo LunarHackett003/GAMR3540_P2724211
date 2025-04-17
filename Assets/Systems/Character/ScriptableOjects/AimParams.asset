@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aimFOV: -10
   altAimFOV: -5
-  sprintFOV: 5
   fovMoveSpeed: 10
+  baseAimPositionOffset: {x: -0.059, y: 0.028, z: 0}
+  aimPositionOffsetAngled: {x: 0.02, y: 0, z: 0}
+  aimRotationReduction: 1
+  viewmodelFOV: -20

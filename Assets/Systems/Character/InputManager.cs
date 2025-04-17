@@ -20,12 +20,12 @@ public class InputManager : SingletonBehaviour<InputManager>
 
     public static Vector2 MoveInput { get => PauseMenu.GamePaused ? Vector2.zero : Instance.moveInput; set => Instance.moveInput = value; }
     public static Vector2 LookInput { get => PauseMenu.GamePaused ? Vector2.zero : Instance.lookInput; set => Instance.lookInput = value; }
-    public static bool FireInput { get => Instance.fireInput && !PauseMenu.GamePaused; set => Instance.fireInput = value; }
+    public static bool PrimaryInput { get => Instance.fireInput && !PauseMenu.GamePaused; set => Instance.fireInput = value; }
     public static bool JumpInput { get => Instance.jumpInput && !PauseMenu.GamePaused; set => Instance.jumpInput = value; }
     public static bool SprintInput { get => Instance.sprintInput && !PauseMenu.GamePaused; set => Instance.sprintInput = value; }
-    public static bool CrouchInput { get => Instance.crouchInput && !PauseMenu.GamePaused; set => Instance.crouchInput = value; }
-    public static bool AimInput { get => Instance.aimInput && !PauseMenu.GamePaused; set => Instance.aimInput = value; }
-    public static bool AltAimInput { get => Instance.altAimInput && !PauseMenu.GamePaused; set => Instance.altAimInput = value; }
+    public static bool CrouchInput { get => Instance.crouchInput; set => Instance.crouchInput = value; }
+    public static bool SecondaryInput { get => Instance.aimInput && !PauseMenu.GamePaused; set => Instance.aimInput = value; }
+    public static bool AltAimInput { get => Instance.altAimInput; set => Instance.altAimInput = value; }
     public static bool SlowWalkInput { get => Instance.slowWalkInput && !PauseMenu.GamePaused; set => Instance.slowWalkInput = value; }
     public static bool DashInput { get => Instance.dashInput && !PauseMenu.GamePaused; set => Instance.dashInput = value; }
 

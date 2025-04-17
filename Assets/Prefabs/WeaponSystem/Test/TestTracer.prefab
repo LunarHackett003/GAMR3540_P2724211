@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6448712971635669641}
   - component: {fileID: 3937423659732281253}
   - component: {fileID: 3320226560603596378}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TestTracer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -8,61 +8,61 @@ public class RBPlayerMotor : LunarScript
     #region Variables
 
     //Components
-    [SerializeField, HideInInspector] protected Rigidbody rb;
+    [SerializeField, HideInInspector] internal Rigidbody rb;
     [SerializeField, HideInInspector] protected CapsuleCollider capsule;
-    [SerializeField, Header("Components")] protected CinemachineVirtualCamera cineCam;
+    [SerializeField, Header("Components")] internal CinemachineVirtualCamera worldCineCam;
+    [SerializeField] internal CinemachineVirtualCamera viewCineCam;
 
     //Transforms
-    [SerializeField, Header("Transforms")] protected Transform head;
+    [SerializeField, Header("Transforms")] internal Transform head;
     [SerializeField] protected Transform ikAimTransform;
     [SerializeField] protected Quaternion ikAimOffset;
     [SerializeField] protected Transform crouchTransform;
 
     //Scriptable References
-    [SerializeField, Header("Parameter References")] protected ViewParams viewParams;
+    [SerializeField, Header("Parameter References")] internal ViewParams viewParams;
     [SerializeField] protected bool canAim;
-    [SerializeField] protected AimParams aimParams;
+    [SerializeField] internal AimParams aimParams;
     [SerializeField] protected bool canSlide;
-    [SerializeField] protected MoveParams moveParams;
+    [SerializeField] internal MoveParams moveParams;
     [SerializeField] Vector3 crouchTransformAxis;
-    [SerializeField] protected float crouchTransformStandHeight, crouchTransformCrouchHeight;
+    [SerializeField] internal float crouchTransformStandHeight, crouchTransformCrouchHeight;
 
-    [SerializeField, Header("Stepping"), Tooltip("Can the player step up ledges?")] protected bool canStep;
-    [SerializeField, Tooltip("The transform we cast from to check for steps")] protected Transform upperStepTransform, lowerStepTransform;
-    [SerializeField] protected StepParams stepParams;
+    [SerializeField, Header("Stepping"), Tooltip("Can the player step up ledges?")] internal bool canStep;
+    [SerializeField, Tooltip("The transform we cast from to check for steps")] internal Transform upperStepTransform, lowerStepTransform;
+    [SerializeField] internal StepParams stepParams;
 
-    [SerializeField, Tooltip("Can the player climb up ledges when they are facing and in contact with them in the air?")] protected bool canMantle;
-    [SerializeField] protected bool debugMantle;
-    [SerializeField] protected MantleParams mantleParams;
+    [SerializeField, Tooltip("Can the player climb up ledges when they are facing and in contact with them in the air?")] internal bool canMantle;
+    [SerializeField] internal bool debugMantle;
+    [SerializeField] internal MantleParams mantleParams;
 
-    [SerializeField, Header("Dashing"), Tooltip("Can the player dash?")] protected bool canDash;
-    [SerializeField] protected DashParams dashParams;
+    [SerializeField, Header("Dashing"), Tooltip("Can the player dash?")] internal bool canDash;
+    [SerializeField] internal DashParams dashParams;
 
     public float aimAmount;
 
     //Aiming
-    protected float lookPitch;
-    protected Vector2 lookDelta;
-    protected Vector2 oldLook;
+    internal float lookPitch;
+    internal Vector2 lookDelta;
+    internal Vector2 oldLook;
 
-    protected bool aiming;
-    protected bool altAiming;
-    protected float headTiltAngle;
-    protected float currentFOV;
+    internal bool aiming;
+    internal bool altAiming;
+    internal float headTiltAngle;
 
     //Movement Parameters
-    protected bool slowWalking;
-    protected bool sprinting;
-    protected bool isSliding;
-    protected bool crouching;
-    protected Vector3 uncrouchCheckPosition;
-    protected bool canUncrouch;
-    protected float currentCrouchLerp;
-    protected int multiJumpsRemaining = 1;
-    protected float currentAirborneIgnoreDampTime;
+    internal bool slowWalking;
+    internal bool sprinting;
+    internal bool isSliding;
+    internal bool crouching;
+    internal Vector3 uncrouchCheckPosition;
+    internal bool canUncrouch;
+    internal float currentCrouchLerp;
+    internal int multiJumpsRemaining = 1;
+    internal float currentAirborneIgnoreDampTime;
 
     //Ground check
-    protected bool isGrounded;
+    internal bool isGrounded;
     [SerializeField] protected Vector3 groundCheckOrigin;
     [SerializeField] protected float groundCheckDistance = 1.2f, groundCheckRadius = 0.4f;
     [SerializeField] protected LayerMask groundChecklayermask;
@@ -72,7 +72,7 @@ public class RBPlayerMotor : LunarScript
     protected float mantleTime, mantleDistance, mantleTimeInc;
     protected Vector3 mantleStart, mantleEnd;
     protected Rigidbody mantleTargetRB;
-    protected bool mantling;
+    internal bool mantling;
     protected Vector3 mantleEndLocalToTarget;
     float mantleCurrentEnableTime;
     Rigidbody connectedBody, lastConnectedBody;
@@ -81,15 +81,15 @@ public class RBPlayerMotor : LunarScript
     /// <summary>
     /// Are we currently dashing?
     /// </summary>
-    protected bool dashing;
+    internal bool dashing;
     /// <summary>
     /// Have we used a dash? this one persists until we can use a dash again.
     /// </summary>
-    [SerializeField] protected bool dashUsed;
+    [SerializeField] internal bool dashUsed;
     /// <summary>
     /// The camera's current FOV as a result of dashing
     /// </summary>
-    protected float dashCurrentFOV;
+    internal float dashCurrentFOV;
     /// <summary>
     /// How far through the dash we are
     /// </summary>
@@ -240,7 +240,7 @@ public class RBPlayerMotor : LunarScript
 
         headTiltAngle = Mathf.Lerp(headTiltAngle, (isSliding ? viewParams.slideHeadTiltAngle : viewParams.strafeHeadTiltAngle) * InputManager.MoveInput.x, viewParams.headTiltSpeed * Time.fixedDeltaTime);
         head.localRotation = Quaternion.Euler(lookPitch, 0, 0);
-        cineCam.transform.localEulerAngles = new Vector3(0, 0, headTiltAngle);
+        worldCineCam.transform.localEulerAngles = new Vector3(0, 0, headTiltAngle);
 
         if(ikAimTransform != null)
         {
@@ -249,7 +249,7 @@ public class RBPlayerMotor : LunarScript
     }
     void CheckAimState()
     {
-        aiming = InputManager.AimInput;
+        aiming = InputManager.SecondaryInput;
         altAiming = aiming && InputManager.AltAimInput;
         if (aiming)
         {
@@ -257,23 +257,6 @@ public class RBPlayerMotor : LunarScript
         }
         aimAmount = Mathf.MoveTowards(aimAmount, aiming ? 1 : 0, aimParams.fovMoveSpeed * Time.deltaTime);
 
-        //The mother of all ternary statements...
-        float fov = viewParams.baseFOV +
-            //Are we dashing?
-            (dashing ? dashCurrentFOV :
-            //Are we aiming?
-            altAiming ? aimParams.altAimFOV :
-            //Are we side aiming?
-            aiming ? aimParams.aimFOV :
-            //Are we sliding
-            isSliding ? viewParams.slideFOV :
-            //Are we sprinting or sliding?
-            ((sprinting && InputManager.MoveInput != Vector2.zero) || isSliding) ? viewParams.sprintFOV :
-            //Are we moving normally or crouching?
-            0);
-
-        currentFOV = Mathf.Lerp(currentFOV, fov, Time.deltaTime * aimParams.fovMoveSpeed);
-        cineCam.m_Lens.FieldOfView = currentFOV;
     }
     #endregion
     #region Movement

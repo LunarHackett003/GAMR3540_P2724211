@@ -18,4 +18,5 @@ public class ViewParams : ScriptableObject
     public float slideHeadTiltAngle = 5;
     public float slideFOV = 5;
     public float headTiltSpeed = 12;
+    public float viewmodelBaseFOV = 45;
 }

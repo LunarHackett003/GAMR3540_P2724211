@@ -16,10 +16,10 @@ MonoBehaviour:
   lookPitchClamp: 89
   aimLookModifier: 0.8
   aimModifierPerDegree: 0.99
-  canAim: 1
+  sprintFOV: 5
   baseFOV: 80
   crouchedHeadHeight: 0.04
-  standingHeadHeight: 0.5
+  standingHeadHeight: 0.56
   strafeHeadTiltAngle: -0.1
   slideHeadTiltAngle: -1
   slideFOV: 5

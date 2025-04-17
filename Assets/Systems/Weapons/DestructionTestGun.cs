@@ -15,7 +15,7 @@ public class DestructionTestGun : LunarScript
         {
             currentFireTime += Time.fixedDeltaTime;
         }
-        if(currentFireTime >= fireDelay && InputManager.FireInput)
+        if(currentFireTime >= fireDelay && InputManager.PrimaryInput)
         {
             Fire();
             currentFireTime = 0;

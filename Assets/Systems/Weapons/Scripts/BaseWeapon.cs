@@ -6,8 +6,14 @@ using UnityEngine;
 /// </summary>
 public abstract class BaseWeapon : LunarScript
 {
-    protected bool primaryInput, secondaryInput, primaryPressedFirst, secondaryPressedFirst, primaryPressed, secondaryPressed;
-    [SerializeField] protected bool attackOnPrimary, attackOnSecondary, primaryBlocksSecondary, secondaryBlocksPrimary;
+    internal bool primaryInput, secondaryInput, primaryPressedFirst, secondaryPressedFirst, primaryPressed, secondaryPressed;
+    [SerializeField] internal bool attackOnPrimary, attackOnSecondary, primaryBlocksSecondary, secondaryBlocksPrimary;
+    [SerializeField] internal bool aimOnSecondary;
+    public WeaponController controller;
+
+    public void SetPrimaryInput(bool input) => primaryInput = input;
+    public void SetSecondaryInput(bool input) => secondaryInput = input;
+
     public override void LTimestep()
     {
         base.LTimestep();
