@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 1
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -106,7 +105,6 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -128,14 +126,13 @@ ScriptedImporter:
     pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
       y: 4
       width: 64
       height: 64
-    spriteID: 7512039f293e52f4d93fead98a44fa01
+    spriteID: 7065f001366dec9478f0a3873ce1b34a
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -147,7 +144,7 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    guid: 732428434
+    guid: -1283687830
     name: PlywoodPanel
     layerFlags: 0
     layerType: 0
@@ -161,7 +158,7 @@ ScriptedImporter:
         y: 0
         width: 64
         height: 64
-      spriteId: 7512039f293e52f4d93fead98a44fa01
+      spriteId: 7065f001366dec9478f0a3873ce1b34a
     linkedCells: []
     parentIndex: -1
   platformSettings:
@@ -181,4 +178,3 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 64, y: 64}
-  previousTextureSize: {x: 128, y: 128}

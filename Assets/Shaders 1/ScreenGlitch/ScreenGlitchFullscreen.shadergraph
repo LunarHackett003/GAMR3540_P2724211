@@ -5695,10 +5695,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -305.0000305175781,
-            "y": 110.00000762939453,
-            "width": 155.0,
-            "height": 129.00003051757813
+            "x": -344.0,
+            "y": 117.0,
+            "width": 155.00001525878907,
+            "height": 129.0
         }
     },
     "m_Slots": [
@@ -7152,9 +7152,6 @@
     "m_AlphaClip": false,
     "m_CastShadows": true,
     "m_ReceiveShadows": true,
-    "m_DisableTint": false,
-    "m_AdditionalMotionVectorMode": 0,
-    "m_AlembicMotionVectors": false,
     "m_SupportsLODCrossFade": false,
     "m_CustomEditorGUI": "",
     "m_SupportVFX": false

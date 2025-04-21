@@ -39,15 +39,12 @@ public class RBPlayerMotor : LunarScript
     [SerializeField, Header("Dashing"), Tooltip("Can the player dash?")] internal bool canDash;
     [SerializeField] internal DashParams dashParams;
 
-    public float aimAmount;
-
     //Aiming
     internal float lookPitch;
     internal Vector2 lookDelta;
     internal Vector2 oldLook;
 
     internal bool aiming;
-    internal bool altAiming;
     internal float headTiltAngle;
 
     //Movement Parameters
@@ -229,7 +226,7 @@ public class RBPlayerMotor : LunarScript
     {
         if (InputManager.LookInput != Vector2.zero)
         {
-            Vector2 lookSpeed = viewParams.lookSpeed * (aiming || altAiming ? viewParams.aimLookModifier : 1);
+            Vector2 lookSpeed = viewParams.lookSpeed * (aiming ? viewParams.aimLookModifier : 1);
             lookPitch -= Time.deltaTime * lookSpeed.y * InputManager.LookInput.y;
             lookPitch = Mathf.Clamp(lookPitch, -viewParams.lookPitchClamp, viewParams.lookPitchClamp);
             transform.rotation *= Quaternion.Euler(0, InputManager.LookInput.x * lookSpeed.x * Time.deltaTime, 0);
@@ -250,13 +247,10 @@ public class RBPlayerMotor : LunarScript
     void CheckAimState()
     {
         aiming = InputManager.SecondaryInput;
-        altAiming = aiming && InputManager.AltAimInput;
         if (aiming)
         {
             sprinting = false;
         }
-        aimAmount = Mathf.MoveTowards(aimAmount, aiming ? 1 : 0, aimParams.fovMoveSpeed * Time.deltaTime);
-
     }
     #endregion
     #region Movement
@@ -392,7 +386,7 @@ public class RBPlayerMotor : LunarScript
                 Vector3 right = Vector3.Cross(-transform.forward, groundNormal);
                 Vector3 forward = Vector3.Cross(right, groundNormal);
 
-                Vector3 moveForce = (aiming ? moveParams.aimWalkMoveMultiply : altAiming ? moveParams.sideAimWalkMoveMultiply : 1) 
+                Vector3 moveForce = (aiming ? moveParams.aimWalkMoveMultiply : 1) 
                     * (sprinting ? moveParams.sprintForceMultiply : crouching ? moveParams.crouchWalkForceMultiply :
                     slowWalking ? moveParams.slowWalkForceMultiply : 1)
                     * moveParams.baseMoveForce

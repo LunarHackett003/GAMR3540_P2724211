@@ -114,7 +114,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AltAim",
+                    "name": "FireSwitch",
                     "type": "Button",
                     "id": "fa765a07-ff3f-4315-955e-310a8cdbbdd7",
                     "expectedControlType": "",
@@ -136,6 +136,15 @@
                     "type": "Button",
                     "id": "e623f139-a728-499a-96b3-2b9a6dc1246d",
                     "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "fd4d0453-d8cd-4b83-bd71-f8100216a7c5",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -556,7 +565,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AltAim",
+                    "action": "FireSwitch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -590,6 +599,39 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ef86d2c3-11e3-4dfa-b6ab-2f0021edcd25",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b88cc209-5e1f-4425-b06e-43485dbd5a51",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7d183c4a-5177-49d8-8388-3f16693f26a7",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "FireSwitch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

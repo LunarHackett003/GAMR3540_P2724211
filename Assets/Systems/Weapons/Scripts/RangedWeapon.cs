@@ -8,8 +8,9 @@ public class RangedWeapon : BaseWeapon
     public enum FireMode : int
     {
         single = 1,
-        automatic = 2,
-        animated = 4
+        burst = 2,
+        automatic = 4,
+        animated = 8
     }
 
     [Tooltip("the radius of the base spread per unit distance covered by the shot.")]
@@ -19,7 +20,8 @@ public class RangedWeapon : BaseWeapon
     [Tooltip("the current influence of the owner's movement.")]
     public float currentMovementInfluence = 0;
 
-    public Vector3 SpreadVector => (((Vector3)Random.insideUnitCircle * (baseSpreadPerUnit + (currentMovementInfluence * maxInfluencedSpreadPerUnit))) + Vector3.forward).normalized;
+
+    public Vector3 SpreadVector => (((Vector3)Random.insideUnitCircle * (baseSpreadPerUnit + (attackSpreadAmount * maxInfluencedSpreadPerUnit * (1 - controller.aimAmount)))) + Vector3.forward).normalized;
 
     public FireMode[] allowedFireModes = new FireMode[] { FireMode.automatic };
     public int fireModeIndex = 0;
@@ -29,10 +31,12 @@ public class RangedWeapon : BaseWeapon
     protected int burstRoundsFired;
     public float timeBetweenRounds;
     public float burstCooldown;
+    public bool autoBurst;
+
+
     float currentFireCooldown;
-    [SerializeField] protected bool fired = false;
     protected bool burstFiring = false;
-    protected virtual bool PrimaryBlocked => fired;
+
     public override void LTimestep()
     {
         base.LTimestep();
@@ -55,44 +59,70 @@ public class RangedWeapon : BaseWeapon
         if(!primaryPressedFirst) 
             SecondaryBehaviour();
     }
-    protected virtual void FireWeapon()
+    protected virtual void FireWeapon(bool primary = true)
     {
-
+        if (controller)
+        {
+            controller.TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, 0.1f);
+        }
+        PostAttackBehaviour();
     }
     protected override void PrimaryBehaviour()
     {
-        if (!primaryPressed && primaryInput)
+        //if (!primaryPressed && primaryInput)
+        //{
+        //    if (roundsInBurst > 0)
+        //    {
+        //        if (!burstFiring)
+        //        {
+        //            StartCoroutine(BurstFire());
+        //        }
+        //    }
+        //    else 
+        //    {
+        //        FireWeapon();
+        //        fired = true;
+        //    }
+
+        //}
+        if (primaryInput)
         {
-            if (roundsInBurst > 0)
-            {
-                if (!burstFiring)
-                {
-                    StartCoroutine(BurstFire());
-                }
-            }
-            else 
-            {
-                FireWeapon();
-                fired = true;
-            }
 
+            switch (CurrentFireMode)
+            {
+                case FireMode.single:
+                    if (!primaryPressed)
+                    {
+                        FireWeapon();
+                        fired = true;
+                        primaryPressed = true;
+                    }
+                    break;
+                case FireMode.automatic:
+                    FireWeapon();
+                    fired = true;
+                    break;
+                case FireMode.animated:
+                    if (!primaryPressed)
+                    {
+                        primaryPressed = true;
+                        FireWeapon();
+                    }
+                    break;
+                case FireMode.burst:
+                    if(roundsInBurst > 0 && !burstFiring)
+                    {
+                        StartCoroutine(BurstFire());
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
-
-        switch (CurrentFireMode)
+        else if(CurrentFireMode == FireMode.single)
         {
-            case FireMode.single:
-                primaryPressed = primaryInput;
-                break;
-            case FireMode.automatic:
-                break;
-            case FireMode.animated:
-                if(primaryInput)
-                    primaryPressed = true;
-                break;
-            default:
-                break;
+            primaryPressed = false;
         }
-
     }
     protected override void SecondaryBehaviour()
     {
@@ -113,9 +143,9 @@ public class RangedWeapon : BaseWeapon
             yield return new WaitForSeconds(timeBetweenRounds);
         }
         yield return new WaitForSeconds(burstCooldown);
-        if (CurrentFireMode == FireMode.single)
+        if (!autoBurst)
         {
-            yield return new WaitWhile(() => { return primaryInput == false; });
+            yield return new WaitUntil(() => { return primaryInput == false; });
         }
         burstRoundsFired = 0;
         burstFiring = false;

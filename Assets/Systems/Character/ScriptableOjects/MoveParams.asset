@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6510e88b43c27114c9c7a2685e9dcc72, type: 3}
   m_Name: MoveParams
   m_EditorClassIdentifier: 
-  baseMoveForce: 20
+  baseMoveForce: 40
   walkDamping: 8
   sprintForceMultiply: 2
   slowWalkForceMultiply: 0.7

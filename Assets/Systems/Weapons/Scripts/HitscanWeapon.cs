@@ -43,12 +43,6 @@ public class HitscanWeapon : RangedWeapon
     }
 
 
-
-
-
-
-
-
     [Tooltip("How many rays a weapon will shoot when firing.")]
     public int fireIterations = 1;
     [Tooltip("Can bullets bounce off of surfaces?")]
@@ -76,8 +70,9 @@ public class HitscanWeapon : RangedWeapon
     public Transform fireOrigin;
     public HitscanTracer tracerPrefab;
     public float tracerSpeed;
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         Debug.Log(TracerPool.CountAll);
     }
     public bool ShouldRicochet(RaycastHit hit, Vector3 direction)
@@ -96,24 +91,25 @@ public class HitscanWeapon : RangedWeapon
     }
     protected virtual void FireHitscan()
     {
+        Transform t = controller == null ? transform : controller.fireOrigin;
         if (BulletScheduler.Instance != null)
         {
             for (int i = 0; i < fireIterations; i++)
             {
                 if (baseSpreadPerUnit > 0 || maxInfluencedSpreadPerUnit > 0)
                 {
-                    BulletScheduler.ScheduleBullet(fireOrigin.position, transform.TransformDirection(SpreadVector), shotMaxRange, 0, this);
+                    BulletScheduler.ScheduleBullet(fireOrigin.position, t.TransformDirection(SpreadVector), shotMaxRange, 0, this);
                 }
                 else
                 {
-                    BulletScheduler.ScheduleBullet(fireOrigin.position, transform.TransformDirection(Vector3.forward), shotMaxRange, 0, this);
+                    BulletScheduler.ScheduleBullet(fireOrigin.position, t.TransformDirection(Vector3.forward), shotMaxRange, 0, this);
                 }
             }
         }
     }
-    protected override void FireWeapon()
+    protected override void FireWeapon(bool primary = true)
     {
-        base.FireWeapon();
+        base.FireWeapon(primary);
         FireHitscan();
     }
     public void SendTracer(Vector3 start, Vector3 end, out HitscanTracer t)

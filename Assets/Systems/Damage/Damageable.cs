@@ -9,16 +9,13 @@ public class Damageable : LunarScript
     public delegate void DamageableHit(Damageable d);
     public DamageableHit onHit;
 
-    public bool CanTakeDamage => CheckTakeDamage();
+    public bool immune;
+
+    public virtual bool CanTakeDamage => !immune && CurrentHealth > 0;
 
     private void Awake()
     {
         CurrentHealth = maxHealth;
-    }
-
-    public bool CheckTakeDamage()
-    {
-        return false;
     }
 
     public void ReceiveHit(float deltaHealth)

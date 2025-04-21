@@ -228,7 +228,7 @@ public class BulletScheduler : LunarScript
         if (Instance.raycastsWaiting < Instance.maxRaycastsPerStep)
         {
             if (tracer == null && owner.tracerPrefab != null)
-                owner.SendTracer(start, start, out tracer);
+                owner.SendTracer(owner.fireOrigin.position, start, out tracer);
             RaycastData bd = new()
             {
                 start = start,

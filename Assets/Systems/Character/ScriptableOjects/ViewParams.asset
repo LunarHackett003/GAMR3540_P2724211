@@ -24,3 +24,5 @@ MonoBehaviour:
   slideHeadTiltAngle: -1
   slideFOV: 5
   headTiltSpeed: 3
+  viewmodelBaseFOV: 45
+  fovMoveSpeed: 20

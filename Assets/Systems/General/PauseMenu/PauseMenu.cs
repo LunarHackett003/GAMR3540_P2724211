@@ -5,8 +5,7 @@ public class PauseMenu : LunarScript
     public static PauseMenu Instance { get; private set; }
 
     public static bool GamePaused;
-    public GameObject menuCanvas;
-
+    public GameObject menuCanvas, gameplayCanvas;
 
     private void Awake()
     {
@@ -37,6 +36,7 @@ public class PauseMenu : LunarScript
     {
         Cursor.lockState = !GamePaused ? CursorLockMode.Locked : CursorLockMode.None;
         menuCanvas.SetActive(GamePaused);
+        gameplayCanvas.SetActive(!GamePaused);
     }
 
 }

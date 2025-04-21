@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 1
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -106,7 +105,6 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -128,14 +126,13 @@ ScriptedImporter:
     pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
       y: 0
       width: 64
       height: 64
-    spriteID: deb5eeeb3f798ed499c0bb14b873a0b9
+    spriteID: 3efcfacb65e97554689e4037d1ea7a7e
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -147,7 +144,7 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    guid: -1946916951
+    guid: 168083733
     name: Brick
     layerFlags: 0
     layerType: 0
@@ -161,7 +158,7 @@ ScriptedImporter:
         y: 0
         width: 64
         height: 64
-      spriteId: deb5eeeb3f798ed499c0bb14b873a0b9
+      spriteId: 3efcfacb65e97554689e4037d1ea7a7e
     linkedCells: []
     parentIndex: -1
   platformSettings:
@@ -205,4 +202,3 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 64, y: 64}
-  previousTextureSize: {x: 64, y: 64}

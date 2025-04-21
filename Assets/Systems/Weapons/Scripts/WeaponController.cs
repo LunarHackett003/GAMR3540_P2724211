@@ -6,7 +6,16 @@ public class WeaponController : LunarScript
 {
     public BaseWeapon currentWeapon;
     public bool primaryInput, secondaryInput;
-    protected bool primaryOld, secondaryOld; 
+    protected bool primaryOld, secondaryOld;
+
+    public Transform fireOrigin;
+
+    internal bool fireBlocked => fireBlockedByAnimation;
+    [SerializeField] internal bool fireBlockedByAnimation;
+    [SerializeField] internal Animator animator;
+    internal float aimLerp = 0;
+    internal float aimAmount;
+
     public override void LUpdate()
     {
         base.LUpdate();
@@ -30,5 +39,19 @@ public class WeaponController : LunarScript
     {
         oldWeapon = currentWeapon;
         return newWeapon != null && newWeapon != currentWeapon;
+    }
+
+    public virtual void TriggerAnimation(string trigger, float time)
+    {
+        if(animator != null)
+        {
+            StartCoroutine(AnimationTrigger(trigger, time));
+        }
+    }
+    protected virtual IEnumerator AnimationTrigger(string trigger, float time)
+    {
+        animator.SetTrigger(trigger);
+        yield return new WaitForSeconds(time);
+        animator.ResetTrigger(trigger);
     }
 }

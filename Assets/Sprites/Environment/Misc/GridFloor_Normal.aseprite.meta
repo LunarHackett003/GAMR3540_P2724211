@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 1
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -106,7 +105,6 @@ ScriptedImporter:
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -128,14 +126,13 @@ ScriptedImporter:
     pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
-    customData: 
     rect:
       serializedVersion: 2
       x: 4
       y: 4
       width: 64
       height: 64
-    spriteID: b247f66a501ec8449b4a2b6332f9b2db
+    spriteID: 97e02ffc926b45846883b8c9c004c8fb
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -147,7 +144,7 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    guid: 226733330
+    guid: -181181206
     name: GridFloor_Normal
     layerFlags: 0
     layerType: 0
@@ -161,7 +158,7 @@ ScriptedImporter:
         y: 0
         width: 64
         height: 64
-      spriteId: b247f66a501ec8449b4a2b6332f9b2db
+      spriteId: 97e02ffc926b45846883b8c9c004c8fb
     linkedCells: []
     parentIndex: -1
   platformSettings:
@@ -181,4 +178,3 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 64, y: 64}
-  previousTextureSize: {x: 128, y: 128}

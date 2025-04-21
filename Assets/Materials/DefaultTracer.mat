@@ -198,7 +198,7 @@ Material:
     - _DoubleSidedNormalMode: 1
     - _DstBlend: 10
     - _EmissionIntensity: 50
-    - _EmissionMultiplier: 25
+    - _EmissionMultiplier: 40
     - _EmissiveColorMode: 1
     - _EmissiveExposureWeight: 0
     - _EmissiveIntensity: 1
