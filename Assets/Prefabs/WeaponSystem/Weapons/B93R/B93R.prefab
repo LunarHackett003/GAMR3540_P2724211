@@ -321,30 +321,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6517f9cfa2f4f9449a325a6ef4fe85c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  displayName: B93R
   attackOnPrimary: 1
   attackOnSecondary: 0
   primaryBlocksSecondary: 0
   secondaryBlocksPrimary: 0
   aimOnSecondary: 1
+  aimParams: {fileID: 0}
   controller: {fileID: 0}
-  baseSpreadPerUnit: 0.02
-  maxInfluencedSpreadPerUnit: 0.1
+  crosshairSpreadBase: 1
+  crosshairSpreadMax: 1.13
+  useAttackSpread: 0
+  spreadOnPrimary: 0
+  spreadOnSecondary: 0
+  attackSpreadIncrement: 0.22
+  attackSpreadDecay: 2.4
+  attackSpreadAmount: 0
+  useAmmunition: 0
+  ammoConsumeOnPrimary: 0
+  ammoConsumeOnSecondary: 0
+  maxAmmo: 0
+  ammoPerShot: 0
+  currentAmmo: 0
+  useAmmoPhases: 0
+  ammoPhases: 0
+  currentAmmoPhase: 0
+  partialReloadTime: 0
+  emptyReloadTime: 0
+  queuedReloadAnimation: 0
+  fired: 0
+  baseSpreadPerUnit: 0
+  maxInfluencedSpreadPerUnit: 0.2
   currentMovementInfluence: 0
-  allowedFireModes: 02000000
+  allowedFireModes: 010000000200000004000000
   fireModeIndex: 0
+  fireModeSwitchTime: 0.4
   roundsPerMinute: 800
   roundsInBurst: 3
   timeBetweenRounds: 0.075
   burstCooldown: 0.13
-  fired: 0
+  autoBurst: 0
   poolStartCapacity: 50
   poolMaxCapacity: 500
   fireIterations: 1
   shotsCanRichochet: 1
   shotsCanPenetrate: 1
   shotMaxRange: 100
-  shotRicochetRangeLoss: 0.5
-  shotPenetrateRangeLoss: 0.2
+  shotRicochetRangeLoss: 0.8
+  shotPenetrateRangeLoss: 0.1
   maxRicochetNormal: 0.35
   minRicochetNormal: -0.3
   minPenetrateNormal: 0.81

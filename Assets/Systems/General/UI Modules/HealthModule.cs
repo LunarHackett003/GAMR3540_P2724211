@@ -49,7 +49,7 @@ public class HealthModule : UIModule
         }
         if(useText)
         {
-            healthText.text = GameplayCanvas.playerController.damageable.CurrentHealth.ToString();
+            healthText.text = GameplayCanvas.playerController.damageable.CurrentHealth.ToString("0");
         }
         if (useMaterial)
         {

@@ -55,12 +55,12 @@ public class PlayerController : WeaponController
             switch (currentWeapon)
             {
                 case RangedWeapon rw:
-                    if (InputManager.FireSwitchInput)
+                    if (InputManager.FireSwitchInput && !fireBlocked)
                     {
                         if(rw.allowedFireModes.Length > 1)
                         {
                             int oldIndex = rw.fireModeIndex;
-                            int newindex = rw.fireModeIndex = (rw.fireModeIndex + 1) % rw.allowedFireModes.Length;
+                            int newindex = (rw.fireModeIndex + 1) % rw.allowedFireModes.Length;
                             TriggerAnimation(oldIndex > newindex ? BaseWeapon.FIRESWITCHDOWN : BaseWeapon.FIRESWITCHUP, 0.2f);
                             InputManager.FireSwitchInput = false;
                         }

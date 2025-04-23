@@ -25,6 +25,7 @@ public class RangedWeapon : BaseWeapon
 
     public FireMode[] allowedFireModes = new FireMode[] { FireMode.automatic };
     public int fireModeIndex = 0;
+    public float fireModeSwitchTime;
     public FireMode CurrentFireMode => allowedFireModes[fireModeIndex];
     public int roundsPerMinute;
     public int roundsInBurst;
@@ -150,5 +151,10 @@ public class RangedWeapon : BaseWeapon
         burstRoundsFired = 0;
         burstFiring = false;
         yield break;
+    }
+    public virtual void IncrementFireMode()
+    {
+        fireModeIndex++;
+        fireModeIndex %= allowedFireModes.Length;
     }
 }

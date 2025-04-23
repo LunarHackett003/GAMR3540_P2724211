@@ -15,7 +15,7 @@ public abstract class BaseWeapon : LunarScript
 
 
 
-
+    public string displayName = "New Weapon";
     internal bool primaryInput, secondaryInput, primaryPressedFirst, secondaryPressedFirst, primaryPressed, secondaryPressed;
     [SerializeField] internal bool attackOnPrimary, attackOnSecondary, primaryBlocksSecondary, secondaryBlocksPrimary;
     [SerializeField] internal bool aimOnSecondary;

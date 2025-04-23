@@ -7,8 +7,11 @@ public class Damageable : LunarScript
     public float CurrentHealth { get; private set; }
 
     public delegate void DamageableHit(Damageable d);
-    public DamageableHit onHit;
+    public DamageableHit healthChanged;
 
+    public bool regenerateHealth;
+    public float regenDelay, regenRate;
+    float currentRegenTime;
     public bool immune;
 
     public virtual bool CanTakeDamage => !immune && CurrentHealth > 0;
@@ -17,18 +20,37 @@ public class Damageable : LunarScript
     {
         CurrentHealth = maxHealth;
     }
+    public override void LTimestep()
+    {
+        base.LTimestep();
 
-    public void ReceiveHit(float deltaHealth)
+        if (regenerateHealth)
+        {
+            if(currentRegenTime < regenDelay)
+            {
+                currentRegenTime += Time.fixedDeltaTime;
+            }
+            else if(CurrentHealth <= maxHealth)
+            {
+                HealthEvent(Time.fixedDeltaTime * regenRate);
+            }
+        }
+    }
+    public void HealthEvent(float deltaHealth)
     {
         if (CanTakeDamage)
         {
-            onHit?.Invoke(this);
             ModifyHealth(deltaHealth);
+            if (regenerateHealth)
+            {
+                currentRegenTime = 0;
+            }
+            healthChanged?.Invoke(this);
         }
     }
     public virtual void ModifyHealth(float deltaHealth)
     {
-        CurrentHealth += deltaHealth;
+        CurrentHealth = Mathf.Clamp(CurrentHealth + deltaHealth, 0, maxHealth);
 
         if (CurrentHealth <= 0)
         {

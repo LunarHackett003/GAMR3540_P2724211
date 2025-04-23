@@ -212,7 +212,7 @@ public class BulletScheduler : LunarScript
                 }
                 if(item.Key.TryGetComponent(out Damageable d))
                 {
-                    d.ModifyHealth(item.Value.damageAccumulated);
+                    d.HealthEvent(-item.Value.damageAccumulated);
                 }
             }
         }
