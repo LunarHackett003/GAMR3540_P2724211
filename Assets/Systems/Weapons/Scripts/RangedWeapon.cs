@@ -21,7 +21,7 @@ public class RangedWeapon : BaseWeapon
     public float currentMovementInfluence = 0;
 
 
-    public Vector3 SpreadVector => (((Vector3)Random.insideUnitCircle * (baseSpreadPerUnit + (attackSpreadAmount * maxInfluencedSpreadPerUnit * (1 - controller.aimAmount)))) + Vector3.forward).normalized;
+    public virtual Vector3 SpreadVector => (((Vector3)Random.insideUnitCircle * (baseSpreadPerUnit + (maxInfluencedSpreadPerUnit * controller.Spread(attackSpreadAmount)))) + Vector3.forward).normalized;
 
     public FireMode[] allowedFireModes = new FireMode[] { FireMode.automatic };
     public int fireModeIndex = 0;
@@ -107,6 +107,7 @@ public class RangedWeapon : BaseWeapon
                     if (!primaryPressed)
                     {
                         primaryPressed = true;
+                        animatedFirePending = true;
                         FireWeapon();
                     }
                     break;
@@ -137,7 +138,7 @@ public class RangedWeapon : BaseWeapon
     protected virtual IEnumerator BurstFire()
     {
         burstFiring = true;
-        while (burstRoundsFired < roundsInBurst)
+        while (burstRoundsFired < roundsInBurst && (!useAmmunition || currentAmmo > 0))
         {
             burstRoundsFired++;
             FireWeapon();

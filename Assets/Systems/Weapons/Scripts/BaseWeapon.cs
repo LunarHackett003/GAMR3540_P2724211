@@ -10,7 +10,7 @@ public abstract class BaseWeapon : LunarScript
 {
     //Constant animation keys
     public const string PRIMARYATTACK = "Primary", SECONDARYATTACK = "Secondary", AMMOPHASE = "AmmoPhase", EMPTYRELOAD = "EmptyReload", PARTIALRELOAD = "TacReload",
-        FIRESWITCHUP = "FireSwitchUp", FIRESWITCHDOWN = "FireSwitchDown";
+        FIRESWITCHUP = "FireSwitchUp", FIRESWITCHDOWN = "FireSwitchDown", COUNTEDRELOAD = "CountedReload", MANUALACTION = "ManualAction";
 
 
 
@@ -42,6 +42,8 @@ public abstract class BaseWeapon : LunarScript
     [SerializeField] protected bool fired = false;
     protected virtual bool PrimaryBlocked => fired || (useAmmunition && currentAmmo <= 0);
 
+    internal bool animatedFirePending;
+    internal bool animatedFireLast;
     public void SetPrimaryInput(bool input) => primaryInput = input;
     public void SetSecondaryInput(bool input) => secondaryInput = input;
 
@@ -60,7 +62,11 @@ public abstract class BaseWeapon : LunarScript
         base.LTimestep();
         UpdateInputPriority();
         ProcessInput();
-
+        if(animatedFireLast != animatedFirePending)
+        {
+            animatedFireLast = animatedFirePending;
+            controller.SetAnimationBool(MANUALACTION, animatedFirePending);
+        }
         if (useAttackSpread)
         {
             attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount - (Time.fixedDeltaTime * attackSpreadDecay));
@@ -106,12 +112,12 @@ public abstract class BaseWeapon : LunarScript
             {
                 if (useAmmoPhases && currentAmmoPhase < ammoPhases)
                 {
-                    controller.TriggerAnimation(AMMOPHASE, 0.2f);
+                    controller.TriggerAnimation(AMMOPHASE, 0.5f);
                     currentAmmoPhase++;
                     ReloadWeapon(false);
                     return;
                 }
-                controller.TriggerAnimation(EMPTYRELOAD, 0.2f);
+                controller.TriggerAnimation(EMPTYRELOAD, 0.5f);
             }
         }
     }

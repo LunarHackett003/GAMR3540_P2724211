@@ -22,7 +22,7 @@ public class CrosshairModule : UIModule
             return;
         crosshairGroup.alpha = 1 - Weapon.controller.aimAmount;
 
-        currentCrosshairSize = Mathf.Lerp(currentCrosshairSize, Weapon.crosshairSpreadBase + (Weapon.attackSpreadAmount * Weapon.crosshairSpreadMax), Time.deltaTime * crosshairLerpSpeed);
+        currentCrosshairSize = Mathf.Lerp(currentCrosshairSize, Weapon.crosshairSpreadBase + (Weapon.controller.Spread(Weapon.attackSpreadAmount) * Weapon.crosshairSpreadMax), Time.deltaTime * crosshairLerpSpeed);
         crosshairRect.sizeDelta = new Vector2(currentCrosshairSize, currentCrosshairSize) * baseCrosshairSize;
     }
 }

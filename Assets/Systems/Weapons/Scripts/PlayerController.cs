@@ -7,11 +7,20 @@ public class PlayerController : WeaponController
     public bool myPlayer;
     public Damageable damageable;
 
+    public Vector2 moveSpreadVelocityBounds;
+    public float crouchInaccuracyMultiplier = 0.5f;
     [SerializeField] protected RBPlayerMotor rbpm;
     internal float currentFOV;
     [SerializeField] internal Transform weaponPositionOffset, weaponRotationInvert, weaponTargetTransform;
     Vector3 weaponPosStart;
     internal float fovLerp = 0;
+
+    public override float Spread(float value)
+    {
+        return base.Spread(value) + Mathf.Clamp01(Mathf.InverseLerp(moveSpreadVelocityBounds.x, moveSpreadVelocityBounds.y, rbpm.rb.velocity.magnitude)
+                + ((1 - rbpm.currentCrouchLerp) * crouchInaccuracyMultiplier));
+    }
+
 
     private void Start()
     {
@@ -28,6 +37,11 @@ public class PlayerController : WeaponController
         }
     }
 
+    public override void LTimestep()
+    {
+        base.LTimestep();
+    }
+
     public override void LUpdate()
     {
 
@@ -40,8 +54,8 @@ public class PlayerController : WeaponController
              */
             return;
         }
-        primaryInput = InputManager.PrimaryInput && !fireBlocked;
-        secondaryInput = InputManager.SecondaryInput && !fireBlocked;
+        primaryInput = InputManager.PrimaryInput && !FireBlocked;
+        secondaryInput = InputManager.SecondaryInput && !FireBlocked;
 
         if (InputManager.ReloadInput)
         {
@@ -55,7 +69,7 @@ public class PlayerController : WeaponController
             switch (currentWeapon)
             {
                 case RangedWeapon rw:
-                    if (InputManager.FireSwitchInput && !fireBlocked)
+                    if (InputManager.FireSwitchInput && !FireBlocked)
                     {
                         if(rw.allowedFireModes.Length > 1)
                         {
@@ -93,17 +107,19 @@ public class PlayerController : WeaponController
         }
 
         aimAmount = Mathf.MoveTowards(aimAmount, rbpm.aiming ? 1 : 0, currentWeapon.aimParams.aimSpeed * Time.deltaTime);
-        aimLerp = Mathf.Lerp(aimLerp, aimAmount, Time.deltaTime * currentWeapon.aimParams.aimSpeed);
-        //weaponPositionOffset.localPosition = Vector3.Lerp(weaponPosStart, weaponPosStart + currentWeapon.aimParams.baseAimPositionOffset + 
-        //    (currentWeapon.aimParams.aimPositionOffsetAngled * (1 - currentWeapon.aimParams.aimRotationReduction)), aimLerp);
+        //aimLerp = Mathf.Lerp(aimLerp, aimAmount, Time.deltaTime * currentWeapon.aimParams.aimSpeed);
+        aimLerp = currentWeapon.aimParams.aimLerpCurve.Evaluate(aimAmount);
+        float crouchLerp = currentWeapon.aimParams.crouchLerpCurve.Evaluate(rbpm.currentCrouchLerp);
 
         //We need to scale the local position of the weapon target, and apply that to the weapon offset
-        weaponPositionOffset.localPosition = (currentWeapon.aimParams.baseAimPositionOffset + 
+        weaponPositionOffset.localPosition = currentWeapon.aimParams.crouchPositionOffset * (crouchLerp * (1 - (aimLerp * currentWeapon.aimParams.aimRotationReduction))) 
+            + (currentWeapon.aimParams.baseAimPositionOffset + 
             weaponTargetTransform.localPosition.Multiply(currentWeapon.aimParams.aimedWeaponPositionScale) + 
             (currentWeapon.aimParams.aimPositionOffsetAngled * (1 - currentWeapon.aimParams.aimRotationReduction))) * aimLerp;
 
 
-        weaponRotationInvert.localRotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Inverse(weaponTargetTransform.localRotation), aimLerp * rbpm.aimParams.aimRotationReduction);
+        weaponRotationInvert.localRotation = Quaternion.Lerp(Quaternion.Lerp(Quaternion.identity, currentWeapon.aimParams.crouchRotationOffset, crouchLerp),
+            Quaternion.Inverse(weaponTargetTransform.localRotation) * currentWeapon.aimParams.aimRotationOffset, aimLerp * rbpm.aimParams.aimRotationReduction);
     }
 
     public void UpdateFOV()

@@ -10,11 +10,13 @@ public class WeaponController : LunarScript
 
     public Transform fireOrigin;
 
-    internal bool fireBlocked => fireBlockedByAnimation;
+    internal bool FireBlocked => fireBlockedByAnimation;
     [SerializeField] internal bool fireBlockedByAnimation;
     [SerializeField] internal Animator animator;
     internal float aimLerp = 0;
     internal float aimAmount;
+
+    public virtual float Spread(float value) => value * (1 - aimAmount);
 
     public override void LUpdate()
     {
@@ -35,10 +37,18 @@ public class WeaponController : LunarScript
         }
     }
 
-    public bool ChangeCurrentWeapon(BaseWeapon newWeapon, out BaseWeapon oldWeapon)
+    public virtual void ChangeCurrentWeapon(BaseWeapon newWeapon, out BaseWeapon oldWeapon, out bool success)
     {
         oldWeapon = currentWeapon;
-        return newWeapon != null && newWeapon != currentWeapon;
+        success = newWeapon != null && newWeapon != currentWeapon;
+    }
+
+    public virtual void SetAnimationBool(string parameter, bool value)
+    {
+        if(animator != null)
+        {
+            animator.SetBool(parameter, value);
+        }
     }
 
     public virtual void TriggerAnimation(string trigger, float time)

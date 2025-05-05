@@ -23,13 +23,14 @@ public class TurretWeaponController : WeaponController
     public float colliderSizeMultiplier = 0.75f;
     [SerializeField] protected float dotFromFOV;
 
-    public LayerMask viewLayermask;
+    public LayerMask viewLayerMask;
+    public LayerMask obstructionLayerMask;
     public int viewMaxTargets = 10;
     public float viewPollInterval;
     [SerializeField] float viewPollTime;
-    
-    NativeArray<ColliderHit> viewSphereHits;
-    NativeArray<OverlapSphereCommand> viewSphereCommands;
+
+    Collider[] viewSphereColliders = new Collider[0];
+
     NativeArray<RaycastCommand> boundsCheckCommands;
     NativeArray<RaycastHit> boundsCheckHits;
     HashSet<Rigidbody> bodiesInRange = new();
@@ -38,7 +39,7 @@ public class TurretWeaponController : WeaponController
     float lastTargetedYaw;
     private void Start()
     {
-        ChangeCurrentWeapon(GetComponentInChildren<BaseWeapon>(), out BaseWeapon _);
+        ChangeCurrentWeapon(GetComponentInChildren<BaseWeapon>(), out BaseWeapon _, out bool _);
 
         dotFromFOV = ((fieldOfView / 90) - 1) * -1;
     }
@@ -136,41 +137,46 @@ public class TurretWeaponController : WeaponController
         //We'll do the sphere check, to see what's actually within detection distance
         QueryParameters qp = new()
         {
-            layerMask = viewLayermask,
+            layerMask = obstructionLayerMask,
         };
-        viewSphereHits = new NativeArray<ColliderHit>(viewMaxTargets, Allocator.TempJob);
-        viewSphereCommands = new(1, Allocator.TempJob);
-        viewSphereCommands[0] = new(yawTransform.position, viewRange, qp);
-        JobHandle jh = OverlapSphereCommand.ScheduleBatch(viewSphereCommands, viewSphereHits, 1, viewMaxTargets);
+        //viewSphereHits = new NativeArray<ColliderHit>(viewMaxTargets, Allocator.TempJob);
+        //viewSphereCommands = new(1, Allocator.TempJob);
+        //viewSphereCommands[0] = new(yawTransform.position, viewRange, qp);
+        //JobHandle jh = OverlapSphereCommand.ScheduleBatch(viewSphereCommands, viewSphereHits, 1, viewMaxTargets);
+        //jh.Complete();
 
-        jh.Complete();
-        int validHits = 0;
+        if(viewSphereColliders.Length != viewMaxTargets)
+        {
+            viewSphereColliders = new Collider[viewMaxTargets];
+        }
+
+        int validHits = Physics.OverlapSphereNonAlloc(yawTransform.position, viewRange, viewSphereColliders, viewLayerMask, QueryTriggerInteraction.Ignore);
+        Debug.Log($"{validHits} targets found by this turret", gameObject);
         boundsCheckCommands = new(viewMaxTargets * 8, Allocator.TempJob);
 
-        for (int i = 0; i < viewSphereHits.Length; i++)
+        for (int i = 0; i < validHits; i++)
         {
-            ColliderHit ch = viewSphereHits[i];
-            if (ch.collider == null || ch.collider.attachedRigidbody == null)
+            Collider c = viewSphereColliders[i];
+            if (c == null || c.attachedRigidbody == null)
             {
                 //Invalid result
                 continue;
             }
-            if (bodiesInRange.Contains(ch.collider.attachedRigidbody))
+            if (bodiesInRange.Contains(c.attachedRigidbody))
             {
                 //No rigidbody, cannot be a valid target
                 continue;
             }
-            float dot = Vector3.Dot(fireOrigin.forward, (ch.collider.transform.position - fireOrigin.position).normalized);
-            Debug.DrawLine(yawTransform.position, ch.collider.bounds.center, Color.Lerp(Color.red, Color.green, dot), viewPollInterval);
+            float dot = Vector3.Dot(fireOrigin.forward, (c.transform.position - fireOrigin.position).normalized);
+            Debug.DrawLine(yawTransform.position, c.bounds.center, Color.Lerp(Color.red, Color.green, dot), viewPollInterval);
             if (dot > dotFromFOV)
             {
-                validHits++;
-                bodiesInRange.Add(ch.collider.attachedRigidbody);
+                bodiesInRange.Add(c.attachedRigidbody);
 
                 //We need to now construct the raycast commands to check each corner of the bounds.
-                foreach (var item in GetBoundingPoints(ch.collider.bounds))
+                foreach (var item in GetBoundingPoints(c.bounds))
                 {
-                    boundsCheckCommands[validHits] = new(fireOrigin.position, (Vector3.Lerp(ch.collider.bounds.center, item, colliderSizeMultiplier) - fireOrigin.position).normalized, qp, viewRange * 1.2f);
+                    boundsCheckCommands[validHits] = new(fireOrigin.position, (Vector3.Lerp(c.bounds.center, item, colliderSizeMultiplier) - fireOrigin.position).normalized, qp, viewRange * 1.2f);
                     Debug.DrawLine(yawTransform.position, item, Color.cyan, viewPollInterval);
                 }
             }
@@ -181,7 +187,7 @@ public class TurretWeaponController : WeaponController
 
             boundsCheckHits = new(boundsCheckCommands.Length, Allocator.TempJob);
             Debug.Log($"{boundsCheckCommands.Length} : {boundsCheckHits.Length}");
-            JobHandle jh2 = RaycastCommand.ScheduleBatch(boundsCheckCommands, boundsCheckHits, 1, jh);
+            JobHandle jh2 = RaycastCommand.ScheduleBatch(boundsCheckCommands, boundsCheckHits, 1);
             jh2.Complete();
 
             for (int i = 0; i < boundsCheckHits.Length; i++)
@@ -214,18 +220,18 @@ public class TurretWeaponController : WeaponController
             Debug.Log("Found no valid rigidbodies within radius! uh oh!");
         }
 
-        bodiesInRange.Clear();
+        if(bodiesInRange.Count > 0)
+            bodiesInRange.Clear();
         if(boundsCheckHits.IsCreated)
             boundsCheckHits.Dispose();
-        boundsCheckCommands.Dispose();
-        viewSphereCommands.Dispose();
-        viewSphereHits.Dispose();
+        if(boundsCheckCommands.IsCreated)
+            boundsCheckCommands.Dispose();
     }
     void KeepOldTarget()
     {
         foreach (var item in GetBoundingPoints(targetedCollider.bounds))
         {
-            if (Physics.Raycast(fireOrigin.position, (Vector3.Lerp(targetedCollider.bounds.center, item, colliderSizeMultiplier) - fireOrigin.position), out RaycastHit hit, viewRange * 1.2f, viewLayermask))
+            if (Physics.Raycast(fireOrigin.position, (Vector3.Lerp(targetedCollider.bounds.center, item, colliderSizeMultiplier) - fireOrigin.position), out RaycastHit hit, viewRange * 1.2f, obstructionLayerMask))
             {
                 if(hit.rigidbody == currentRigidbody)
                 {

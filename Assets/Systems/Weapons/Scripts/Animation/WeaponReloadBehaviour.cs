@@ -24,7 +24,7 @@ public class WeaponReloadBehaviour : WeaponAnimationBehaviourBase
         if(!reloaded && stateInfo.normalizedTime >= normalisedTimeForReload)
         {
             reloaded = true;
-            controller.currentWeapon.ReloadWeapon(true);
+            weapon.ReloadWeapon(true);
         }
     }
 }

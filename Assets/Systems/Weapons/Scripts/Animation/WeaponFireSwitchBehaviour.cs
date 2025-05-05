@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponFireSwitchBehaviour : WeaponAnimationBehaviourBase
 {
-    RangedWeapon weapon;
+    RangedWeapon rweapon;
     bool switched;
     public float timeToSwitch;
     float normTime;
@@ -13,16 +13,16 @@ public class WeaponFireSwitchBehaviour : WeaponAnimationBehaviourBase
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
 
-        weapon = (RangedWeapon)controller.currentWeapon;
-        if(weapon != null)
+        rweapon = (RangedWeapon)weapon;
+        if(rweapon != null)
         {
-            timeToSwitch = weapon.fireModeSwitchTime;
+            timeToSwitch = rweapon.fireModeSwitchTime;
             normTime = Mathf.InverseLerp(0, stateInfo.length, timeToSwitch);
             switched = false;
         }
         else
         {
-            Debug.Log("Should not have entered this state with current weapon, re-evaluate. Stupid dev >:|");
+            Debug.Log("Should not have entered this state with current rweapon, re-evaluate. Stupid dev >:|");
         }
     }
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -31,7 +31,7 @@ public class WeaponFireSwitchBehaviour : WeaponAnimationBehaviourBase
 
         if(!switched && stateInfo.normalizedTime >= normTime)
         {
-            weapon.IncrementFireMode();
+            rweapon.IncrementFireMode();
             switched = true;
         }
     }

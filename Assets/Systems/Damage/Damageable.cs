@@ -11,7 +11,7 @@ public class Damageable : LunarScript
 
     public bool regenerateHealth;
     public float regenDelay, regenRate;
-    float currentRegenTime;
+    public float currentRegenTime;
     public bool immune;
 
     public virtual bool CanTakeDamage => !immune && CurrentHealth > 0;
@@ -38,10 +38,10 @@ public class Damageable : LunarScript
     }
     public void HealthEvent(float deltaHealth)
     {
-        if (CanTakeDamage)
+        if (CanTakeDamage || deltaHealth > 0)
         {
             ModifyHealth(deltaHealth);
-            if (regenerateHealth)
+            if (regenerateHealth && deltaHealth < 0)
             {
                 currentRegenTime = 0;
             }

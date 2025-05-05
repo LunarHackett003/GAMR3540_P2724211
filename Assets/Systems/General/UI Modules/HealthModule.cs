@@ -11,10 +11,10 @@ public class HealthModule : UIModule
     public Slider healthBar;
     public bool useText;
     public TMP_Text healthText;
-    public bool useMaterial;
     public bool useFullscreenMaterial;
     public bool materialUsesInverse;
     public Material fullscreenMaterial;
+    Material originalMaterial;
     public FullScreenPassRendererFeature fullscreenPass;
     public string fullscreenMaterialKey;
     int fullscreenMaterialID;
@@ -27,9 +27,10 @@ public class HealthModule : UIModule
         fullscreenMaterialID = Shader.PropertyToID(fullscreenMaterialKey);
         healthBar.gameObject.SetActive(useBar);
         healthText.gameObject.SetActive(useText);
-        fullscreenPass.SetActive(useMaterial);
-        if (useMaterial)
+        fullscreenPass.SetActive(useFullscreenMaterial);
+        if (useFullscreenMaterial)
         {
+            originalMaterial = fullscreenMaterial;
             fullscreenMaterial = new(fullscreenMaterial);
             fullscreenPass.passMaterial = fullscreenMaterial;
         }
@@ -51,9 +52,17 @@ public class HealthModule : UIModule
         {
             healthText.text = GameplayCanvas.playerController.damageable.CurrentHealth.ToString("0");
         }
-        if (useMaterial)
+        if (useFullscreenMaterial)
         {
             fullscreenMaterial.SetFloat(fullscreenMaterialID, materialUsesInverse ? (1 - healthInverseLerp) : healthInverseLerp);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (useFullscreenMaterial)
+        {
+            fullscreenPass.passMaterial = originalMaterial;
         }
     }
 }

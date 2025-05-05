@@ -43,7 +43,7 @@ public class HitscanWeapon : RangedWeapon
     }
 
 
-    [Tooltip("How many rays a weapon will shoot when firing.")]
+    [Tooltip("How many rays a rweapon will shoot when firing.")]
     public int fireIterations = 1;
     [Tooltip("Can bullets bounce off of surfaces?")]
     public bool shotsCanRichochet = false;
@@ -109,8 +109,8 @@ public class HitscanWeapon : RangedWeapon
     }
     protected override void FireWeapon(bool primary = true)
     {
-        base.FireWeapon(primary);
         FireHitscan();
+        base.FireWeapon(primary);
     }
     public void SendTracer(Vector3 start, Vector3 end, out HitscanTracer t)
     {
