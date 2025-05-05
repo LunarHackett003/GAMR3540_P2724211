@@ -36,9 +36,9 @@ public class ProjectileWeapon : RangedWeapon
 
     }
 
-    private void Start()
+    protected override void Start()
     {
-        
+        base.Start();
     }
 
 

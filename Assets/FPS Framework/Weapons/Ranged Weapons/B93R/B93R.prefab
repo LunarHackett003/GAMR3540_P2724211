@@ -322,6 +322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: B93R
+  animSet: {fileID: 11400000, guid: 5837d759dbaa80d4f92386f3ef219d70, type: 2}
   attackOnPrimary: 1
   attackOnSecondary: 0
   primaryBlocksSecondary: 0
@@ -350,6 +351,7 @@ MonoBehaviour:
   emptyReloadTime: 1.4
   queuedReloadAnimation: 0
   fired: 0
+  animator: {fileID: 0}
   baseSpreadPerUnit: 0
   maxInfluencedSpreadPerUnit: 0.2
   currentMovementInfluence: 0

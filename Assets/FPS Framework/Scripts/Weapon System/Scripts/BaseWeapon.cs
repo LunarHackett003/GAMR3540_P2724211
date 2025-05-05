@@ -16,6 +16,7 @@ public abstract class BaseWeapon : LunarScript
 
 
     public string displayName = "New Weapon";
+    public AnimationSetScriptableObject animSet;
     internal bool primaryInput, secondaryInput, primaryPressedFirst, secondaryPressedFirst, primaryPressed, secondaryPressed;
     [SerializeField] internal bool attackOnPrimary, attackOnSecondary, primaryBlocksSecondary, secondaryBlocksPrimary;
     [SerializeField] internal bool aimOnSecondary;
@@ -44,6 +45,9 @@ public abstract class BaseWeapon : LunarScript
 
     internal bool animatedFirePending;
     internal bool animatedFireLast;
+
+    public WeaponAnimator animator;
+
     public void SetPrimaryInput(bool input) => primaryInput = input;
     public void SetSecondaryInput(bool input) => secondaryInput = input;
 
@@ -65,7 +69,7 @@ public abstract class BaseWeapon : LunarScript
         if(animatedFireLast != animatedFirePending)
         {
             animatedFireLast = animatedFirePending;
-            controller.SetAnimationBool(MANUALACTION, animatedFirePending);
+            SetBool(MANUALACTION, animatedFirePending);
         }
         if (useAttackSpread)
         {
@@ -112,12 +116,12 @@ public abstract class BaseWeapon : LunarScript
             {
                 if (useAmmoPhases && currentAmmoPhase < ammoPhases)
                 {
-                    controller.TriggerAnimation(AMMOPHASE, 0.5f);
+                    TriggerAnimation(AMMOPHASE, 0.5f);
                     currentAmmoPhase++;
                     ReloadWeapon(false);
                     return;
                 }
-                controller.TriggerAnimation(EMPTYRELOAD, 0.5f);
+                TriggerAnimation(EMPTYRELOAD, 0.5f);
             }
         }
     }
@@ -134,4 +138,20 @@ public abstract class BaseWeapon : LunarScript
         currentAmmo = maxAmmo;
     }
 
+
+    internal virtual void TriggerAnimation(string parameter, float time)
+    {
+        if(controller != null)
+            controller.animator.TriggerAnimation(parameter, time);
+        if(animator != null)
+            animator.TriggerAnimation(parameter, time);
+    }
+
+    internal virtual void SetBool(string parameter, bool value)
+    {
+        if(controller != null)
+            controller.animator.SetAnimationBool(parameter, value);
+        if(animator != null)
+            animator.SetAnimationBool(parameter, value);
+    }
 }

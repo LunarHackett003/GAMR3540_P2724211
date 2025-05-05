@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76f9fb033a385164dbc07c0aa34b46e9, type: 3}
+  m_Name: B93R_AnimSet
+  m_EditorClassIdentifier: 
+  clips:
+  - targetClip: {fileID: 7400000, guid: 438cf89d5892ee2448206251db20dda8, type: 2}
+    newClip: {fileID: 7400000, guid: dfd136179bbba7b42ae60efbdb1aaeb6, type: 2}
+  - targetClip: {fileID: 7400000, guid: b4dd95253c670e9428e605b16017d173, type: 2}
+    newClip: {fileID: 7400000, guid: 9c878c8ae7e870841a316abc0cc06683, type: 2}
+  - targetClip: {fileID: 7400000, guid: d4ccb8e53f7b6514db0225cb030cabf6, type: 2}
+    newClip: {fileID: 7400000, guid: f070cf48cedc94b4f8b2f50bc1b5fab7, type: 2}
+  - targetClip: {fileID: 7400000, guid: e82a9a2a95cfc904e82aae0e54d455c3, type: 2}
+    newClip: {fileID: 7400000, guid: ff2609c5a661077419b66581312f03bf, type: 2}
+  - targetClip: {fileID: 7400000, guid: 1966759c9a621a641912c50077ad8fa9, type: 2}
+    newClip: {fileID: 7400000, guid: 3f07cd4ed11c82245a2e5b85e8f538ef, type: 2}
+  - targetClip: {fileID: 7400000, guid: 7ab4f5402fd260e4f9e720d295a5f048, type: 2}
+    newClip: {fileID: 7400000, guid: 47668052ea503bb48bbc51df31f11e66, type: 2}
+  - targetClip: {fileID: 7400000, guid: d3939dcd22008324ab3fa261ace3e098, type: 2}
+    newClip: {fileID: 7400000, guid: a5b99cb99735e8e499a1fcc0e335c182, type: 2}
+  - targetClip: {fileID: 7400000, guid: 1de0b8596ccd1e041b82905acbcbaa08, type: 2}
+    newClip: {fileID: 7400000, guid: 1b825e6e3cb076f479aee3e0795bb953, type: 2}

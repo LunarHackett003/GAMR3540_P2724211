@@ -62,10 +62,7 @@ public class RangedWeapon : BaseWeapon
     }
     protected virtual void FireWeapon(bool primary = true)
     {
-        if (controller)
-        {
-            controller.TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, 0.1f);
-        }
+        TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, 0.1f);   
         PostAttackBehaviour();
     }
     protected override void PrimaryBehaviour()

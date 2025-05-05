@@ -402,6 +402,7 @@ GameObject:
   - component: {fileID: 5584500024579432994}
   - component: {fileID: 8203894505471458476}
   - component: {fileID: 2667549168340214893}
+  - component: {fileID: 2584058582603335238}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -567,11 +568,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentWeapon: {fileID: 0}
+  weapons: []
+  weaponIndex: 0
   primaryInput: 0
   secondaryInput: 0
   fireOrigin: {fileID: 7269716539852128244}
   fireBlockedByAnimation: 0
-  animator: {fileID: 5786238750598794529}
+  animator: {fileID: 2584058582603335238}
   myPlayer: 1
   damageable: {fileID: 2667549168340214893}
   moveSpreadVelocityBounds: {x: 2.5, y: 10}
@@ -598,6 +601,21 @@ MonoBehaviour:
   regenRate: 35
   currentRegenTime: 0
   immune: 0
+--- !u!114 &2584058582603335238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3229907142889673036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2687c5bf2b0e2254b95519ab3ef3922c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 5786238750598794529}
+  controller: {fileID: 8203894505471458476}
+  isWeapon: 0
 --- !u!1 &3792357219554433636
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,13 +17,15 @@ public class PlayerController : WeaponController
 
     public override float Spread(float value)
     {
-        return base.Spread(value) + Mathf.Clamp01(Mathf.InverseLerp(moveSpreadVelocityBounds.x, moveSpreadVelocityBounds.y, rbpm.rb.velocity.magnitude)
-                + ((1 - rbpm.currentCrouchLerp) * crouchInaccuracyMultiplier));
+        return base.Spread(value) * (Mathf.Clamp01(Mathf.InverseLerp(moveSpreadVelocityBounds.x, moveSpreadVelocityBounds.y, rbpm.rb.velocity.magnitude)
+                + ((1 - rbpm.currentCrouchLerp) * crouchInaccuracyMultiplier)));
     }
 
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         weaponPosStart = weaponPositionOffset.localPosition;
 
         if (myPlayer)
@@ -61,7 +63,7 @@ public class PlayerController : WeaponController
         {
             if (currentWeapon.useAmmunition && currentWeapon.currentAmmo < currentWeapon.maxAmmo)
             {
-                TriggerAnimation(currentWeapon.currentAmmo > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f);
+                currentWeapon.TriggerAnimation(currentWeapon.currentAmmo > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f);
             }
             InputManager.ReloadInput = false;
         }
@@ -75,7 +77,7 @@ public class PlayerController : WeaponController
                         {
                             int oldIndex = rw.fireModeIndex;
                             int newindex = (rw.fireModeIndex + 1) % rw.allowedFireModes.Length;
-                            TriggerAnimation(oldIndex > newindex ? BaseWeapon.FIRESWITCHDOWN : BaseWeapon.FIRESWITCHUP, 0.2f);
+                            currentWeapon.TriggerAnimation(oldIndex > newindex ? BaseWeapon.FIRESWITCHDOWN : BaseWeapon.FIRESWITCHUP, 0.2f);
                             InputManager.FireSwitchInput = false;
                         }
                     }
