@@ -12,6 +12,7 @@ public abstract class BaseWeapon : LunarScript
     public const string PRIMARYATTACK = "Primary", SECONDARYATTACK = "Secondary", AMMOPHASE = "AmmoPhase", EMPTYRELOAD = "EmptyReload", PARTIALRELOAD = "TacReload",
         FIRESWITCHUP = "FireSwitchUp", FIRESWITCHDOWN = "FireSwitchDown", COUNTEDRELOAD = "CountedReload", MANUALACTION = "ManualAction", CHANGEWEAPON = "ChangeWeapon";
 
+    public const float TRIGGERTIMESHORT = 0.4f, TRIGGERTIMELONG = 0.8f;
 
 
 
@@ -65,13 +66,13 @@ public abstract class BaseWeapon : LunarScript
     public override void LTimestep()
     {
         base.LTimestep();
-        UpdateInputPriority();
-        ProcessInput();
-        if(animatedFireLast != animatedFirePending)
+        if (animatedFireLast != animatedFirePending)
         {
             animatedFireLast = animatedFirePending;
             SetBool(MANUALACTION, animatedFirePending);
         }
+        UpdateInputPriority();
+        ProcessInput();
         if (useAttackSpread)
         {
             attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount - (Time.fixedDeltaTime * attackSpreadDecay));
@@ -117,11 +118,11 @@ public abstract class BaseWeapon : LunarScript
             {
                 if (useAmmoPhases && currentAmmoPhase < ammoPhases)
                 {
-                    TriggerAnimation(AMMOPHASE, 0.7f);
+                    TriggerAnimation(AMMOPHASE, TRIGGERTIMELONG);
 
                     return;
                 }
-                TriggerAnimation(EMPTYRELOAD, 0.5f);
+                TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT);
             }
         }
     }

@@ -16,7 +16,8 @@ public class PlayerController : WeaponController
     internal float fovLerp = 0;
     public override float Spread(float value)
     {
-        return value * Mathf.Clamp01((1 - aimAmount) - (rbpm.currentCrouchLerp * crouchInaccuracyMultiplier));
+        return value * Mathf.Clamp01((1 - aimAmount) - (rbpm.currentCrouchLerp * crouchInaccuracyMultiplier)) 
+            * Mathf.InverseLerp(moveSpreadVelocityBounds.x, moveSpreadVelocityBounds.y, rbpm.rb.velocity.magnitude);
     }
 
 
@@ -69,7 +70,7 @@ public class PlayerController : WeaponController
 
             if (InputManager.ReloadInput)
             {
-                if (currentWeapon.useAmmunition && currentWeapon.currentAmmo < currentWeapon.maxAmmo)
+                if (currentWeapon.useAmmunition && (currentWeapon.currentAmmo < currentWeapon.maxAmmo || (currentWeapon.useAmmoPhases && currentWeapon.currentAmmoPhase != 0)))
                 {
                     currentWeapon.TriggerAnimation(currentWeapon.currentAmmo > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f);
                 }

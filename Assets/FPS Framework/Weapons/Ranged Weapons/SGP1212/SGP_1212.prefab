@@ -129,6 +129,26 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 755e54ece6e164e4b881f6cc5d1f41fc, type: 2}
+    - target: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: f5dcbb014a7c8de4fb84da38cabf801b, type: 2}
+    - target: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 52a5b61e29f7ce849829b8406a43a575, type: 2}
+    - target: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7acec067f04d0bb4b80ea3be285b8ace, type: 2}
     - target: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Name
@@ -267,6 +287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 3737877566551122370}
   controller: {fileID: 0}
+  weapon: {fileID: 0}
   isWeapon: 1
 --- !u!114 &3186947292507736985
 MonoBehaviour:
@@ -287,22 +308,22 @@ MonoBehaviour:
   primaryBlocksSecondary: 0
   secondaryBlocksPrimary: 0
   aimOnSecondary: 0
-  aimParams: {fileID: 11400000, guid: dcb30aa0e4dfba6438e4ae88c905fab2, type: 2}
+  aimParams: {fileID: 11400000, guid: dc072120578f0764785d9ae3a53b9626, type: 2}
   controller: {fileID: 0}
   crosshairSpreadBase: 1
   crosshairSpreadMax: 1.5
   useAttackSpread: 1
-  spreadOnPrimary: 0
+  spreadOnPrimary: 1
   spreadOnSecondary: 0
-  attackSpreadIncrement: 0
-  attackSpreadDecay: 0
-  baseAttackSpread: 0.1
+  attackSpreadIncrement: 0.7
+  attackSpreadDecay: 0.8
+  baseAttackSpread: 0.05
   attackSpreadAmount: 0
   useAmmunition: 1
   ammoConsumeOnPrimary: 0
   ammoConsumeOnSecondary: 0
   maxAmmo: 3
-  ammoPerShot: 0
+  ammoPerShot: 1
   currentAmmo: 0
   useAmmoPhases: 1
   ammoPhases: 4
@@ -313,28 +334,28 @@ MonoBehaviour:
   fired: 0
   animator: {fileID: 8429981282044506423}
   baseSpreadPerUnit: 0.1
-  maxInfluencedSpreadPerUnit: 0.1
+  maxInfluencedSpreadPerUnit: 0.14
   currentMovementInfluence: 0
   allowedFireModes: 08000000
   fireModeIndex: 0
   fireModeSwitchTime: 0
-  roundsPerMinute: 0
+  roundsPerMinute: 10
   roundsInBurst: 0
-  timeBetweenRounds: Infinity
+  timeBetweenRounds: 6
   burstCooldown: 0
   autoBurst: 0
   poolStartCapacity: 50
   poolMaxCapacity: 500
-  fireIterations: 1
+  fireIterations: 12
   shotsCanRichochet: 0
   shotsCanPenetrate: 0
-  shotMaxRange: 100
+  shotMaxRange: 75
   shotRicochetRangeLoss: 0.5
   shotPenetrateRangeLoss: 0.2
   maxRicochetNormal: 0.2
   minRicochetNormal: 0.2
   minPenetrateNormal: 0.5
-  maxDamage: 30
+  maxDamage: 10
   knockbackForceMultiplier: 0.1
   damageFalloff:
     serializedVersion: 2
@@ -342,20 +363,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0
-      outSlope: -1
+      inSlope: -2.9907475
+      outSlope: -2.9907475
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.033078622
     - serializedVersion: 3
-      time: 1
+      time: 1.0012817
       value: 0
-      inSlope: -1
-      outSlope: 0
+      inSlope: -0.03428548
+      outSlope: -0.03428548
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.0966672
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

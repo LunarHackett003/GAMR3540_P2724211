@@ -34,7 +34,7 @@ public class WeaponModule : UIModule
     void UpdatePhaseDisplay()
     {
         bool @override = lastWeapon != Weapon;
-        if (lastAmmo != Weapon.currentAmmo || @override)
+        if (lastAmmo != Weapon.currentAmmo || Weapon.currentAmmoPhase != lastAmmoPhase || @override)
         {
             lastAmmo = Weapon.currentAmmo;
             weaponAmmoText.text = $"{Weapon.currentAmmo:0}/{Weapon.maxAmmo}";
