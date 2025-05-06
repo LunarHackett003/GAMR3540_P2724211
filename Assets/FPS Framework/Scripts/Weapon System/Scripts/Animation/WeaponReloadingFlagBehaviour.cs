@@ -10,13 +10,16 @@ public class WeaponReloadingFlagBehaviour : WeaponAnimationBehaviourBase
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateUpdate(animator, stateInfo, layerIndex);
-
+        if (!canExecute)
+            return;
         blocked = stateInfo.normalizedTime >= blockFromNormTime && stateInfo.normalizedTime < unblockAfterNormTime;
         UpdateBlock();
     }
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateExit(animator, stateInfo, layerIndex);
+        if (!canExecute)
+            return;
         blocked = false;
         UpdateBlock();
     }

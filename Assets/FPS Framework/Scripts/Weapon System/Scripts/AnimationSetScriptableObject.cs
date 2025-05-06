@@ -11,5 +11,5 @@ public class AnimationSetScriptableObject : ScriptableObject
 public struct AnimationClipPair
 {
     public AnimationClip targetClip;
-    public AnimationClip newClip;
+    public AnimationClip characterClip, weaponClip;
 }

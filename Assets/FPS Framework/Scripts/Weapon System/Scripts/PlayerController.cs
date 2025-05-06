@@ -14,16 +14,15 @@ public class PlayerController : WeaponController
     [SerializeField] internal Transform weaponPositionOffset, weaponRotationInvert, weaponTargetTransform;
     Vector3 weaponPosStart;
     internal float fovLerp = 0;
-
     public override float Spread(float value)
     {
-        return base.Spread(value) * (Mathf.Clamp01(Mathf.InverseLerp(moveSpreadVelocityBounds.x, moveSpreadVelocityBounds.y, rbpm.rb.velocity.magnitude)
-                + ((1 - rbpm.currentCrouchLerp) * crouchInaccuracyMultiplier)));
+        return value * Mathf.Clamp01((1 - aimAmount) - (rbpm.currentCrouchLerp * crouchInaccuracyMultiplier));
     }
 
 
     protected override void Start()
     {
+        
         base.Start();
 
         weaponPosStart = weaponPositionOffset.localPosition;
@@ -59,15 +58,23 @@ public class PlayerController : WeaponController
         primaryInput = InputManager.PrimaryInput && !FireBlocked;
         secondaryInput = InputManager.SecondaryInput && !FireBlocked;
 
-        if (InputManager.ReloadInput)
-        {
-            if (currentWeapon.useAmmunition && currentWeapon.currentAmmo < currentWeapon.maxAmmo)
-            {
-                currentWeapon.TriggerAnimation(currentWeapon.currentAmmo > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f);
-            }
-            InputManager.ReloadInput = false;
-        }
         if (currentWeapon != null) {
+            if (!switchingWeapons && InputManager.WeaponSwitchInput)
+            {
+                currentWeapon.TriggerAnimation(BaseWeapon.CHANGEWEAPON, 0.2f);
+                nextWeaponIndex = (nextWeaponIndex + 1) % weapons.Count;
+                switchingWeapons = true;
+                return;
+            }
+
+            if (InputManager.ReloadInput)
+            {
+                if (currentWeapon.useAmmunition && currentWeapon.currentAmmo < currentWeapon.maxAmmo)
+                {
+                    currentWeapon.TriggerAnimation(currentWeapon.currentAmmo > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f);
+                }
+                InputManager.ReloadInput = false;
+            }
             switch (currentWeapon)
             {
                 case RangedWeapon rw:

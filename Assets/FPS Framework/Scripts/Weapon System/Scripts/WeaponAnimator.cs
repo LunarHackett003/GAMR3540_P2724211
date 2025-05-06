@@ -1,24 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class WeaponAnimator : LunarScript
 {
     [SerializeField] internal Animator animator;
     [SerializeField] internal WeaponController controller;
+    [SerializeField] internal BaseWeapon weapon;
     public bool isWeapon;
 
     internal AnimatorOverrideController aoc;
     internal AnimationClipOverrides clipOverrides;
 
 
-    private void Start()
+    internal void Initialise()
     {
-        if (controller.TryGetComponent(out controller))
+        if (!TryGetComponent(out controller))
         {
-
+            controller = GetComponentInParent<WeaponController>();
+        }
+        if (isWeapon)
+        {
+            weapon = GetComponent<BaseWeapon>();
+            UpdateAnimations();
+            animator.tag = "Weapon";
         }
     }
 
@@ -33,17 +39,16 @@ public class WeaponAnimator : LunarScript
             aoc.GetOverrides(clipOverrides);
         }
 
-        for (int i = 0; i < controller.currentWeapon.animSet.clips.Length; i++)
+        AnimationClipPair[] clips = isWeapon ? weapon.animSet.clips : controller.currentWeapon.animSet.clips;
+        for (int i = 0; i < clips.Length; i++)
         {
-            AnimationClipPair acp = controller.currentWeapon.animSet.clips[i];
-            if (acp.targetClip.name == "ChangeWeapon")
-            {
-                continue;
-            }
-            else
-            {
-                clipOverrides[acp.targetClip.name] = acp.newClip;
-            }
+            AnimationClipPair acp = clips[i];
+            //if (!isWeapon && acp.targetClip.name == "ChangeWeapon")
+            //{
+            //    continue;
+            //}
+            //else
+                clipOverrides[acp.targetClip.name] = isWeapon ? acp.weaponClip : acp.characterClip;
         }
         aoc.ApplyOverrides(clipOverrides);
     }
@@ -52,7 +57,7 @@ public class WeaponAnimator : LunarScript
         if(aoc != null)
         {
             clipOverrides["ChangeWeapon"] = 
-                controller.currentWeapon.animSet.clips.First(x => x.targetClip.name == "ChangeWeapon").newClip;
+                controller.currentWeapon.animSet.clips.First(x => x.targetClip.name == "ChangeWeapon").characterClip;
         }
     }
 

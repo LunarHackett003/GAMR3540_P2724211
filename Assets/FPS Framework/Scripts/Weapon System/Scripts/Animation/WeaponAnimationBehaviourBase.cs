@@ -6,6 +6,7 @@ public abstract class WeaponAnimationBehaviourBase : StateMachineBehaviour
 {
     protected WeaponController controller;
     protected BaseWeapon weapon;
+    protected bool canExecute;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
@@ -13,6 +14,7 @@ public abstract class WeaponAnimationBehaviourBase : StateMachineBehaviour
         {
             controller = animator.GetComponentInParent<WeaponController>();
             weapon = controller.currentWeapon;
+            canExecute = !animator.CompareTag("Weapon");
         }
     }
 }

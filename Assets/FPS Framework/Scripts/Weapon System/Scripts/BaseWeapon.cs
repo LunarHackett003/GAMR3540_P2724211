@@ -28,6 +28,7 @@ public abstract class BaseWeapon : LunarScript
     [SerializeField] internal bool useAttackSpread, spreadOnPrimary, spreadOnSecondary;
     [SerializeField] internal float attackSpreadIncrement;
     [SerializeField] internal float attackSpreadDecay;
+    [SerializeField] internal float baseAttackSpread = 0.1f;
     [SerializeField] internal float attackSpreadAmount;
 
     [SerializeField] internal bool useAmmunition, ammoConsumeOnPrimary, ammoConsumeOnSecondary;
@@ -116,14 +117,18 @@ public abstract class BaseWeapon : LunarScript
             {
                 if (useAmmoPhases && currentAmmoPhase < ammoPhases)
                 {
-                    TriggerAnimation(AMMOPHASE, 0.5f);
-                    currentAmmoPhase++;
-                    ReloadWeapon(false);
+                    TriggerAnimation(AMMOPHASE, 0.7f);
+
                     return;
                 }
                 TriggerAnimation(EMPTYRELOAD, 0.5f);
             }
         }
+    }
+    public void IncrementAmmoPhase()
+    {
+        currentAmmoPhase++;
+        ReloadWeapon(false);
     }
     /// <summary>
     /// Restores the weapon's ammunition to MaxAmmo, and optionally reset the ammo phase.
@@ -135,13 +140,15 @@ public abstract class BaseWeapon : LunarScript
         {
             currentAmmoPhase = 0;
         }
+        primaryPressed = false;
+        animatedFirePending = false;
         currentAmmo = maxAmmo;
     }
 
 
     internal virtual void TriggerAnimation(string parameter, float time)
     {
-        if(controller != null)
+        if(controller != null && controller.animator != null)
             controller.animator.TriggerAnimation(parameter, time);
         if(animator != null)
             animator.TriggerAnimation(parameter, time);

@@ -7,6 +7,7 @@ public class CrosshairModule : UIModule
 {
     public CanvasGroup crosshairGroup;
     public float currentCrosshairSize = 1f;
+    public float crosshairTargetSize = 0;
     public float crosshairLerpSpeed = 3f;
     public float baseCrosshairSize = 100f;
 
@@ -22,7 +23,9 @@ public class CrosshairModule : UIModule
             return;
         crosshairGroup.alpha = 1 - Weapon.controller.aimAmount;
 
-        currentCrosshairSize = Mathf.Lerp(currentCrosshairSize, Weapon.crosshairSpreadBase + (Weapon.controller.Spread(Weapon.attackSpreadAmount) * Weapon.crosshairSpreadMax), Time.deltaTime * crosshairLerpSpeed);
+        crosshairTargetSize = 1 + Weapon.controller.Spread(Weapon.baseAttackSpread + Weapon.attackSpreadAmount);
+
+        currentCrosshairSize = Mathf.Lerp(currentCrosshairSize, Weapon.crosshairSpreadBase * (crosshairTargetSize * Weapon.crosshairSpreadMax), Time.deltaTime * crosshairLerpSpeed);
         crosshairRect.sizeDelta = new Vector2(currentCrosshairSize, currentCrosshairSize) * baseCrosshairSize;
     }
 }

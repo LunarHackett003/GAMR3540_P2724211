@@ -225,8 +225,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crosshairGroup: {fileID: 3348167160602204063}
   currentCrosshairSize: 1
+  crosshairTargetSize: 0
   crosshairLerpSpeed: 3
-  baseCrosshairSize: 150
+  baseCrosshairSize: 125
   crosshairRect: {fileID: 5123592298420115301}
   weaponChargeImage: {fileID: 0}
   weaponChargeFillAmount: 0
@@ -1690,7 +1691,6 @@ MonoBehaviour:
   healthBar: {fileID: 1998480883034810418}
   useText: 1
   healthText: {fileID: 577134795679383822}
-  useMaterial: 0
   useFullscreenMaterial: 0
   materialUsesInverse: 0
   fullscreenMaterial: {fileID: 2100000, guid: e5fd482bba38dee498b83800c3cdb913, type: 2}

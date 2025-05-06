@@ -21,7 +21,9 @@ public class RangedWeapon : BaseWeapon
     public float currentMovementInfluence = 0;
 
 
-    public virtual Vector3 SpreadVector => (((Vector3)Random.insideUnitCircle * (baseSpreadPerUnit + (maxInfluencedSpreadPerUnit * controller.Spread(attackSpreadAmount)))) + Vector3.forward).normalized;
+    public virtual Vector3 SpreadVector => (((Vector3)Random.insideUnitCircle * 
+        (baseSpreadPerUnit + (maxInfluencedSpreadPerUnit * controller.Spread(baseAttackSpread + attackSpreadAmount))))
+        + Vector3.forward).normalized;
 
     public FireMode[] allowedFireModes = new FireMode[] { FireMode.automatic };
     public int fireModeIndex = 0;

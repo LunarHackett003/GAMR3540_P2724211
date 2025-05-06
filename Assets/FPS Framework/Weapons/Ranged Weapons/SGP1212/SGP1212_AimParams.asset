@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ed3a36ca30c1554fbadd86fa1131307, type: 3}
-  m_Name: AimParams
+  m_Name: SGP1212_AimParams
   m_EditorClassIdentifier: 
   aimFOV: -10
   altAimFOV: -5
   aimSpeed: 8
-  baseAimPositionOffset: {x: -0.012, y: 0.148, z: 0.07}
+  baseAimPositionOffset: {x: 0, y: 0, z: 0}
   aimedWeaponPositionScale: {x: -0.8, y: -0.9, z: 0}
   aimPositionOffsetAngled: {x: 0.02, y: 0, z: 0}
   aimRotationReduction: 1

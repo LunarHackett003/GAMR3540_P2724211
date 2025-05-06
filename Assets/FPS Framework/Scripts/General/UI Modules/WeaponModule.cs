@@ -22,34 +22,40 @@ public class WeaponModule : UIModule
 
         if (Weapon.useAmmunition)
         {
-            if(lastAmmo != Weapon.currentAmmo)
-            {
-                lastAmmo = Weapon.currentAmmo;
-                weaponAmmoText.text = $"{Weapon.currentAmmo:0}/{Weapon.maxAmmo}";
-                if (Weapon.useAmmoPhases)
-                {
-                    weaponPhaseParent.SetActive(true);
-                    if (lastAmmoPhase != Weapon.currentAmmoPhase)
-                    {
-                        lastAmmoPhase = Weapon.currentAmmoPhase;
-                        for (int i = 0; i < weaponPhaseIndicators.Length; i++)
-                        {
-                            Image img = weaponPhaseIndicators[i];
-                            img.gameObject.SetActive(i < Weapon.ammoPhases);
-                            img.color = i > Weapon.currentAmmoPhase ? ammoPhaseDefaultColour : ammoPhasePassedColour;
-                        }
-                    }
-                }
-                else
-                {
-                    weaponPhaseParent.SetActive(false);
-                }
-            }
+            UpdatePhaseDisplay();
         }
         if(lastWeapon != Weapon)
         {
             lastWeapon = Weapon;
             weaponNameText.text = Weapon.displayName;
+            UpdatePhaseDisplay();
+        }
+    }
+    void UpdatePhaseDisplay()
+    {
+        bool @override = lastWeapon != Weapon;
+        if (lastAmmo != Weapon.currentAmmo || @override)
+        {
+            lastAmmo = Weapon.currentAmmo;
+            weaponAmmoText.text = $"{Weapon.currentAmmo:0}/{Weapon.maxAmmo}";
+            if (Weapon.useAmmoPhases)
+            {
+                weaponPhaseParent.SetActive(true);
+                if (lastAmmoPhase != Weapon.currentAmmoPhase || @override)
+                {
+                    lastAmmoPhase = Weapon.currentAmmoPhase;
+                    for (int i = 0; i < weaponPhaseIndicators.Length; i++)
+                    {
+                        Image img = weaponPhaseIndicators[i];
+                        img.gameObject.SetActive(i < Weapon.ammoPhases);
+                        img.color = i >= Weapon.currentAmmoPhase ? ammoPhaseDefaultColour : ammoPhasePassedColour;
+                    }
+                }
+            }
+            else
+            {
+                weaponPhaseParent.SetActive(false);
+            }
         }
     }
 }

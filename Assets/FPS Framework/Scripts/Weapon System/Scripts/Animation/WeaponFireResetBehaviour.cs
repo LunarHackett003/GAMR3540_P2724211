@@ -9,10 +9,11 @@ public class WeaponFireResetBehaviour : WeaponAnimationBehaviourBase
     {
         base.OnStateUpdate(animator, stateInfo, layerIndex);
 
-        if(!triggered && stateInfo.normalizedTime > 0.9f)
+        if(canExecute && !triggered && stateInfo.normalizedTime > 0.9f)
         {
             triggered = true;
             weapon.animatedFirePending = false;
+            weapon.primaryPressed = false;
         }
     }
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

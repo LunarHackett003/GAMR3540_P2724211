@@ -12,7 +12,10 @@ public class WeaponReloadBehaviour : WeaponAnimationBehaviourBase
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
-        Debug.Log($"reload time : {reloadAtTime}, state duration: {stateInfo.length}");
+        if (!canExecute)
+            return;
+
+        Debug.Log($"reload time : {reloadAtTime}, state duration: {stateInfo.length}", animator.gameObject);
         reloadAtTime = emptyReload ? controller.currentWeapon.emptyReloadTime : controller.currentWeapon.partialReloadTime;
         normalisedTimeForReload = Mathf.InverseLerp(0, stateInfo.length, reloadAtTime);
         reloaded = false;
@@ -20,8 +23,9 @@ public class WeaponReloadBehaviour : WeaponAnimationBehaviourBase
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateUpdate(animator, stateInfo, layerIndex);
-
-        if(!reloaded && stateInfo.normalizedTime >= normalisedTimeForReload)
+        if (!canExecute)
+            return;
+        if (!reloaded && stateInfo.normalizedTime >= normalisedTimeForReload)
         {
             reloaded = true;
             weapon.ReloadWeapon(true);

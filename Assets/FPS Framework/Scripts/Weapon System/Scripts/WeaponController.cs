@@ -16,6 +16,9 @@ public class WeaponController : LunarScript
     [SerializeField] internal bool fireBlockedByAnimation;
     internal float aimLerp = 0;
     internal float aimAmount;
+    protected bool switchingWeapons;
+
+    internal int nextWeaponIndex;
 
     public WeaponAnimator animator;
 
@@ -27,6 +30,17 @@ public class WeaponController : LunarScript
         {
             weapons.AddRange(GetComponentsInChildren<BaseWeapon>());
             ChangeCurrentWeapon(weapons[0], out _, out _);
+
+            for (int i = 0; i < weapons.Count; i++)
+            {
+                weapons[i].animator.controller = this;
+                weapons[i].animator.Initialise();
+
+                if (i == 0)
+                    continue;
+
+                weapons[i].gameObject.SetActive(false);
+            }
         }
     }
 
@@ -54,12 +68,23 @@ public class WeaponController : LunarScript
         oldWeapon = currentWeapon;
         currentWeapon = newWeapon;
         success = newWeapon != null && newWeapon != currentWeapon;
+
+        if(oldWeapon != null)
+            oldWeapon.gameObject.SetActive(false);
+        newWeapon.gameObject.SetActive(true);
+
         if(animator != null)
             animator.UpdateAnimations();
+        
     }
     public virtual void SwitchToWeaponIndex(int index)
     {
-        ChangeCurrentWeapon(weapons[index], out _, out _);
+        switchingWeapons = false;
+        ChangeCurrentWeapon(weapons[index], out _, out bool success);
+        if (success)
+        {
+            weaponIndex = index;
+        }
     }
 
 }

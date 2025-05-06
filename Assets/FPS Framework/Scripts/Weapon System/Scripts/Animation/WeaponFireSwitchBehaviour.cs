@@ -12,7 +12,8 @@ public class WeaponFireSwitchBehaviour : WeaponAnimationBehaviourBase
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
-
+        if (!canExecute)
+            return;
         rweapon = (RangedWeapon)weapon;
         if(rweapon != null)
         {
@@ -29,7 +30,7 @@ public class WeaponFireSwitchBehaviour : WeaponAnimationBehaviourBase
     {
         base.OnStateUpdate(animator, stateInfo, layerIndex);
 
-        if(!switched && stateInfo.normalizedTime >= normTime)
+        if(canExecute && !switched && stateInfo.normalizedTime >= normTime)
         {
             rweapon.IncrementFireMode();
             switched = true;
