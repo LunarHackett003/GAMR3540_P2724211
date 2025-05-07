@@ -11,7 +11,7 @@ public class DestructibleWall : MonoBehaviour
         ShowDamageables(false);
         for (int i = 0; i < damageables.Length; i++)
         {
-            damageables[i].healthChanged += ChildHit;
+            damageables[i].onHealthChanged += ChildHit;
         }
     }
     public void ChildHit(Damageable d)
@@ -30,7 +30,7 @@ public class DestructibleWall : MonoBehaviour
             //damageables[i].render.enabled = value;
             if (!value)
             {
-                damageables[i].healthChanged -= ChildHit;    
+                damageables[i].onHealthChanged -= ChildHit;    
             }
         }
     }

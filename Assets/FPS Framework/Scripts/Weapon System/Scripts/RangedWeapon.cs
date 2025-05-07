@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class RangedWeapon : BaseWeapon
 {
@@ -39,6 +40,12 @@ public class RangedWeapon : BaseWeapon
 
     float currentFireCooldown;
     protected bool burstFiring = false;
+
+    public Transform fireOrigin;
+    [Tooltip("How many rays a rweapon will shoot when firing.")]
+    public int fireIterations = 1;
+
+
 
     public override void LTimestep()
     {

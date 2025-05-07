@@ -13,11 +13,11 @@ public class HealthBar : MonoBehaviour
         {
             healthBar.maxValue = damageable.maxHealth;
             healthBar.value = damageable.maxHealth;
-            damageable.healthChanged += DamageableHit;
+            damageable.onHealthChanged += DamageableHit;
         }
     }
-    void DamageableHit(Damageable d)
+    void DamageableHit(Damageable.HealthChangeEvent hit)
     {
-        healthBar.value = d.CurrentHealth;
+        healthBar.value = hit.damageable.CurrentHealth;
     }
 }

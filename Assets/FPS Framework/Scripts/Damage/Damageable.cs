@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Damageable : LunarScript
@@ -6,8 +7,24 @@ public class Damageable : LunarScript
     public float maxHealth;
     public float CurrentHealth { get; private set; }
 
-    public delegate void DamageableHit(Damageable d);
-    public DamageableHit healthChanged;
+    public struct HealthChangeEvent
+    {
+        public HealthChangeEvent(Damageable damageable, float previous, float current)
+        {
+            this.damageable = damageable;
+            previousHealth = previous;
+            currentHealth = current;
+        }
+        public Damageable damageable;
+        public float previousHealth, currentHealth;
+    }
+
+    public delegate void HealthChanged(HealthChangeEvent hit);
+    public HealthChanged onHealthChanged;
+
+    public bool canRespawn;
+    public float respawnTime = 5;
+    public float healthRestoredOnRespawn = 1;
 
     public bool regenerateHealth;
     public float regenDelay, regenRate;
@@ -24,7 +41,7 @@ public class Damageable : LunarScript
     {
         base.LTimestep();
 
-        if (regenerateHealth)
+        if (regenerateHealth && CurrentHealth > 0)
         {
             if(currentRegenTime < regenDelay)
             {
@@ -32,20 +49,21 @@ public class Damageable : LunarScript
             }
             else if(CurrentHealth <= maxHealth)
             {
-                HealthEvent(Time.fixedDeltaTime * regenRate);
+                OnHealthEvent(Time.fixedDeltaTime * regenRate);
             }
         }
     }
-    public void HealthEvent(float deltaHealth)
+    public void OnHealthEvent(float deltaHealth)
     {
         if (CanTakeDamage || deltaHealth > 0)
         {
+            float prev = CurrentHealth;
             ModifyHealth(deltaHealth);
             if (regenerateHealth && deltaHealth < 0)
             {
                 currentRegenTime = 0;
             }
-            healthChanged?.Invoke(this);
+            onHealthChanged?.Invoke(new(this, prev, CurrentHealth));
         }
     }
     public virtual void ModifyHealth(float deltaHealth)
@@ -59,6 +77,24 @@ public class Damageable : LunarScript
     }
     public virtual void DamageableDied()
     {
-
+        if (canRespawn)
+        {
+            StartCoroutine(WaitForRespawn(respawnTime, healthRestoredOnRespawn));
+        }
+    }
+    public virtual void DamageableRespawned(float healthAmount = 1)
+    {
+        CurrentHealth = maxHealth * healthAmount;
+    }
+    /// <summary>
+    /// Triggers a respawn after a time period.
+    /// </summary>
+    /// <param name="respawnTime">Time (in seconds) to wait before respawning this object. Defaults to 5 seconds.</param>
+    /// <param name="healthAmount">0-1 multiplier of max health restored on respawn. Defaults to 1.</param>
+    /// <returns></returns>
+    public virtual IEnumerator WaitForRespawn(float respawnTime = 5, float healthAmount = 1)
+    {
+        yield return new WaitForSeconds(respawnTime);
+        DamageableRespawned(healthAmount);
     }
 }

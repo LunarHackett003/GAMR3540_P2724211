@@ -5,42 +5,69 @@ using UnityEngine.Pool;
 
 public class ProjectileWeapon : RangedWeapon
 {
-    ObjectPool<Projectile> projectilePool;
+    ObjectPool<BaseProjectile> projectilePool;
 
     public int poolStartCapacity = 50, poolMaxCapacity = 500;
 
 
-    public ObjectPool<Projectile> ProjectilePool
+    public ObjectPool<BaseProjectile> ProjectilePool
     {
         get
         {
-            projectilePool ??= new ObjectPool<Projectile>(CreatePooledItem, TakeFromPool, ReturnToPool, DestroyPoolObject, true, poolStartCapacity, poolMaxCapacity);
+            projectilePool ??= new ObjectPool<BaseProjectile>(CreatePooledItem, TakeFromPool, ReturnToPool, DestroyPoolObject, true, poolStartCapacity, poolMaxCapacity);
             return projectilePool;
         }
     }
 
-    Projectile CreatePooledItem()
+    BaseProjectile CreatePooledItem()
     {
-        return null;
+        BaseProjectile projectile = Instantiate(projectilePrefab, fireOrigin.position, Quaternion.identity).GetComponent<BaseProjectile>();
+        projectile.InitialiseFromPool();
+        projectile.InitialiseFromWeapon(this);
+        projectile.transform.forward = fireOrigin.forward;
+        return projectile;
     }
-    void ReturnToPool(Projectile projectile)
+    void ReturnToPool(BaseProjectile projectile)
     {
+        projectile.gameObject.SetActive(false);
+        projectile.ReturnToPool();
+        projectile.hideFlags = HideFlags.HideInHierarchy;
+    }
+    void TakeFromPool(BaseProjectile projectile)
+    {
+        projectile.gameObject.SetActive(true);
+        projectile.InitialiseFromPool();
+        projectile.hideFlags = HideFlags.None;
+    }
+    void DestroyPoolObject(BaseProjectile projectile)
+    {
+        if (projectile != null)
+            Destroy(projectile.gameObject);
+    }
 
-    }
-    void TakeFromPool(Projectile projectile)
-    {
+    [SerializeField] internal GameObject projectilePrefab;
 
-    }
-    void DestroyPoolObject(Projectile projectile)
-    {
 
-    }
 
     protected override void Start()
     {
         base.Start();
     }
 
+    protected override void FireWeapon(bool primary = true)
+    {
+        CreateProjectile();
+        base.FireWeapon(primary);
+    }
+
+    protected virtual void CreateProjectile()
+    {
+        BaseProjectile[] createdProjectiles = new BaseProjectile[fireIterations];
+        for (int i = 0; i < fireIterations; i++)
+        {
+            createdProjectiles[i] = ProjectilePool.Get();
+        }
+    }
 
 
 

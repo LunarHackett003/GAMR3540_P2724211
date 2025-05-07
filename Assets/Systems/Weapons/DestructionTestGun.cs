@@ -28,7 +28,7 @@ public class DestructionTestGun : LunarScript
         {
             if (hit.collider.TryGetComponent(out Damageable d))
             {
-                d.HealthEvent(-10);
+                d.OnHealthEvent(-10);
             }
             Destroy(Instantiate(bulletHit, hit.point, Quaternion.LookRotation(hit.normal)), bulletHitDestroyTime);
         }

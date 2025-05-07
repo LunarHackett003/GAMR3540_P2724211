@@ -39,12 +39,10 @@ public class HitscanWeapon : RangedWeapon
     }
     void DestroyPoolObject(HitscanTracer trace)
     {
-        Destroy(trace.gameObject);
+        if(trace != null)
+            Destroy(trace.gameObject);
     }
 
-
-    [Tooltip("How many rays a rweapon will shoot when firing.")]
-    public int fireIterations = 1;
     [Tooltip("Can bullets bounce off of surfaces?")]
     public bool shotsCanRichochet = false;
     [Tooltip("Can bullets penetrate surfaces?")]
@@ -66,8 +64,6 @@ public class HitscanWeapon : RangedWeapon
     [Tooltip("The multiplier to knockback force")]
     public float knockbackForceMultiplier = 0.1f;
     public AnimationCurve damageFalloff = AnimationCurve.Linear(0, 1, 1, 0);
-
-    public Transform fireOrigin;
     public HitscanTracer tracerPrefab;
     public float tracerSpeed;
     protected override void Start()
