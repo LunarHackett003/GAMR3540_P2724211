@@ -8,6 +8,7 @@ public class PlayerController : WeaponController
     public Damageable damageable;
 
     public Vector2 moveSpreadVelocityBounds;
+    public Vector2 moveSpreadMultiplier;
     public float crouchInaccuracyMultiplier = 0.5f;
     [SerializeField] protected RBPlayerMotor rbpm;
     internal float currentFOV;
@@ -17,7 +18,7 @@ public class PlayerController : WeaponController
     public override float Spread(float value)
     {
         return value * Mathf.Clamp01((1 - aimAmount) - (rbpm.currentCrouchLerp * crouchInaccuracyMultiplier)) 
-            * Mathf.InverseLerp(moveSpreadVelocityBounds.x, moveSpreadVelocityBounds.y, rbpm.rb.velocity.magnitude);
+            + Mathf.Lerp(moveSpreadMultiplier.x, moveSpreadMultiplier.y, Mathf.InverseLerp(moveSpreadVelocityBounds.x, moveSpreadVelocityBounds.y, rbpm.rb.velocity.magnitude));
     }
 
 
@@ -128,8 +129,10 @@ public class PlayerController : WeaponController
             (currentWeapon.aimParams.aimPositionOffsetAngled * (1 - currentWeapon.aimParams.aimRotationReduction))) * aimLerp;
 
 
-        weaponRotationInvert.localRotation = Quaternion.Lerp(Quaternion.Lerp(Quaternion.identity, currentWeapon.aimParams.crouchRotationOffset, crouchLerp),
-            Quaternion.Inverse(weaponTargetTransform.localRotation) * currentWeapon.aimParams.aimRotationOffset, aimLerp * rbpm.aimParams.aimRotationReduction);
+        weaponRotationInvert.localRotation = Quaternion.Lerp(
+            Quaternion.Lerp(Quaternion.identity, currentWeapon.aimParams.crouchRotationOffset, crouchLerp),
+            Quaternion.Inverse(weaponTargetTransform.localRotation) * currentWeapon.aimParams.aimRotationOffset,
+            aimLerp * currentWeapon.aimParams.aimRotationReduction);
     }
 
     public void UpdateFOV()

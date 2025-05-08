@@ -54,7 +54,7 @@ public class TurretWeaponController : WeaponController
             {
                 if (currentRigidbody != null)
                 {
-                    Debug.Log("keeping existing target");
+                    //Debug.Log("keeping existing target");
                     KeepOldTarget();
                     if (currentRigidbody == null)
                     {
@@ -133,7 +133,7 @@ public class TurretWeaponController : WeaponController
     void AcquireNewTarget()
     {
 
-        Debug.Log("Finding new target");
+        //Debug.Log("Finding new target");
         //We'll do the sphere check, to see what's actually within detection distance
         QueryParameters qp = new()
         {
@@ -151,7 +151,7 @@ public class TurretWeaponController : WeaponController
         }
 
         int validHits = Physics.OverlapSphereNonAlloc(yawTransform.position, viewRange, viewSphereColliders, viewLayerMask, QueryTriggerInteraction.Ignore);
-        Debug.Log($"{validHits} targets found by this turret", gameObject);
+        //Debug.Log($"{validHits} targets found by this turret", gameObject);
         boundsCheckCommands = new(viewMaxTargets * 8, Allocator.TempJob);
 
         for (int i = 0; i < validHits; i++)
@@ -186,7 +186,7 @@ public class TurretWeaponController : WeaponController
         {
 
             boundsCheckHits = new(boundsCheckCommands.Length, Allocator.TempJob);
-            Debug.Log($"{boundsCheckCommands.Length} : {boundsCheckHits.Length}");
+            //Debug.Log($"{boundsCheckCommands.Length} : {boundsCheckHits.Length}");
             JobHandle jh2 = RaycastCommand.ScheduleBatch(boundsCheckCommands, boundsCheckHits, 1);
             jh2.Complete();
 
@@ -217,7 +217,7 @@ public class TurretWeaponController : WeaponController
         }
         else
         {
-            Debug.Log("Found no valid rigidbodies within radius! uh oh!");
+            //Debug.Log("Found no valid rigidbodies within radius! uh oh!");
         }
 
         if(bodiesInRange.Count > 0)

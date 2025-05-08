@@ -10,9 +10,10 @@ public abstract class BaseWeapon : LunarScript
 {
     //Constant animation keys
     public const string PRIMARYATTACK = "Primary", SECONDARYATTACK = "Secondary", AMMOPHASE = "AmmoPhase", EMPTYRELOAD = "EmptyReload", PARTIALRELOAD = "TacReload",
-        FIRESWITCHUP = "FireSwitchUp", FIRESWITCHDOWN = "FireSwitchDown", COUNTEDRELOAD = "CountedReload", MANUALACTION = "ManualAction", CHANGEWEAPON = "ChangeWeapon";
+        FIRESWITCHUP = "FireSwitchUp", FIRESWITCHDOWN = "FireSwitchDown", COUNTEDRELOAD = "CountedReload", MANUALACTION = "ManualAction", CHANGEWEAPON = "ChangeWeapon",
+        CHARGEAMOUNT = "Charge", CHARGING = "Charging";
 
-    public const float TRIGGERTIMESHORT = 0.4f, TRIGGERTIMELONG = 0.8f;
+    public const float TRIGGERTIMETINY = 0.1f, TRIGGERTIMESHORT = 0.4f, TRIGGERTIMELONG = 0.8f;
 
 
 
@@ -43,6 +44,16 @@ public abstract class BaseWeapon : LunarScript
 
     [SerializeField] internal bool queuedReloadAnimation;
     [SerializeField] protected bool fired = false;
+
+    [SerializeField, Tooltip("Should the weapon charge for the primary attack? Takes priority over secondary charge")] protected bool primaryUsesCharge;
+    [SerializeField, Tooltip("Should the weapon charge for the secondary attack? Does not work if primary uses charge")] protected bool secondaryUsesCharge;
+    [SerializeField, Tooltip("How much charge the weapon accumulates every second")] protected float chargeRate;
+    [SerializeField, Tooltip("How much charge the weapon loses every second when not charging")] protected float chargeDecayRate;
+    [SerializeField, Tooltip("How much charge is required to fire the weapon?")] protected float minimumChargeToFire;
+    [SerializeField, Tooltip("Resets charge to zero after firing")] protected bool resetChargeOnFire;
+    [SerializeField, Tooltip("How much charge the weapon currently has")] protected float chargeAmount;
+
+    [SerializeField, Tooltip("Fires the weapon when we release the fire input")] protected bool fireOnRelease;
     protected virtual bool PrimaryBlocked => fired || (useAmmunition && currentAmmo <= 0);
 
     internal bool animatedFirePending;
@@ -73,10 +84,35 @@ public abstract class BaseWeapon : LunarScript
         }
         UpdateInputPriority();
         ProcessInput();
+
+        if (primaryUsesCharge || secondaryUsesCharge)
+        {
+            UpdateCharge();
+        }
+
         if (useAttackSpread)
         {
             attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount - (Time.fixedDeltaTime * attackSpreadDecay));
         }
+    }
+
+    protected virtual void UpdateCharge()
+    {
+        bool charging = (primaryUsesCharge && primaryInput) || (secondaryUsesCharge && secondaryInput);
+        //animator.SetAnimationBool(CHARGING, primaryUsesCharge ? primaryInput : (secondaryUsesCharge && secondaryInput));
+        SetBool(CHARGING, charging);
+
+        //if ((primaryUsesCharge && primaryInput) || (secondaryUsesCharge && secondaryInput))
+        //{
+        //    chargeAmount += Time.fixedDeltaTime * 
+        //}
+        //else
+        //{
+
+        //}
+        chargeAmount += Time.fixedDeltaTime * (charging ? chargeRate : -chargeDecayRate);
+        chargeAmount = Mathf.Clamp01(chargeAmount);
+        SetFloat(CHARGEAMOUNT, chargeAmount);
     }
     protected void UpdateInputPriority()
     {
@@ -118,12 +154,16 @@ public abstract class BaseWeapon : LunarScript
             {
                 if (useAmmoPhases && currentAmmoPhase < ammoPhases)
                 {
-                    TriggerAnimation(AMMOPHASE, TRIGGERTIMELONG);
+                    TriggerAnimation(AMMOPHASE, TRIGGERTIMELONG, true);
 
                     return;
                 }
-                TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT);
+                TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT, true);
             }
+        }
+        if(primaryUsesCharge || secondaryUsesCharge && resetChargeOnFire)
+        {
+            chargeAmount = 0;
         }
     }
     public void IncrementAmmoPhase()
@@ -147,19 +187,27 @@ public abstract class BaseWeapon : LunarScript
     }
 
 
-    internal virtual void TriggerAnimation(string parameter, float time)
+    internal virtual void TriggerAnimation(string parameter, float time, bool reset = false)
     {
         if(controller != null && controller.animator != null)
-            controller.animator.TriggerAnimation(parameter, time);
+            controller.animator.TriggerAnimation(parameter, time, reset);
         if(animator != null)
-            animator.TriggerAnimation(parameter, time);
+            animator.TriggerAnimation(parameter, time, reset);
     }
 
     internal virtual void SetBool(string parameter, bool value)
     {
-        if(controller != null)
+        if(controller != null && controller.animator != null)
             controller.animator.SetAnimationBool(parameter, value);
         if(animator != null)
             animator.SetAnimationBool(parameter, value);
+    }
+
+    internal virtual void SetFloat(string parameter, float value)
+    {
+        if(controller != null && controller.animator != null)
+            controller.animator.SetAnimationFloat(parameter, value);
+        if(animator != null)
+            animator.SetAnimationFloat(parameter, value);
     }
 }

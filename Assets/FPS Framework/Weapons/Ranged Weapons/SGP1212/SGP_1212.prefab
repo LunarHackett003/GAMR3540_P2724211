@@ -328,8 +328,8 @@ MonoBehaviour:
   useAmmoPhases: 1
   ammoPhases: 4
   currentAmmoPhase: 0
-  partialReloadTime: 3
-  emptyReloadTime: 3
+  partialReloadTime: 2.8
+  emptyReloadTime: 2.8
   queuedReloadAnimation: 0
   fired: 0
   animator: {fileID: 8429981282044506423}
@@ -344,9 +344,10 @@ MonoBehaviour:
   timeBetweenRounds: 6
   burstCooldown: 0
   autoBurst: 0
+  fireOrigin: {fileID: 4979490576160884970}
+  fireIterations: 12
   poolStartCapacity: 50
   poolMaxCapacity: 500
-  fireIterations: 12
   shotsCanRichochet: 0
   shotsCanPenetrate: 0
   shotMaxRange: 75
@@ -381,7 +382,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fireOrigin: {fileID: 4979490576160884970}
   tracerPrefab: {fileID: 3937423659732281253, guid: c23d85e845ad20e4198880685d105867,
     type: 3}
   tracerSpeed: 150

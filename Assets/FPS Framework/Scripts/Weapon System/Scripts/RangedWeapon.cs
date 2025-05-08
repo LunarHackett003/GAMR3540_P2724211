@@ -34,9 +34,16 @@ public class RangedWeapon : BaseWeapon
     public int roundsInBurst;
     protected int burstRoundsFired;
     public float timeBetweenRounds;
+    public float TrueTimeBetweenRounds => timeBetweenRounds / 
+        (chargeAffectsFireRate ? Mathf.Lerp(minChargeFireRateMultiplier, maxChargeFireRateMultiplier, chargeAmount) : 1);
     public float burstCooldown;
     public bool autoBurst;
 
+    [Tooltip("Does the weapon's charge affect its fire rate?")] public bool chargeAffectsFireRate = false;
+    [Tooltip("")] public float minChargeFireRateMultiplier = 0.4f;
+    [Tooltip("")] public float maxChargeFireRateMultiplier = 1f;
+    [Tooltip("")] public float minChargeDamageMultiplier = 0.2f;
+    [Tooltip("")] public float maxChargeDamageMultiplier = 0.2f;
 
     float currentFireCooldown;
     protected bool burstFiring = false;
@@ -50,16 +57,17 @@ public class RangedWeapon : BaseWeapon
     public override void LTimestep()
     {
         base.LTimestep();
+        
+
         if (fired)
         {
             currentFireCooldown += Time.fixedDeltaTime;
         }
-        if(currentFireCooldown >= timeBetweenRounds)
+        if (currentFireCooldown >= TrueTimeBetweenRounds)
         {
             fired = false;
             currentFireCooldown = 0;
         }
-
     }
 
     protected override void ProcessInput()
@@ -71,65 +79,60 @@ public class RangedWeapon : BaseWeapon
     }
     protected virtual void FireWeapon(bool primary = true)
     {
-        TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, TRIGGERTIMESHORT);   
+        TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, TRIGGERTIMETINY);   
         PostAttackBehaviour();
     }
     protected override void PrimaryBehaviour()
     {
-        //if (!primaryPressed && primaryInput)
+
+        //if ((!fireOnRelease && primaryInput))
         //{
-        //    if (roundsInBurst > 0)
-        //    {
-        //        if (!burstFiring)
-        //        {
-        //            StartCoroutine(BurstFire());
-        //        }
-        //    }
-        //    else 
-        //    {
-        //        FireWeapon();
-        //        fired = true;
-        //    }
-
+        //    TryFireRanged();
         //}
-        if (primaryInput)
-        {
+        //else if ((fireOnRelease && primaryPressed && !primaryInput))
+        //{
+        //    TryFireRanged();
+        //}
 
-            switch (CurrentFireMode)
+        if((!fireOnRelease && primaryInput) || (fireOnRelease && primaryPressed && !primaryInput))
+        {
+            if(!primaryUsesCharge || (chargeAmount > minimumChargeToFire))
             {
-                case FireMode.single:
-                    if (!primaryPressed)
-                    {
-                        FireWeapon();
-                        fired = true;
-                        primaryPressed = true;
-                    }
-                    break;
-                case FireMode.automatic:
-                    FireWeapon();
-                    fired = true;
-                    break;
-                case FireMode.animated:
-                    if (!primaryPressed)
-                    {
-                        primaryPressed = true;
-                        animatedFirePending = true;
-                        FireWeapon();
-                    }
-                    break;
-                case FireMode.burst:
-                    if(roundsInBurst > 0 && !burstFiring)
-                    {
-                        StartCoroutine(BurstFire());
-                    }
-                    break;
-                default:
-                    break;
+                TryFireRanged();
             }
         }
-        else if(CurrentFireMode == FireMode.single)
+        primaryPressed = primaryInput;
+    }
+    protected virtual void TryFireRanged()
+    {
+        switch (CurrentFireMode)
         {
-            primaryPressed = false;
+            case FireMode.single:
+                if (!primaryPressed || fireOnRelease)
+                {
+                    FireWeapon();
+                    fired = true;
+                }
+                break;
+            case FireMode.automatic:
+                FireWeapon();
+                fired = true;
+                break;
+            case FireMode.animated:
+                if (!animatedFirePending)
+                {
+                    animatedFirePending = true;
+                    FireWeapon();
+                }
+                break;
+            case FireMode.burst:
+                if (roundsInBurst > 0 && !burstFiring)
+                {
+                    StartCoroutine(BurstFire());
+                }
+                break;
+            default:
+                break;
         }
     }
     protected override void SecondaryBehaviour()

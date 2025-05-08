@@ -10,6 +10,8 @@ public class WeaponController : LunarScript
     public bool primaryInput, secondaryInput;
     protected bool primaryOld, secondaryOld;
 
+    public Collider[] colliders;
+
     public Transform fireOrigin;
 
     internal bool FireBlocked => fireBlockedByAnimation;

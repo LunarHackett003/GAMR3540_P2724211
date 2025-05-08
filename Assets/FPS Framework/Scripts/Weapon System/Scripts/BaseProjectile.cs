@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 
+[RequireComponent(typeof(Rigidbody))]
 public abstract class BaseProjectile : LunarScript
 {
-    protected Rigidbody rb;
+    [SerializeField] protected Rigidbody rb;
 
     [SerializeField, Range(0, 50)] internal int maxBounceCount = 1;
     [SerializeField] internal bool useBounceCount;
@@ -12,9 +14,25 @@ public abstract class BaseProjectile : LunarScript
     [SerializeField] internal float gravityMultiplier = 1;
     [SerializeField] internal float maxAliveTime;
 
+    [SerializeField] internal float damageMultiplier = 1;
+
     internal ProjectileWeapon owner;
-    protected int bounceCount;
+    [SerializeField] protected int bounceCount;
     protected bool terminated;
+
+    public GameObject hitEffectPrefab;
+    public float hitEffectRemoveTime;
+    public bool attachHitEffectToCollider;
+
+    public bool disableCollidersOnHit;
+    public Collider[] colliders;
+
+    protected float aliveTime;
+
+    public bool followVelocity;
+
+    GameObject hitEffect;
+
     public override void LTimestep()
     {
         base.LTimestep();
@@ -22,6 +40,20 @@ public abstract class BaseProjectile : LunarScript
         if(gravityMultiplier != 1)
         {
             rb.AddForce(Physics.gravity * gravityMultiplier, ForceMode.Acceleration);
+        }
+        aliveTime += Time.fixedDeltaTime;
+        if(maxAliveTime > 0 && aliveTime > maxAliveTime )
+        {
+            Terminate();
+        }
+        if (followVelocity)
+        {
+            transform.forward = rb.velocity;
+        }
+
+        if (hitEffect)
+        {
+            hitEffect.transform.SetPositionAndRotation(transform.position, transform.rotation);
         }
     }
 
@@ -42,7 +74,7 @@ public abstract class BaseProjectile : LunarScript
     {
         if(rb == null && !TryGetComponent(out rb))
         {
-            rb = gameObject.AddComponent<Rigidbody>();
+
         }
     }
 
@@ -53,6 +85,7 @@ public abstract class BaseProjectile : LunarScript
     public virtual void InitialiseFromWeapon(ProjectileWeapon weapon)
     {
         owner = weapon;
+        CreateHitPrefab();
     }
 
     ///<summary>
@@ -60,6 +93,35 @@ public abstract class BaseProjectile : LunarScript
     /// </summary>
     /// <param name="collision"></param>
     public virtual void ProjectileHitEvent(Collision collision)
+    {
+        terminated = true;
+
+        if (attachHitEffectToCollider)
+        {
+            ParentConstraint pc = hitEffect.AddComponent<ParentConstraint>();
+            pc.AddSource(new ConstraintSource()
+            {
+                sourceTransform = collision.collider.transform,
+                weight = 1
+            });
+            pc.constraintActive = true;
+            pc.locked = true;
+        }
+        if(hitEffectRemoveTime > 0)
+        {
+            Destroy(hitEffect, hitEffectRemoveTime);
+        }
+        if (disableCollidersOnHit)
+        {
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                colliders[i].enabled = false;
+            }
+        }
+        Terminate();
+    }
+
+    protected virtual void Terminate()
     {
         terminated = true;
         owner.ProjectilePool.Release(this);
@@ -73,6 +135,8 @@ public abstract class BaseProjectile : LunarScript
         if(rb != null)
         {
             rb.isKinematic = true;
+            for (int i = 0; i < colliders.Length; i++)
+                colliders[i].enabled = false;
         }
         if (rb == null)
             rb = GetComponent<Rigidbody>();
@@ -92,7 +156,8 @@ public abstract class BaseProjectile : LunarScript
     {
         terminated = false;
         rb.isKinematic = false;
-        if (useBounceCount)
+        aliveTime = 0;
+        if (!useBounceCount)
         {
             bounceCount = 1;
         }
@@ -102,5 +167,12 @@ public abstract class BaseProjectile : LunarScript
         }
         rb.useGravity = gravityMultiplier == 1;
         rb.velocity = transform.forward * velocity;
+    }
+
+    void CreateHitPrefab()
+    {
+        hitEffect = Instantiate(hitEffectPrefab);
+        hitEffect.transform.SetPositionAndRotation(position: transform.position,
+            rotation: transform.rotation);
     }
 }

@@ -14,9 +14,14 @@ public class ProjectileWeapon : RangedWeapon
     {
         get
         {
-            projectilePool ??= new ObjectPool<BaseProjectile>(CreatePooledItem, TakeFromPool, ReturnToPool, DestroyPoolObject, true, poolStartCapacity, poolMaxCapacity);
+            InitialiseProjectilePool();
             return projectilePool;
         }
+    }
+
+    void InitialiseProjectilePool()
+    {
+        projectilePool = new ObjectPool<BaseProjectile>(CreatePooledItem, TakeFromPool, ReturnToPool, DestroyPoolObject, true, poolStartCapacity, poolMaxCapacity);
     }
 
     BaseProjectile CreatePooledItem()
@@ -36,7 +41,6 @@ public class ProjectileWeapon : RangedWeapon
     void TakeFromPool(BaseProjectile projectile)
     {
         projectile.gameObject.SetActive(true);
-        projectile.InitialiseFromPool();
         projectile.hideFlags = HideFlags.None;
     }
     void DestroyPoolObject(BaseProjectile projectile)
@@ -52,20 +56,39 @@ public class ProjectileWeapon : RangedWeapon
     protected override void Start()
     {
         base.Start();
+        InitialiseProjectilePool();
     }
 
     protected override void FireWeapon(bool primary = true)
     {
-        CreateProjectile();
+        CreateProjectile(primary);
         base.FireWeapon(primary);
     }
 
-    protected virtual void CreateProjectile()
+    protected virtual void CreateProjectile(bool primary = true)
     {
         BaseProjectile[] createdProjectiles = new BaseProjectile[fireIterations];
         for (int i = 0; i < fireIterations; i++)
         {
-            createdProjectiles[i] = ProjectilePool.Get();
+            BaseProjectile bp;
+            bp = ProjectilePool.Get();
+            bp.transform.forward = controller.fireOrigin.TransformDirection(SpreadVector);
+            bp.transform.position = controller.fireOrigin.position;
+            bp.transform.position += bp.transform.forward * 0.1f;
+            createdProjectiles[i] = bp;
+            if ((primary && primaryUsesCharge) || secondaryUsesCharge)
+            {
+                bp.damageMultiplier = chargeAmount;
+            }
+            bp.InitialiseFromPool();
+            for (int x = 0; x < controller.colliders.Length; x++)
+            {
+                for (int z = 0; z < bp.colliders.Length; z++)
+                {
+                    Physics.IgnoreCollision(controller.colliders[x], bp.colliders[z]);
+                }
+                bp.colliders[i].enabled = true;
+            }
         }
     }
 

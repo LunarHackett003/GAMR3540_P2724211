@@ -68,19 +68,30 @@ public class WeaponAnimator : LunarScript
             animator.SetBool(parameter, value);
         }
     }
+    public virtual void SetAnimationFloat(string parameter, float value)
+    {
+        if(animator != null)
+        {
+            animator.SetFloat(parameter, value);
+        }
+    }
 
-    public virtual void TriggerAnimation(string trigger, float time)
+    public virtual void TriggerAnimation(string trigger, float time, bool reset = false)
     {
         if (animator != null)
         {
-            StartCoroutine(AnimationTrigger(trigger, time));
+            StartCoroutine(AnimationTrigger(trigger, time, reset));
         }
     }
-    protected virtual IEnumerator AnimationTrigger(string trigger, float time)
+    protected virtual IEnumerator AnimationTrigger(string trigger, float time, bool reset = false)
     {
         animator.SetTrigger(trigger);
-        yield return new WaitForSeconds(time);
-        animator.ResetTrigger(trigger);
+        if (reset)
+        {
+            yield return new WaitForSeconds(time);
+            animator.ResetTrigger(trigger);
+        }
+        yield break;
     }
 }
 
