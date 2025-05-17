@@ -22,6 +22,10 @@ public class HealthModule : UIModule
     public float healthInverseLerp = 0;
     public float healthLastValue = -1;
 
+    public Image dashIcon, dashIconFill;
+
+    bool updatingDash;
+
     private void Start()
     {
         fullscreenMaterialID = Shader.PropertyToID(fullscreenMaterialKey);
@@ -38,7 +42,25 @@ public class HealthModule : UIModule
 
     public override void UpdateModule()
     {
-        healthInverseLerp = Mathf.InverseLerp(0, GameplayCanvas.playerController.damageable.maxHealth, GameplayCanvas.playerController.damageable.CurrentHealth);
+        healthInverseLerp = Mathf.InverseLerp(0, Player.damageable.maxHealth, Player.damageable.CurrentHealth);
+
+        if (Player.rbpm.dashCurrentWaitTime != 0)
+        {
+            updatingDash = true;
+            if(!dashIconFill.enabled)
+                dashIconFill.enabled = true;
+            dashIconFill.fillAmount = 1 - (Player.rbpm.dashCurrentWaitTime / Player.rbpm.dashParams.dashDelayTime);
+        }
+        else
+        {
+            if (updatingDash)
+            {
+                dashIconFill.enabled = false;
+                dashIcon.enabled = true;
+                updatingDash = false;
+            }
+
+        }
 
         if (healthLastValue == healthInverseLerp)
             return;
@@ -50,12 +72,13 @@ public class HealthModule : UIModule
         }
         if(useText)
         {
-            healthText.text = GameplayCanvas.playerController.damageable.CurrentHealth.ToString("0");
+            healthText.text = Player.damageable.CurrentHealth.ToString("0");
         }
         if (useFullscreenMaterial)
         {
             fullscreenMaterial.SetFloat(fullscreenMaterialID, materialUsesInverse ? (1 - healthInverseLerp) : healthInverseLerp);
         }
+
     }
 
     private void OnDestroy()

@@ -212,7 +212,7 @@ MonoBehaviour:
   spreadOnPrimary: 1
   spreadOnSecondary: 0
   attackSpreadIncrement: 1
-  attackSpreadDecay: 0.5
+  attackSpreadDecay: 1
   baseAttackSpread: 0.1
   attackSpreadAmount: 0
   useAmmunition: 1
@@ -230,14 +230,17 @@ MonoBehaviour:
   fired: 0
   primaryUsesCharge: 1
   secondaryUsesCharge: 0
-  chargeRate: 0.5
+  chargeRate: 3
   chargeDecayRate: 1
   minimumChargeToFire: 0.4
   resetChargeOnFire: 1
   chargeAmount: 0
+  chargeUntilFire: 0
+  chargeOnlyUntilMinimum: 1
   fireOnRelease: 1
   animator: {fileID: 3559566880184751904}
-  baseSpreadPerUnit: 0.1
+  charging: 0
+  baseSpreadPerUnit: 0
   maxInfluencedSpreadPerUnit: 0.1
   currentMovementInfluence: 0
   allowedFireModes: 01000000
@@ -251,8 +254,8 @@ MonoBehaviour:
   chargeAffectsFireRate: 0
   minChargeFireRateMultiplier: 0.4
   maxChargeFireRateMultiplier: 1
-  minChargeDamageMultiplier: 1
-  maxChargeDamageMultiplier: 0.2
+  minChargeDamageMultiplier: 0.2
+  maxChargeDamageMultiplier: 1
   fireOrigin: {fileID: 5456802938713051418}
   fireIterations: 1
   poolStartCapacity: 50

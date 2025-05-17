@@ -10,7 +10,7 @@ public class PlayerController : WeaponController
     public Vector2 moveSpreadVelocityBounds;
     public Vector2 moveSpreadMultiplier;
     public float crouchInaccuracyMultiplier = 0.5f;
-    [SerializeField] protected RBPlayerMotor rbpm;
+    [SerializeField] internal RBPlayerMotor rbpm;
     internal float currentFOV;
     [SerializeField] internal Transform weaponPositionOffset, weaponRotationInvert, weaponTargetTransform;
     Vector3 weaponPosStart;
@@ -71,9 +71,9 @@ public class PlayerController : WeaponController
 
             if (InputManager.ReloadInput)
             {
-                if (currentWeapon.useAmmunition && (currentWeapon.currentAmmo < currentWeapon.maxAmmo || (currentWeapon.useAmmoPhases && currentWeapon.currentAmmoPhase != 0)))
+                if (currentWeapon.useAmmunition && (currentWeapon.CurrentAmmo < currentWeapon.maxAmmo || (currentWeapon.useAmmoPhases && currentWeapon.currentAmmoPhase != 0)))
                 {
-                    currentWeapon.TriggerAnimation(currentWeapon.currentAmmo > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f);
+                    currentWeapon.TriggerAnimation(currentWeapon.CurrentAmmo > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f);
                 }
                 InputManager.ReloadInput = false;
             }

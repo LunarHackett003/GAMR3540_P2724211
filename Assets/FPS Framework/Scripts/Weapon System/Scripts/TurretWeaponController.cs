@@ -37,10 +37,10 @@ public class TurretWeaponController : WeaponController
     Collider targetedCollider;
     [SerializeField] Rigidbody currentRigidbody;
     float lastTargetedYaw;
-    private void Start()
-    {
-        ChangeCurrentWeapon(GetComponentInChildren<BaseWeapon>(), out BaseWeapon _, out bool _);
 
+    protected override void Start()
+    {
+        base.Start();
         dotFromFOV = ((fieldOfView / 90) - 1) * -1;
     }
 

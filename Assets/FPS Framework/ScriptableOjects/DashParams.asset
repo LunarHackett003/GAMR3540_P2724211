@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a69af0c9f33c74142a1429e20db49c2f, type: 3}
   m_Name: DashParams
   m_EditorClassIdentifier: 
-  dashForce: {x: 100, y: 70}
+  dashForce: {x: 120, y: 70}
   dashForceDamping: 8
   dashDirectionPitchContribution: 0.2
-  dashDuration: 0.2
-  dashDelayTime: 0.1
-  dashMaxFOV: 15
+  dashDuration: 0.15
+  dashDelayTime: 1
+  dashMaxFOV: 5
   dashFOVCurve:
     serializedVersion: 2
     m_Curve:
@@ -52,4 +52,4 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   dashSteerSpeed: 0.2
-  dashVerticalAmount: 0.3
+  dashVerticalAmount: 0.4

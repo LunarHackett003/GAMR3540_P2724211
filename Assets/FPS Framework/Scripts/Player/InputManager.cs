@@ -128,11 +128,13 @@ public class InputManager : SingletonBehaviour<InputManager>
         }
         else
         {
+            Debug.Log("Input Manager Destroyed!");
             Destroy(gameObject);
             return;
         }
+        Debug.Log("Input Manager Created!");
+        pauseMenu.SetPaused(true);
     }
-
     public void PauseGame(bool paused)
     {
         playerInput.DeactivateInput();

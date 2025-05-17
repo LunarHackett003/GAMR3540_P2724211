@@ -95,6 +95,7 @@ public class RBPlayerMotor : LunarScript
     /// The direction we're dashing in
     /// </summary>
     protected Vector3 dashDirection;
+    internal float dashCurrentWaitTime;
     #endregion
     #region Unity Messages
     private void OnValidate()
@@ -457,8 +458,13 @@ public class RBPlayerMotor : LunarScript
         }
         dashing = false;
         rb.drag = moveParams.airborneDamping;
-        yield return new WaitForSeconds(dashParams.dashDelayTime);
+        while (dashCurrentWaitTime < dashParams.dashDelayTime)
+        {
+            dashCurrentWaitTime += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
         dashCurrentTime = 0;
+        dashCurrentWaitTime = 0;
         dashUsed = false;
         yield return null;
     }
@@ -466,6 +472,9 @@ public class RBPlayerMotor : LunarScript
     {
         if (Physics.BoxCast(lowerStepTransform.position, stepParams.stepBoxSize, transform.forward, out RaycastHit hit, transform.rotation, stepParams.stepDistance, stepParams.stepLayermask, QueryTriggerInteraction.Ignore))
         {
+            if (Vector3.Dot(hit.normal, transform.up) > 0.5f)
+                return;
+
             if(Physics.BoxCast(upperStepTransform.position, stepParams.stepBoxSize, -transform.up, out RaycastHit hit2, transform.rotation, stepParams.stepDistance + 0.03f, stepParams.stepLayermask, QueryTriggerInteraction.Ignore))
             {
 

@@ -34,10 +34,10 @@ public class WeaponModule : UIModule
     void UpdatePhaseDisplay()
     {
         bool @override = lastWeapon != Weapon;
-        if (lastAmmo != Weapon.currentAmmo || Weapon.currentAmmoPhase != lastAmmoPhase || @override)
+        if (lastAmmo != Weapon.CurrentAmmo || Weapon.currentAmmoPhase != lastAmmoPhase || @override)
         {
-            lastAmmo = Weapon.currentAmmo;
-            weaponAmmoText.text = $"{Weapon.currentAmmo:0}/{Weapon.maxAmmo}";
+            lastAmmo = Weapon.CurrentAmmo;
+            weaponAmmoText.text = $"{Weapon.CurrentAmmo:0}/{Weapon.maxAmmo}";
             if (Weapon.useAmmoPhases)
             {
                 weaponPhaseParent.SetActive(true);

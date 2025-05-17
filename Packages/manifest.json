@@ -2,6 +2,7 @@
   "dependencies": {
     "com.jiaozi158.unity-physically-based-sky-urp": "https://github.com/jiaozi158/UnityPhysicallyBasedSkyURP.git",
     "com.jiaozi158.unityssgiurp": "https://github.com/jiaozi158/UnitySSGIURP.git",
+    "com.unity.ai.navigation": "1.1.6",
     "com.unity.animation.rigging": "1.2.1",
     "com.unity.cinemachine": "2.10.3",
     "com.unity.collab-proxy": "2.7.1",

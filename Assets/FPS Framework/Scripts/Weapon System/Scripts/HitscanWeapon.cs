@@ -71,6 +71,12 @@ public class HitscanWeapon : RangedWeapon
         base.Start();
         Debug.Log(TracerPool.CountAll);
     }
+
+    private void OnDestroy()
+    {
+        TracerPool?.Dispose();
+    }
+
     public bool ShouldRicochet(RaycastHit hit, Vector3 direction)
     {
         float dot = Vector3.Dot(hit.normal, direction);
@@ -85,27 +91,46 @@ public class HitscanWeapon : RangedWeapon
     {
         return damageFalloff.Evaluate(Mathf.InverseLerp(0, shotMaxRange, range)) * maxDamage;
     }
-    protected virtual void FireHitscan()
+    //only the server should receive the fire method.
+    protected virtual void FireHitscan(Vector3 origin, Quaternion rotation)
+    {
+        ScheduleHitscan(origin, rotation);
+    }
+
+    public virtual void ScheduleHitscan(Vector3 origin, Quaternion rotation)
     {
         Transform t = controller == null ? transform : controller.fireOrigin;
+        if (Vector3.Distance(origin, t.position) > 0.1f)
+        {
+            //If the client's fire origin position is too different from the server's fire origin, we'll use the halfway point between the two.
+            //This may change later on but currently, it should be okay.
+            origin = (t.position + origin) / 2;
+        }
+        if (Quaternion.Dot(rotation, t.rotation) < 0.8f)
+        {
+            //We do the same as we did for the rotation, though we can change this later on.
+            rotation = Quaternion.Lerp(rotation, t.rotation, 0.5f);
+        }
         if (BulletScheduler.Instance != null)
         {
             for (int i = 0; i < fireIterations; i++)
             {
                 if (baseSpreadPerUnit > 0 || maxInfluencedSpreadPerUnit > 0)
                 {
-                    BulletScheduler.ScheduleBullet(fireOrigin.position, t.TransformDirection(SpreadVector), shotMaxRange, 0, this);
+                    BulletScheduler.ScheduleBullet(origin, rotation * SpreadVector, shotMaxRange, 0, this);
                 }
                 else
                 {
-                    BulletScheduler.ScheduleBullet(fireOrigin.position, t.TransformDirection(Vector3.forward), shotMaxRange, 0, this);
+                    BulletScheduler.ScheduleBullet(origin, rotation * Vector3.forward, shotMaxRange, 0, this);
                 }
             }
         }
     }
+
     protected override void FireWeapon(bool primary = true)
     {
-        FireHitscan();
+        Transform t = controller == null ? transform : controller.fireOrigin;
+        FireHitscan(t.position, t.rotation);
         base.FireWeapon(primary);
     }
     public void SendTracer(Vector3 start, Vector3 end, out HitscanTracer t)
@@ -127,8 +152,5 @@ public class HitscanWeapon : RangedWeapon
         if (fireIterations < 1)
             fireIterations = 1;
     }
-    private void OnDestroy()
-    {
-        TracerPool?.Dispose();
-    }
+
 }

@@ -13,7 +13,7 @@ public class DamagingProjectile : BaseProjectile
     public override void LTimestep()
     {
         base.LTimestep();
-        distanceTravelled += rb.velocity.magnitude;
+        distanceTravelled += rb.velocity.magnitude * Time.fixedDeltaTime;
     }
 
     public override void ProjectileHitEvent(Collision collision)
@@ -21,8 +21,10 @@ public class DamagingProjectile : BaseProjectile
         
         if(collision.collider.TryGetComponent(out Damageable d))
         {
+
+
             float dmg = Mathf.Lerp(damageAtMinRange, damageAtMaxRange, Mathf.Clamp01(Mathf.InverseLerp(minDamageRange, maxDamageRange, distanceTravelled))) * damageMultiplier;
-            Debug.Log($"hit a collider and dealt {dmg} damage");
+            Debug.Log($"hit a collider and dealt {dmg} damage after moving {distanceTravelled} metres");
             d.OnHealthEvent(-dmg);
         }
         base.ProjectileHitEvent(collision);

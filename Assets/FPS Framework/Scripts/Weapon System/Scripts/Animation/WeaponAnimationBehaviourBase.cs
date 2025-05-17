@@ -13,8 +13,8 @@ public abstract class WeaponAnimationBehaviourBase : StateMachineBehaviour
         if (controller == null)
         {
             controller = animator.GetComponentInParent<WeaponController>();
-            weapon = controller.currentWeapon;
             canExecute = !animator.CompareTag("Weapon");
         }
+        weapon = controller.currentWeapon;
     }
 }

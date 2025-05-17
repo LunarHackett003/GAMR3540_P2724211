@@ -247,8 +247,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentWeapon: {fileID: 3657026597638073025}
+  weapons: []
+  weaponIndex: 0
   primaryInput: 0
   secondaryInput: 0
+  colliders: []
   fireOrigin: {fileID: 6571896365454239521}
   fireBlockedByAnimation: 0
   animator: {fileID: 0}
@@ -265,7 +268,10 @@ MonoBehaviour:
   viewResolution: 10
   colliderSizeMultiplier: 0.4
   dotFromFOV: 0
-  viewLayermask:
+  viewLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  obstructionLayerMask:
     serializedVersion: 2
     m_Bits: 65
   viewMaxTargets: 10
@@ -317,6 +323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: New Weapon
+  animSet: {fileID: 0}
   attackOnPrimary: 0
   attackOnSecondary: 0
   primaryBlocksSecondary: 0
@@ -331,6 +338,7 @@ MonoBehaviour:
   spreadOnSecondary: 0
   attackSpreadIncrement: 0.2
   attackSpreadDecay: 1
+  baseAttackSpread: 0.1
   attackSpreadAmount: 0
   useAmmunition: 0
   ammoConsumeOnPrimary: 0
@@ -345,20 +353,38 @@ MonoBehaviour:
   emptyReloadTime: 0
   queuedReloadAnimation: 0
   fired: 0
+  primaryUsesCharge: 0
+  secondaryUsesCharge: 0
+  chargeRate: 0
+  chargeDecayRate: 0
+  minimumChargeToFire: 0
+  resetChargeOnFire: 0
+  chargeAmount: 0
+  chargeUntilFire: 0
+  chargeOnlyUntilMinimum: 0
+  fireOnRelease: 0
+  animator: {fileID: 0}
+  charging: 0
   baseSpreadPerUnit: 0.01
   maxInfluencedSpreadPerUnit: 0.05
   currentMovementInfluence: 0
-  allowedFireModes: 02000000
+  allowedFireModes: 04000000
   fireModeIndex: 0
   fireModeSwitchTime: 0
-  roundsPerMinute: 400
+  roundsPerMinute: 600
   roundsInBurst: 5
-  timeBetweenRounds: 0.15
+  timeBetweenRounds: 0.1
   burstCooldown: 0.5
-  autoBurst: 1
+  autoBurst: 0
+  chargeAffectsFireRate: 0
+  minChargeFireRateMultiplier: 0.4
+  maxChargeFireRateMultiplier: 1
+  minChargeDamageMultiplier: 0.2
+  maxChargeDamageMultiplier: 0.2
+  fireOrigin: {fileID: 6571896365454239521}
+  fireIterations: 1
   poolStartCapacity: 50
   poolMaxCapacity: 500
-  fireIterations: 1
   shotsCanRichochet: 0
   shotsCanPenetrate: 0
   shotMaxRange: 25
@@ -367,42 +393,32 @@ MonoBehaviour:
   maxRicochetNormal: 0.2
   minRicochetNormal: 0.2
   minPenetrateNormal: 0.5
-  maxDamage: 8
+  maxDamage: 10
   knockbackForceMultiplier: 0.1
   damageFalloff:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1.0023575
-      inSlope: -0.26232854
-      outSlope: -0.26232854
-      tangentMode: 0
+      value: 1
+      inSlope: -0.5
+      outSlope: -0.5
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 1
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.14202732
-      value: 0.9457218
-      inSlope: -1.5437465
-      outSlope: -1.5437465
-      tangentMode: 0
+      time: 1
+      value: 0.5
+      inSlope: -0.5
+      outSlope: -0.5
+      tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.053580888
-    - serializedVersion: 3
-      time: 0.99871826
-      value: 0
-      inSlope: -0.11394408
-      outSlope: -0.11394408
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.08290093
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fireOrigin: {fileID: 6571896365454239521}
   tracerPrefab: {fileID: 3937423659732281253, guid: c23d85e845ad20e4198880685d105867,
     type: 3}
   tracerSpeed: 100

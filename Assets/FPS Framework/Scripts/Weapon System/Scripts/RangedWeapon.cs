@@ -72,6 +72,9 @@ public class RangedWeapon : BaseWeapon
 
     protected override void ProcessInput()
     {
+        //If we are charging via coroutine, we do not want to fire. Ignore this.
+        if (charging)
+            return;
         if (!secondaryPressedFirst && !PrimaryBlocked)
             PrimaryBehaviour();
         if(!primaryPressedFirst) 
@@ -94,14 +97,15 @@ public class RangedWeapon : BaseWeapon
         //    TryFireRanged();
         //}
 
-        if((!fireOnRelease && primaryInput) || (fireOnRelease && primaryPressed && !primaryInput))
+        bool chargeMet = (chargeRate <= 0 || chargeAmount >= (chargeOnlyUntilMinimum ? minimumChargeToFire : 1));
+        if (!fireOnRelease && (primaryInput || chargeHoldFrame) && chargeMet || (fireOnRelease && primaryPressed && !primaryInput))
         {
             if(!primaryUsesCharge || (chargeAmount > minimumChargeToFire))
             {
                 TryFireRanged();
             }
         }
-        primaryPressed = primaryInput;
+        primaryPressed = primaryInput && chargeMet;
     }
     protected virtual void TryFireRanged()
     {
@@ -147,7 +151,7 @@ public class RangedWeapon : BaseWeapon
     protected virtual IEnumerator BurstFire()
     {
         burstFiring = true;
-        while (burstRoundsFired < roundsInBurst && (!useAmmunition || currentAmmo > 0))
+        while (burstRoundsFired < roundsInBurst && (!useAmmunition || CurrentAmmo > 0))
         {
             burstRoundsFired++;
             FireWeapon();

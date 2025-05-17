@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4979490576160884970}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: FireOrigin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ PrefabInstance:
     - target: {fileID: -5426815105314284637, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5426815105314284637, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
@@ -102,32 +102,32 @@ PrefabInstance:
     - target: {fileID: -3600576030362479548, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3002181365596537429, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -2840824010604437095, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -873795412321157321, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -330523862827261707, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 373456997046911637, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
@@ -157,32 +157,32 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4985185789273264572, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5726379117218031158, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6545371077322243759, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7036213049465896255, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8623366283767361407, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8879528566716807029, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
@@ -239,6 +239,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 3186947292507736985}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2144131535093995190}
   m_SourcePrefab: {fileID: 100100000, guid: 2a403992dcff11740999f13273d77f88, type: 3}
 --- !u!4 &2636527759282066816 stripped
 Transform:
@@ -287,7 +291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 3737877566551122370}
   controller: {fileID: 0}
-  weapon: {fileID: 0}
+  weapon: {fileID: 3186947292507736985}
   isWeapon: 1
 --- !u!114 &3186947292507736985
 MonoBehaviour:
@@ -332,7 +336,18 @@ MonoBehaviour:
   emptyReloadTime: 2.8
   queuedReloadAnimation: 0
   fired: 0
+  primaryUsesCharge: 0
+  secondaryUsesCharge: 0
+  chargeRate: 0
+  chargeDecayRate: 0
+  minimumChargeToFire: 0
+  resetChargeOnFire: 0
+  chargeAmount: 0
+  chargeUntilFire: 0
+  chargeOnlyUntilMinimum: 0
+  fireOnRelease: 0
   animator: {fileID: 8429981282044506423}
+  charging: 0
   baseSpreadPerUnit: 0.1
   maxInfluencedSpreadPerUnit: 0.14
   currentMovementInfluence: 0
@@ -344,6 +359,11 @@ MonoBehaviour:
   timeBetweenRounds: 6
   burstCooldown: 0
   autoBurst: 0
+  chargeAffectsFireRate: 0
+  minChargeFireRateMultiplier: 0.4
+  maxChargeFireRateMultiplier: 1
+  minChargeDamageMultiplier: 0.2
+  maxChargeDamageMultiplier: 0.2
   fireOrigin: {fileID: 4979490576160884970}
   fireIterations: 12
   poolStartCapacity: 50
@@ -385,3 +405,25 @@ MonoBehaviour:
   tracerPrefab: {fileID: 3937423659732281253, guid: c23d85e845ad20e4198880685d105867,
     type: 3}
   tracerSpeed: 150
+--- !u!114 &2144131535093995190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011691946470104996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70fabffa41b1498e1d0c8cf278e68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 6306477283575243946}
+  layerName: Character
+  layerIndex: 6
+--- !u!137 &6306477283575243946 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
+    type: 3}
+  m_PrefabInstance: {fileID: 6894087614696022773}
+  m_PrefabAsset: {fileID: 0}

@@ -31,7 +31,8 @@ public abstract class BaseProjectile : LunarScript
 
     public bool followVelocity;
 
-    GameObject hitEffect;
+    public float projectileRemoveTime = 5;
+
 
     public override void LTimestep()
     {
@@ -46,14 +47,9 @@ public abstract class BaseProjectile : LunarScript
         {
             Terminate();
         }
-        if (followVelocity)
+        if (!rb.isKinematic && followVelocity)
         {
             transform.forward = rb.velocity;
-        }
-
-        if (hitEffect)
-        {
-            hitEffect.transform.SetPositionAndRotation(transform.position, transform.rotation);
         }
     }
 
@@ -85,7 +81,6 @@ public abstract class BaseProjectile : LunarScript
     public virtual void InitialiseFromWeapon(ProjectileWeapon weapon)
     {
         owner = weapon;
-        CreateHitPrefab();
     }
 
     ///<summary>
@@ -94,22 +89,24 @@ public abstract class BaseProjectile : LunarScript
     /// <param name="collision"></param>
     public virtual void ProjectileHitEvent(Collision collision)
     {
-        terminated = true;
-
-        if (attachHitEffectToCollider)
+        if (hitEffectPrefab != null)
         {
-            ParentConstraint pc = hitEffect.AddComponent<ParentConstraint>();
-            pc.AddSource(new ConstraintSource()
+            CreateHitPrefab(collision.GetContact(0).point, transform.rotation, out GameObject hitEffect);
+            if (attachHitEffectToCollider)
             {
-                sourceTransform = collision.collider.transform,
-                weight = 1
-            });
-            pc.constraintActive = true;
-            pc.locked = true;
-        }
-        if(hitEffectRemoveTime > 0)
-        {
-            Destroy(hitEffect, hitEffectRemoveTime);
+                ParentConstraint pc = hitEffect.AddComponent<ParentConstraint>();
+                pc.AddSource(new ConstraintSource()
+                {
+                    sourceTransform = collision.collider.transform,
+                    weight = 1
+                });
+                pc.constraintActive = true;
+                pc.locked = true;
+            }
+            if (hitEffectRemoveTime > 0)
+            {
+                Destroy(hitEffect, hitEffectRemoveTime);
+            }
         }
         if (disableCollidersOnHit)
         {
@@ -118,7 +115,8 @@ public abstract class BaseProjectile : LunarScript
                 colliders[i].enabled = false;
             }
         }
-        Terminate();
+        rb.isKinematic = true;
+        StartCoroutine(RemoveProjectile());
     }
 
     protected virtual void Terminate()
@@ -169,10 +167,15 @@ public abstract class BaseProjectile : LunarScript
         rb.velocity = transform.forward * velocity;
     }
 
-    void CreateHitPrefab()
+    void CreateHitPrefab(Vector3 pos, Quaternion rotation, out GameObject hitEffect)
     {
         hitEffect = Instantiate(hitEffectPrefab);
-        hitEffect.transform.SetPositionAndRotation(position: transform.position,
-            rotation: transform.rotation);
+        hitEffect.transform.SetPositionAndRotation(position: pos,
+            rotation: rotation);
+    }
+    protected virtual IEnumerator RemoveProjectile()
+    {
+        yield return new WaitForSeconds(projectileRemoveTime);
+        Terminate();
     }
 }

@@ -27,6 +27,7 @@ public class WeaponReloadBehaviour : WeaponAnimationBehaviourBase
             return;
         if (!reloaded && stateInfo.normalizedTime >= normalisedTimeForReload)
         {
+            Debug.Log("attempted to reload weapon", weapon);
             reloaded = true;
             weapon.ReloadWeapon(true);
         }

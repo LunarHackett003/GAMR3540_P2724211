@@ -5,7 +5,7 @@ public class Damageable : LunarScript
 {
 
     public float maxHealth;
-    public float CurrentHealth { get; private set; }
+    public float CurrentHealth = 100;
 
     public struct HealthChangeEvent
     {
@@ -33,9 +33,15 @@ public class Damageable : LunarScript
 
     public virtual bool CanTakeDamage => !immune && CurrentHealth > 0;
 
-    private void Awake()
+    protected virtual void Awake()
+    {
+
+    }
+
+    protected virtual void Initialise()
     {
         CurrentHealth = maxHealth;
+
     }
     public override void LTimestep()
     {
@@ -72,19 +78,25 @@ public class Damageable : LunarScript
 
         if (CurrentHealth <= 0)
         {
+            if (canRespawn)
+            {
+                StartCoroutine(WaitForRespawn(respawnTime, healthRestoredOnRespawn));
+            }
             DamageableDied();
         }
     }
+    public void SendDeath()
+    {
+        DamageableDied();
+    }
+
     public virtual void DamageableDied()
     {
-        if (canRespawn)
-        {
-            StartCoroutine(WaitForRespawn(respawnTime, healthRestoredOnRespawn));
-        }
+
     }
     public virtual void DamageableRespawned(float healthAmount = 1)
     {
-        CurrentHealth = maxHealth * healthAmount;
+        OnHealthEvent(maxHealth * healthAmount);
     }
     /// <summary>
     /// Triggers a respawn after a time period.

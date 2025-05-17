@@ -19,7 +19,7 @@ public class CrosshairModule : UIModule
 
     public override void UpdateModule()
     {
-        if (Weapon == null)
+        if (Weapon == null || Weapon.controller == null)
             return;
         crosshairGroup.alpha = 1 - Weapon.controller.aimAmount;
 
