@@ -184,7 +184,7 @@ public class NetPlayerMotor : LunarNetScript
 
         MyBufferManager.SendInputPayload_RPC(inputpayload);
 
-        StatePayload statePayload = ProcessMovement(inputpayload);
+        StatePayload statePayload = ClientMovementProcess(inputpayload);
         if(debugReconciliation && clientCube != null)
         {
             clientCube.transform.position = statePayload.position + Vector3.up * 4;
@@ -200,7 +200,7 @@ public class NetPlayerMotor : LunarNetScript
         {
             InputPayload input = MyBufferManager.serverInputQueue.Dequeue();
             bufferIndex = input.tick % MyBufferManager.bufferSize;
-            StatePayload state = ProcessMovement(input);
+            StatePayload state = ClientMovementProcess(input);
             MyBufferManager.serverStateBuffer.Add(state, bufferIndex);
 
             if (debugReconciliation && serverCube != null)
@@ -281,7 +281,7 @@ public class NetPlayerMotor : LunarNetScript
     {
         Physics.simulationMode = SimulationMode.Script;
 
-        StatePayload payload = ProcessMovement(inputPayload);
+        StatePayload payload = ClientMovementProcess(inputPayload);
 
         Physics.Simulate(Time.fixedDeltaTime);
         Physics.simulationMode = SimulationMode.FixedUpdate;
@@ -289,11 +289,53 @@ public class NetPlayerMotor : LunarNetScript
         return payload;
     }
 
-    StatePayload ProcessMovement(InputPayload input)
+    StatePayload ClientMovementProcess(InputPayload input)
     {
         MovementUpdate();
+        return new StatePayload()
+        {
+            tick = input.tick,
+            crouching = crouching,
+            sprinting = sprinting,
+            sliding = sliding,
+            position = rigidbody.position,
+            velocity = rigidbody.velocity,
+        };
+    }
+    StatePayload ServerMovementProcess(InputPayload input)
+    {
 
+        CheckGround();
+        CheckMoveState();
+        Jump();
+        MovePlayer();
+        if (isGrounded && moveInput.y > 0 && !mantling)
+        {
+            ClimbSteps();
+        }
+        if (!isGrounded && !mantling)
+        {
+            CheckMantle();
+        }
+        rigidbody.isKinematic = mantling;
 
+        if (mantleTargetRigidbody != null && mantling)
+        {
+            connectedBody = mantleTargetRigidbody;
+        }
+        UpdateConnectedMotion();
+        if (connectedBody != null)
+        {
+            if (moveParams.followPlatformPosition)
+            {
+                rigidbody.position += connectionVelocity * Time.fixedDeltaTime;
+            }
+            if (moveParams.followPlatformRotation)
+            {
+                rigidbody.rotation *= Quaternion.Euler(0, connectionDeltaYaw, 0);
+            }
+        }
+        lastConnectedBody = connectedBody;
 
 
         return new StatePayload()
