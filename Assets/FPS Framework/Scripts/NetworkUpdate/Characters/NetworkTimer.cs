@@ -5,7 +5,7 @@ public class NetworkTimer
     float timer;
     public float MinTimeBetweenTicks {  get;}
     public int CurrentTick { get; private set; }
-
+    public bool ShouldTick { get; private set; }
 
     public NetworkTimer(float serverTickRate)
     {
@@ -15,9 +15,10 @@ public class NetworkTimer
     public void Update(float deltaTime)
     {
         timer += deltaTime;
+        ShouldTick = SetShouldTick();
     }
 
-    public bool ShouldTick()
+    public bool SetShouldTick()
     {
         if(timer >= MinTimeBetweenTicks)
         {

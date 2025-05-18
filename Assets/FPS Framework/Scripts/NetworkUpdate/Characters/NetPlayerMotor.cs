@@ -151,7 +151,7 @@ public class NetPlayerMotor : LunarNetScript
             if (MyBufferManager.ShouldTick)
             {
                 ClientTick();
-                ServerTick();
+                ServerTick();   
             }
         }
     }
@@ -224,7 +224,6 @@ public class NetPlayerMotor : LunarNetScript
     void ServerReconciliation()
     {
         bool shouldReconcile = ShouldReconcile();
-        Debug.Log($"Should Reconcile: {shouldReconcile}");
         if (!shouldReconcile)
             return;
 
@@ -236,7 +235,6 @@ public class NetPlayerMotor : LunarNetScript
         if(bufferIndex - 1 < 0)
         {
             //Cannot reconcile, not enough information to do so
-            Debug.Log("not enough information to reconcile!");
             return;
         }
         rewindState = IsHost ? 

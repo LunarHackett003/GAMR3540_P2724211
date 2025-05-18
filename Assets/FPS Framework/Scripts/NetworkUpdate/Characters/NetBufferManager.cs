@@ -38,7 +38,7 @@ public class NetBufferManager : LunarNetScript
 
     internal CircularBuffer<StatePayload> serverStateBuffer;
     internal Queue<InputPayload> serverInputQueue;
-    public bool ShouldTick => timer != null && timer.ShouldTick();
+    public bool ShouldTick => timer != null && timer.ShouldTick;
     public int Tick => timer == null ? -1 : timer.CurrentTick;
 
     public float TickTime =>  Time.fixedDeltaTime;
