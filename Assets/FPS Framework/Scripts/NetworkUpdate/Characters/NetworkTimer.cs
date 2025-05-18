@@ -1,5 +1,5 @@
 ﻿
-
+[System.Serializable]
 public class NetworkTimer
 {
     float timer;

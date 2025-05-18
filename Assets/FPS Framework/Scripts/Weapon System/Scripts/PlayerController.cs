@@ -31,7 +31,7 @@ public class PlayerController : WeaponController
 
         if (myPlayer)
         {
-            GameplayCanvas.playerController = this;
+            //GameplayCanvas.playerEntity = this;
         }
 
         if (currentWeapon)

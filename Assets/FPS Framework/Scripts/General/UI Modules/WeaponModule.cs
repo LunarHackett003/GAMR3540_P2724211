@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class WeaponModule : UIModule
 {
-    BaseWeapon Weapon => GameplayCanvas.playerController.currentWeapon;
+    BaseWeapon Weapon => null;
     float lastAmmo; int lastAmmoPhase;
     BaseWeapon lastWeapon;
     public TMP_Text weaponNameText, weaponAmmoText;

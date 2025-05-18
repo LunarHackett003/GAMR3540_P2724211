@@ -10,18 +10,26 @@ public class NetPlayerEntity : NetEntity
     /// <summary>
     /// A dictionary of all players by their Client ID. Used for quick player lookups.
     /// </summary>
-    public static Dictionary<ulong, NetPlayerEntity> playersByID = new();
+    internal static Dictionary<ulong, NetPlayerEntity> playersByID = new();
+
+    [SerializeField] internal NetworkTimer netTimer;
 
     [SerializeField] internal NetPlayerMotor motor;
 
+    [SerializeField] internal NetBufferManager bufferManager;
 
-
+    
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
         playersByID.Add(OwnerClientId, this);
+
+        if (IsOwner && GameplayCanvas.Instance != null)
+        {
+            GameplayCanvas.player = this;
+        }
     }
 
     public override void OnNetworkDespawn()

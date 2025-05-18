@@ -8,37 +8,11 @@ using UnityEngine.UIElements.Experimental;
 
 public class NetPlayerMotor : LunarNetScript
 {
-    public struct InputPayload : INetworkSerializable
-    {
-        public int tick;
-        public Vector3 inputVector;
-
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref tick);
-            serializer.SerializeValue(ref inputVector);
-        }
-    }
-
-    public struct StatePayload : INetworkSerializable
-    {
-        public int tick;
-        public Vector3 velocity, position;
+    NetBufferManager MyBufferManager => playerEntity.bufferManager;
 
 
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref tick);
-            serializer.SerializeValue(ref velocity);
-            serializer.SerializeValue(ref position);
-        }
-    }
-
-
-
-
-
-
+    internal bool jumpInput, slowWalkInput, slideInput, crouchInput, sprintInput;
+    internal Vector2 lookInput, moveInput;
 
     [SerializeField] internal Rigidbody rigidbody;
     [SerializeField] NetPlayerEntity playerEntity;
@@ -87,6 +61,11 @@ public class NetPlayerMotor : LunarNetScript
     Vector3 connectionVelocity, connectedWorldPos, connectedLocalPos;
     float connectionDeltaYaw, connectionYaw, connectionLastYaw;
 
+
+
+    [SerializeField] bool debugReconciliation;
+    [SerializeField] GameObject serverCube, clientCube;
+
     private void OnValidate()
     {
         if (rigidbody == null)
@@ -98,6 +77,25 @@ public class NetPlayerMotor : LunarNetScript
         {
             crouchTransformCrouchHeight = crouchTransformStandHeight + moveParams.crouchedCapsuleCentre.y;
         }
+        if (debugReconciliation)
+        {
+            if(serverCube == null)
+            {
+                serverCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                serverCube.transform.SetParent(transform, false);
+                DestroyImmediate(serverCube.GetComponent<Collider>());
+            }
+            if(clientCube == null)
+            {
+                clientCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                clientCube.transform.SetParent(transform, false);
+                DestroyImmediate(clientCube.GetComponent<Collider>());
+            }
+        }
+        if(serverCube != null)
+        serverCube.SetActive(debugReconciliation);
+        if(clientCube != null)
+        clientCube.SetActive(debugReconciliation);
     }
     private void OnDrawGizmosSelected()
     {
@@ -145,25 +143,200 @@ public class NetPlayerMotor : LunarNetScript
         upperStepTransform.localPosition = lowerStepTransform.localPosition + (Vector3.forward * stepParams.stepDistance)
             + (Vector3.up * stepParams.stepHeight);
     }
-
+    #region Update
     public override void LTimestep()
     {
+        if (IsOwner)
+        {
+            if (MyBufferManager.ShouldTick)
+            {
+                ClientTick();
+                ServerTick();
+            }
+        }
+    }
+
+    void ClientTick()
+    {
+        if (!IsClient)
+            return;
+
+        var currentTick = MyBufferManager.Tick;
+        int bufferIndex = currentTick % MyBufferManager.bufferSize;
+
+        if (IsOwner)
+        {
+            crouchInput = InputManager.CrouchInput;
+            moveInput = InputManager.MoveInput;
+            sprintInput = InputManager.SprintInput;
+            jumpInput = InputManager.JumpInput;
+            slowWalkInput = InputManager.SlowWalkInput;
+        }
+
+        InputPayload inputpayload = new()
+        {
+            crouchInput = crouchInput,
+            moveInput = moveInput,
+            jumpInput = jumpInput,
+            sprintInput = sprintInput,
+            tick = currentTick,
+        };
+
+        MyBufferManager.SendInputPayload_RPC(inputpayload);
+
+        StatePayload statePayload = ProcessMovement(inputpayload);
+        if(debugReconciliation && clientCube != null)
+        {
+            clientCube.transform.position = statePayload.position + Vector3.up * 4;
+        }
+        MyBufferManager.clientStateBuffer.Add(statePayload, bufferIndex);
+
+        ServerReconciliation();
+    }
+    void ServerTick()
+    {
+        var bufferIndex = -1;
+        while(MyBufferManager.serverInputQueue.Count > 0)
+        {
+            InputPayload input = MyBufferManager.serverInputQueue.Dequeue();
+            bufferIndex = input.tick % MyBufferManager.bufferSize;
+            StatePayload state = ProcessMovement(input);
+            MyBufferManager.serverStateBuffer.Add(state, bufferIndex);
+
+            if (debugReconciliation && serverCube != null)
+            {
+                serverCube.transform.position = state.position + Vector3.up * 6;
+            }
+        }
+
+        if (bufferIndex == -1) return;
+            
+        MyBufferManager.SendStateToClient_RPC(MyBufferManager.serverStateBuffer.Get(bufferIndex));
+    }
+    bool ShouldReconcile()
+    {
+        bool isNewServerState = !MyBufferManager.lastServerState.Equals(default);
+        bool isLastStateUndefinedOrDifferent = MyBufferManager.lastProcessedState.Equals(default) ||
+            !MyBufferManager.lastProcessedState.Equals(MyBufferManager.lastServerState);
+
+        return isNewServerState && isLastStateUndefinedOrDifferent;
+    }
+    void ServerReconciliation()
+    {
+        bool shouldReconcile = ShouldReconcile();
+        Debug.Log($"Should Reconcile: {shouldReconcile}");
+        if (!shouldReconcile)
+            return;
+
+        float positionError = 0;
+        int bufferIndex = -1;
+        StatePayload rewindState;
+
+        bufferIndex = MyBufferManager.lastServerState.tick % MyBufferManager.bufferSize;
+        if(bufferIndex - 1 < 0)
+        {
+            //Cannot reconcile, not enough information to do so
+            Debug.Log("not enough information to reconcile!");
+            return;
+        }
+        rewindState = IsHost ? 
+            (MyBufferManager.serverStateBuffer.Get(bufferIndex - 1)) 
+            : (MyBufferManager.lastServerState);
+
+        positionError = Vector3.Distance(rewindState.position, MyBufferManager.clientStateBuffer.Get(bufferIndex).position);
+        if(positionError > MyBufferManager.reconciliationPositionThreshold)
+        {
+            ReconcileState(rewindState);
+        }
+
+        MyBufferManager.lastProcessedState = MyBufferManager.lastServerState;
+
+
+    }
+    void ReconcileState(StatePayload rewindState)
+    {
+        rigidbody.position = rewindState.position;
+        rigidbody.velocity = rewindState.velocity;
+        sliding = rewindState.sliding;
+        crouching = rewindState.crouching;
+        sprinting = rewindState.sprinting;
+
+        if (!rewindState.Equals(MyBufferManager.lastServerState)) return;
+
+        Debug.Log($"Reconciling from {MyBufferManager.Tick} to {rewindState.tick}!");
+
+        MyBufferManager.clientStateBuffer.Add(rewindState, rewindState.tick);
+
+        int tickToReplay = MyBufferManager.lastServerState.tick;
+        while (tickToReplay < MyBufferManager.Tick)
+        {
+            int bufferIndex = tickToReplay % MyBufferManager.bufferSize;
+            StatePayload payload = ResimulateMovement(MyBufferManager.clientInputBuffer.Get(bufferIndex));
+
+            MyBufferManager.clientStateBuffer.Add(payload, bufferIndex);
+            tickToReplay++;
+        }
+
+    }
+
+    StatePayload ResimulateMovement(InputPayload inputPayload)
+    {
+        Physics.simulationMode = SimulationMode.Script;
+
+        StatePayload payload = ProcessMovement(inputPayload);
+
+        Physics.Simulate(Time.fixedDeltaTime);
+        Physics.simulationMode = SimulationMode.FixedUpdate;
+
+        return payload;
+    }
+
+    StatePayload ProcessMovement(InputPayload input)
+    {
+        MovementUpdate();
+
+
+
+
+        return new StatePayload()
+        {
+            tick = input.tick,
+            crouching = crouching,
+            sprinting = sprinting,
+            sliding = sliding,
+            position = rigidbody.position,
+            velocity = rigidbody.velocity,
+        };
+    }
+
+    void MovementUpdate()
+    {
+
+        if (IsHost)
+        {
+            if (InputManager.DashInput)
+            {
+                InputManager.DashInput = false;
+                rigidbody.position += head.forward * 10;
+            }
+        }
+
         CheckGround();
         CheckMoveState();
         Jump();
         CrouchPlayer();
         MovePlayer();
-        if(isGrounded && InputManager.MoveInput.y > 0 && !mantling)
+        if (isGrounded && moveInput.y > 0 && !mantling)
         {
             ClimbSteps();
         }
-        if(!isGrounded && !mantling)
+        if (!isGrounded && !mantling)
         {
             CheckMantle();
         }
         rigidbody.isKinematic = mantling;
 
-        if(mantleTargetRigidbody != null && mantling)
+        if (mantleTargetRigidbody != null && mantling)
         {
             connectedBody = mantleTargetRigidbody;
         }
@@ -180,9 +353,22 @@ public class NetPlayerMotor : LunarNetScript
             }
         }
         lastConnectedBody = connectedBody;
+
     }
 
+    public override void LUpdate()
+    {
+        base.LUpdate();
+        if (IsOwner)
+        {
+            lookInput = InputManager.LookInput;
+            CheckAimState();
+            RotatePlayer();
+        }
+    }
+    #endregion Update
 
+    #region Movement
     void CheckGround()
     {
         if (Physics.SphereCast(transform.position + groundCheckOrigin, groundCheckRadius, -transform.up,
@@ -232,7 +418,7 @@ public class NetPlayerMotor : LunarNetScript
             }
             if (InputManager.CrouchInput)
             {
-                crouching = InputManager.CrouchInput && !sliding;
+                crouching = crouchInput && !sliding;
             }
             else
             {
@@ -249,11 +435,15 @@ public class NetPlayerMotor : LunarNetScript
             }
         }
 
-        sprinting = InputManager.SprintInput && !sliding;
+        sprinting = sprintInput && !sliding;
         if(crouching && sprinting)
         {
             crouching = false;
-            InputManager.CrouchInput = false;
+            crouchInput = false;
+            if (IsOwner)
+            {
+                InputManager.CrouchInput = false;
+            }
         }
     }
     void StartSlide()
@@ -264,7 +454,7 @@ public class NetPlayerMotor : LunarNetScript
     }
     void UpdateSlide()
     {
-        if (!InputManager.CrouchInput || rigidbody.velocity.sqrMagnitude < 4f)
+        if (!crouchInput || rigidbody.velocity.sqrMagnitude < 4f)
         {
             StopSlide();
         }
@@ -281,11 +471,15 @@ public class NetPlayerMotor : LunarNetScript
     }
     void Jump()
     {
-        if (InputManager.JumpInput)
+        if (jumpInput)
         {
             if (isGrounded || jumpsRemaining > 0)
             {
-                InputManager.JumpInput = false;
+                if (IsOwner)
+                {
+                    InputManager.JumpInput = false;
+                }
+                jumpInput = false;
                 rigidbody.velocity.Scale(new(1, 0, 1));
                 rigidbody.AddForce(Vector3.up * moveParams.jumpForce, ForceMode.VelocityChange);
                 jumpsRemaining--;
@@ -307,7 +501,7 @@ public class NetPlayerMotor : LunarNetScript
         {
             if (sliding)
             {
-                rigidbody.AddForce(Vector3.ProjectOnPlane(InputManager.MoveInput.x * moveParams.slideSteerForce * transform.right, groundNormal));
+                rigidbody.AddForce(Vector3.ProjectOnPlane(moveInput.x * moveParams.slideSteerForce * transform.right, groundNormal));
             }
             else
             {
@@ -318,7 +512,7 @@ public class NetPlayerMotor : LunarNetScript
                 Vector3 moveForce =  (sprinting ? moveParams.sprintForceMultiply : crouching ? moveParams.crouchWalkForceMultiply :
                     slowWalking ? moveParams.slowWalkForceMultiply : 1)
                     * moveParams.baseMoveForce
-                    * (right * InputManager.MoveInput.x + forward * InputManager.MoveInput.y);
+                    * (right * moveInput.x + forward * moveInput.y);
                 rigidbody.AddForce(moveForce);
                 rigidbody.AddForce(Vector3.ProjectOnPlane(-Physics.gravity, groundNormal));
             };
@@ -327,12 +521,12 @@ public class NetPlayerMotor : LunarNetScript
         }
         else
         {
-            rigidbody.AddForce(transform.rotation * new Vector3(InputManager.MoveInput.x, 0, InputManager.MoveInput.y) * moveParams.airMoveForce);
+            rigidbody.AddForce(transform.rotation * new Vector3(moveInput.x, 0, moveInput.y) * moveParams.airMoveForce);
         }
     }
     void CheckMantle()
     {
-        if (!(InputManager.MoveInput.y > 0 || InputManager.JumpInput))
+        if (!(moveInput.y > 0 || InputManager.JumpInput))
         {
             return;
         }
@@ -434,7 +628,7 @@ public class NetPlayerMotor : LunarNetScript
 
         if (mantleTime >= 1)
         {
-            rigidbody.velocity = transform.rotation * new Vector3(mantleParams.mantleDismountSpeed * InputManager.MoveInput.x, rigidbody.velocity.y, mantleParams.mantleDismountSpeed * InputManager.MoveInput.y);
+            rigidbody.velocity = transform.rotation * new Vector3(mantleParams.mantleDismountSpeed * moveInput.x, rigidbody.velocity.y, mantleParams.mantleDismountSpeed * moveInput.y);
         }
 
         mantling = false;
@@ -462,7 +656,8 @@ public class NetPlayerMotor : LunarNetScript
         mantleTimeIncrement = (speed / mantleDistance) * Time.fixedDeltaTime;
 
     }
-
+    #endregion Movement
+    #region Looking
     void CheckAimState()
     {
         //Do more later
@@ -472,8 +667,9 @@ public class NetPlayerMotor : LunarNetScript
         if(InputManager.LookInput != Vector2.zero)
         {
             Vector2 lookSpeed = viewParams.lookSpeed;
-            lookPitch = Mathf.Clamp(lookPitch - Time.deltaTime * lookSpeed.y * InputManager.LookInput.y, -viewParams.lookPitchClamp, viewParams.lookPitchClamp);
-            transform.rotation *= Quaternion.Euler(0, InputManager.LookInput.x * lookSpeed.x * Time.deltaTime, 0);
+            lookPitch = Mathf.Clamp(lookPitch - Time.deltaTime * lookSpeed.y * lookInput.y, -viewParams.lookPitchClamp, viewParams.lookPitchClamp);
+            head.localRotation = Quaternion.Euler(lookPitch, 0, 0);
+            transform.rotation *= Quaternion.Euler(0, lookInput.x * lookSpeed.x * Time.deltaTime, 0);
             oldLook = new(transform.eulerAngles.x, lookPitch);
         }
         if(lookDelta != oldLook)
@@ -486,4 +682,5 @@ public class NetPlayerMotor : LunarNetScript
             ikAimtransform.localRotation = head.localRotation * ikAimOffset;
         }
     }
+    #endregion Looking
 }

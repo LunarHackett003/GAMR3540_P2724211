@@ -42,25 +42,8 @@ public class HealthModule : UIModule
 
     public override void UpdateModule()
     {
-        healthInverseLerp = Mathf.InverseLerp(0, Player.damageable.maxHealth, Player.damageable.CurrentHealth);
+        healthInverseLerp = Mathf.InverseLerp(0, Player.maxHealth, Player.currentHealth.Value);
 
-        if (Player.rbpm.dashCurrentWaitTime != 0)
-        {
-            updatingDash = true;
-            if(!dashIconFill.enabled)
-                dashIconFill.enabled = true;
-            dashIconFill.fillAmount = 1 - (Player.rbpm.dashCurrentWaitTime / Player.rbpm.dashParams.dashDelayTime);
-        }
-        else
-        {
-            if (updatingDash)
-            {
-                dashIconFill.enabled = false;
-                dashIcon.enabled = true;
-                updatingDash = false;
-            }
-
-        }
 
         if (healthLastValue == healthInverseLerp)
             return;
@@ -72,7 +55,7 @@ public class HealthModule : UIModule
         }
         if(useText)
         {
-            healthText.text = Player.damageable.CurrentHealth.ToString("0");
+            healthText.text = Player.IntHealth.ToString("0");
         }
         if (useFullscreenMaterial)
         {

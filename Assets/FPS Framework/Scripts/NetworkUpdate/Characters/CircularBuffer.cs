@@ -1,5 +1,4 @@
 ﻿
-
 public class CircularBuffer<T>
 {
     T[] buffer;
@@ -14,5 +13,4 @@ public class CircularBuffer<T>
     public void Add(T item, int index) => buffer[index % bufferSize] = item;
     public T Get(int index) => buffer[index % bufferSize];
     public void Clear() => buffer = new T[bufferSize];
-
 }

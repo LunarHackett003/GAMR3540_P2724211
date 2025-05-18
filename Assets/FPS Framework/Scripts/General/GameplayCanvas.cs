@@ -10,7 +10,7 @@ using UnityEngine;
 public class GameplayCanvas : LunarScript
 {
     public static GameplayCanvas Instance { get; private set; }
-    public static PlayerController playerController;
+    public static NetPlayerEntity player;
     private void Awake()
     {
         if(Instance == null)
@@ -31,7 +31,7 @@ public class GameplayCanvas : LunarScript
     {
         base.LPostUpdate();
 
-        if(playerController == null)
+        if(player == null)
         {
             return;
         }

@@ -7,6 +7,6 @@ public class NetDamageable : LunarNetScript
 {
     public AnticipatedNetworkVariable<float> currentHealth = new(100, StaleDataHandling.Reanticipate);
 
-    [SerializeField] protected int maxHealth;
+    [SerializeField] internal int maxHealth;
     public int IntHealth => Mathf.RoundToInt(currentHealth.Value);
 }

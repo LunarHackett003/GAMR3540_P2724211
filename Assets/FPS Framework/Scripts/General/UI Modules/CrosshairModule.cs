@@ -15,7 +15,7 @@ public class CrosshairModule : UIModule
     public Image weaponChargeImage;
     public float weaponChargeFillAmount;
 
-    public BaseWeapon Weapon => GameplayCanvas.playerController.currentWeapon;
+    public BaseWeapon Weapon => null;
 
     public override void UpdateModule()
     {

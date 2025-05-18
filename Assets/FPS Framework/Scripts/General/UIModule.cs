@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class UIModule : MonoBehaviour
 {
 
-    public PlayerController Player => GameplayCanvas.playerController;
+    public NetPlayerEntity Player => GameplayCanvas.player;
 
     public abstract void UpdateModule();
 }

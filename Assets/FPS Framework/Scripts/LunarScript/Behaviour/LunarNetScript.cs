@@ -7,16 +7,19 @@ public class LunarNetScript : NetworkBehaviour
 {
     protected virtual void OnEnable()
     {
+        Debug.Log("Subscribed this net script");
         LunarManager.Instance.lPostUpdate += LPostUpdate;
         LunarManager.Instance.lUpdate += LUpdate;
         LunarManager.Instance.lTimeStep += LTimestep;
     }
     protected virtual void OnDisable()
     {
+        Debug.Log("Unsubscribed this net script");
         LunarManager.Instance.lPostUpdate -= LPostUpdate;
         LunarManager.Instance.lUpdate -= LUpdate;
         LunarManager.Instance.lTimeStep -= LTimestep;
     }
+    
 
 
     public virtual void LUpdate()
