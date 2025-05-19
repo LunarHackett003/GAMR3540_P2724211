@@ -1,0 +1,111 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Jobs;
+using UnityEngine;
+
+public class ProjectileSimulator : LunarNetScript
+{
+    public static List<NetProjectile> allProjectiles;
+    public struct HitData
+    {
+        public RangedNetWeapon weapon;
+        public float damageAccumulated;
+        public int hits;
+        public Vector3 forceAccumulated;
+        public Vector3 hitPointAccumulated;
+    }
+    public Dictionary<Collider, HitData> colliderHitData;
+    public float raycastDebugTime = 0.1f;
+
+    public LayerMask layermask;
+
+    NativeArray<SpherecastCommand> castCommands;
+    NativeArray<RaycastHit> hits;
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (IsServer)
+        {
+            colliderHitData = new();
+            allProjectiles = new();
+        }
+    }
+
+    public override void LTimestep()
+    {
+        base.LTimestep();
+
+        if (!IsServer)
+            return;
+
+        if (allProjectiles.Count == 0)
+            return;
+        SimulateProjectiles();
+
+        foreach (NetProjectile projectile in allProjectiles)
+        {
+            projectile.TickProjectile();
+        }
+    }
+
+    void SimulateProjectiles()
+    {
+        QueryParameters qp = new()
+        {
+            layerMask = layermask,
+            hitTriggers = QueryTriggerInteraction.Collide,
+        };
+        castCommands = new(allProjectiles.Count, Allocator.TempJob);
+        for (int i = 0; i < castCommands.Length; i++)
+        {
+            NetProjectile proj = allProjectiles[i];
+            castCommands[i] = new(proj.transform.position, proj.thickness, proj.direction, qp, proj.velocity * Time.fixedDeltaTime);
+        }
+        hits = new NativeArray<RaycastHit>(allProjectiles.Count, Allocator.TempJob);
+        JobHandle job = SpherecastCommand.ScheduleBatch(castCommands, hits, 1);
+        job.Complete();
+
+        int hitCount = 0;
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (hits[i].collider == null)
+            {
+                continue;
+            }
+
+            Collider c = hits[i].collider;
+            RaycastHit hit = hits[i];
+            NetProjectile proj = allProjectiles[i];
+            if (proj.ignoredColliders.Contains(c))
+            {
+                continue;
+            }
+            //If we progress past here, we hit something.
+            float damageDealt = proj.weapon.GetDamage(proj.distanceTravelled + hit.distance);
+            if(colliderHitData.TryGetValue(c, out HitData chd))
+            {
+                chd.damageAccumulated += damageDealt;
+                chd.forceAccumulated += -hit.normal * damageDealt;
+                chd.hitPointAccumulated += hit.point;
+                chd.hits++;
+                colliderHitData[c] = chd;
+            }
+            else
+            {
+                colliderHitData.TryAdd(c, new()
+                {
+                    weapon = proj.weapon,
+                    damageAccumulated = damageDealt,
+                    forceAccumulated = -hit.normal * damageDealt,
+
+                });
+            }
+
+
+        }
+    }
+
+}

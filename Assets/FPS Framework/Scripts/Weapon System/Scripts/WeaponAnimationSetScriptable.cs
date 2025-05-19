@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Scriptable Objects/Animation Set")]
-public class AnimationSetScriptableObject : ScriptableObject
+public class WeaponAnimationSetScriptable : ScriptableObject
 {
     public AnimationClipPair[] clips = new AnimationClipPair[0];
 }

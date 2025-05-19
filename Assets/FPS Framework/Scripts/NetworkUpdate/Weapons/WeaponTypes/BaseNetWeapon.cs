@@ -1,30 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-/// <summary>
-/// BaseWeapon provides core functionality that is shared across all weapons. <br></br>
-/// This functionality might not be particularly broad, but it provides a common base for all weapon types.
-/// </summary>
-public abstract class BaseWeapon : LunarScript
+public class BaseNetWeapon : LunarNetScript
 {
-    //Constant animation keys
+
     public const string PRIMARYATTACK = "Primary", SECONDARYATTACK = "Secondary", AMMOPHASE = "AmmoPhase", EMPTYRELOAD = "EmptyReload", PARTIALRELOAD = "TacReload",
         FIRESWITCHUP = "FireSwitchUp", FIRESWITCHDOWN = "FireSwitchDown", COUNTEDRELOAD = "CountedReload", MANUALACTION = "ManualAction", CHANGEWEAPON = "ChangeWeapon",
         CHARGEAMOUNT = "Charge", CHARGING = "Charging";
-
     public const float TRIGGERTIMETINY = 0.1f, TRIGGERTIMESHORT = 0.4f, TRIGGERTIMELONG = 0.8f;
 
+    public string displayName = "Networked Weapon";
+    public WeaponAnimationSetScriptable animationSet;
+    internal bool primaryInput, secondaryInput, primaryPressed, secondaryPressed;
 
+    [SerializeField] internal NetWeaponController controller;
+    [SerializeField] NetWeaponAnimator animator;
+    [SerializeField] internal bool canCrit;
+    [SerializeField] internal float critMultiplier;
 
-    public string displayName = "New Weapon";
-    public WeaponAnimationSetScriptable animSet;
-    internal bool primaryInput, secondaryInput, primaryPressedFirst, secondaryPressedFirst, primaryPressed, secondaryPressed;
-    [SerializeField] internal bool attackOnPrimary, attackOnSecondary, primaryBlocksSecondary, secondaryBlocksPrimary;
-    [SerializeField] internal bool aimOnSecondary;
-    [SerializeField] internal AimParams aimParams;
-    public WeaponController controller;
-    //Animation
     [SerializeField] internal float crosshairSpreadBase;
     [SerializeField] internal float crosshairSpreadMax;
     [SerializeField] internal bool useAttackSpread, spreadOnPrimary, spreadOnSecondary;
@@ -36,7 +31,7 @@ public abstract class BaseWeapon : LunarScript
     [SerializeField] internal bool useAmmunition, ammoConsumeOnPrimary, ammoConsumeOnSecondary;
     [SerializeField] internal int maxAmmo;
     [SerializeField] internal float ammoPerShot;
-    [SerializeField] internal float CurrentAmmo;
+    [SerializeField] internal AnticipatedNetworkVariable<float> CurrentAmmo = new(0, StaleDataHandling.Reanticipate);
     [SerializeField] internal bool useAmmoPhases;
     [SerializeField] internal int ammoPhases;
     [SerializeField] internal int currentAmmoPhase;
@@ -45,9 +40,9 @@ public abstract class BaseWeapon : LunarScript
     [SerializeField] internal bool queuedReloadAnimation;
     [SerializeField] protected bool fired = false;
 
-    [SerializeField, Tooltip("Should the weapon charge for the primary attack? Takes priority over secondary charge")] protected bool primaryUsesCharge;
-    [SerializeField, Tooltip("Should the weapon charge for the secondary attack? Does not work if primary uses charge")] protected bool secondaryUsesCharge;
-    [SerializeField, Tooltip("How much charge the weapon accumulates every second")] protected float chargeRate;
+    [SerializeField, Tooltip("Should the weapon charge for the primary attack? Takes priority over secondary charge")] internal bool primaryUsesCharge;
+    [SerializeField, Tooltip("Should the weapon charge for the secondary attack? Does not work if primary uses charge")] internal bool secondaryUsesCharge;
+    [SerializeField, Tooltip("How much charge the weapon accumulates every second")] internal float chargeRate;
     [SerializeField, Tooltip("How much charge the weapon loses every second when not charge")] protected float chargeDecayRate;
     [SerializeField, Tooltip("How much charge is required to fire the weapon?")] protected float minimumChargeToFire;
     [SerializeField, Tooltip("Resets charge to zero after firing")] protected bool resetChargeOnFire;
@@ -55,109 +50,57 @@ public abstract class BaseWeapon : LunarScript
     [SerializeField, Tooltip("Will the weapon charge to full, even if the player releases the fire input?")] protected bool chargeUntilFire;
     [SerializeField, Tooltip("Will the forced charge end when we reach minimum charge, if we've released the fire input?")] protected bool chargeOnlyUntilMinimum;
     [SerializeField, Tooltip("Fires the weapon when we release the fire input")] protected bool fireOnRelease;
-    protected virtual bool PrimaryBlocked => fired || (useAmmunition && CurrentAmmo <= 0);
+    protected virtual bool PrimaryBlocked => fired || (useAmmunition && CurrentAmmo.Value <= 0);
     protected virtual bool ChargeInput => (primaryUsesCharge && primaryInput) || (secondaryUsesCharge && secondaryInput) || chargeHoldFrame;
     internal bool animatedFirePending;
     internal bool animatedFireLast;
 
-    public WeaponAnimator animator;
-
     [SerializeField] internal bool charging;
     internal bool chargeHoldFrame;
 
-    public void SetPrimaryInput(bool input) => primaryInput = input;
-    public void SetSecondaryInput(bool input) => secondaryInput = input;
-
-    protected virtual void Start()
+    /// <summary>
+    /// Calculates the damage that should be dealt at the supplied distance.
+    /// </summary>
+    /// <param name="distance"></param>
+    /// <returns></returns>
+    public virtual float GetDamage(float distance = 0)
     {
-        controller = GetComponentInParent<WeaponController>();
-        if (useAmmunition)
-        {
-            CurrentAmmo = maxAmmo;
-        }
+        return 0;
+    }
+
+    public virtual void InitialiseWeapon(NetWeaponController controller)
+    {
+        this.controller = controller;
     }
 
     public override void LTimestep()
     {
         base.LTimestep();
-
-        if (animatedFireLast != animatedFirePending)
+        if(animatedFireLast != animatedFirePending)
         {
             animatedFireLast = animatedFirePending;
-            SetBool(MANUALACTION, animatedFirePending);
-        }
-        UpdateInputPriority();
-        ProcessInput();
-
-        if (primaryUsesCharge || secondaryUsesCharge)
-        {
-            UpdateCharge();
+            
         }
 
-        if (useAttackSpread)
+
+        if(primaryInput && !secondaryPressed)
         {
-            attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount - (Time.fixedDeltaTime * attackSpreadDecay));
+            PrimaryBehaviour();
+        }
+        if(secondaryInput && !primaryPressed)
+        {
+            SecondaryBehaviour();
         }
     }
 
-    protected virtual void UpdateCharge()
+    protected virtual void PrimaryBehaviour()
     {
-        bool charge = charging || ChargeInput || chargeHoldFrame;
-        //animator.SetAnimationBool(CHARGING, primaryUsesCharge ? primaryInput : (secondaryUsesCharge && secondaryInput));
-        SetBool(CHARGING, charge);
 
-        //if ((primaryUsesCharge && primaryInput) || (secondaryUsesCharge && secondaryInput))
-        //{
-        //    chargeAmount += Time.fixedDeltaTime * 
-        //}
-        //else
-        //{
-
-        //}
-        
-
-        //If we are not charging this weapon via a coroutine...
-        if (!charging)
-        {
-            //Start charging 
-            if (chargeUntilFire && chargeAmount < (chargeOnlyUntilMinimum ? minimumChargeToFire : 1) && !charging && ChargeInput)
-            {
-                StartCoroutine(ChargeWeaponCoroutine());
-            }
-            if(!chargeHoldFrame)
-                chargeAmount += Time.fixedDeltaTime * (charge ? chargeRate : -chargeDecayRate);
-        }
-
-        chargeAmount = Mathf.Clamp01(chargeAmount);
-        SetFloat(CHARGEAMOUNT, chargeAmount);
     }
-    protected void UpdateInputPriority()
+    protected virtual void SecondaryBehaviour()
     {
-        if (primaryBlocksSecondary)
-        {
-            if (primaryInput && !secondaryInput)
-                primaryPressedFirst = true;
-            if (!primaryInput)
-            {
-                primaryPressedFirst = false;
-            }
-        }
-        if (secondaryBlocksPrimary)
-        {
-            if (secondaryInput && !primaryInput)
-            {
-                secondaryPressedFirst = true;
-            }
-            if (!secondaryInput)
-            {
-                secondaryPressedFirst = false;
-            }
-        }
-    }
-    protected abstract void ProcessInput();
-    protected abstract void PrimaryBehaviour();
-    protected abstract void SecondaryBehaviour();
 
+    }
     protected virtual void PostAttackBehaviour()
     {
         if (useAttackSpread)
@@ -166,8 +109,8 @@ public abstract class BaseWeapon : LunarScript
         }
         if (useAmmunition)
         {
-            CurrentAmmo-= ammoPerShot;
-            if(CurrentAmmo <= 0)
+            CurrentAmmo.Anticipate(CurrentAmmo.Value - ammoPerShot);
+            if (CurrentAmmo.Value <= 0)
             {
                 if (useAmmoPhases && currentAmmoPhase < ammoPhases)
                 {
@@ -178,7 +121,7 @@ public abstract class BaseWeapon : LunarScript
                 TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT, true);
             }
         }
-        if(primaryUsesCharge || secondaryUsesCharge && resetChargeOnFire)
+        if (primaryUsesCharge || secondaryUsesCharge && resetChargeOnFire)
         {
             chargeAmount = 0;
         }
@@ -200,31 +143,31 @@ public abstract class BaseWeapon : LunarScript
         }
         primaryPressed = false;
         animatedFirePending = false;
-        CurrentAmmo = maxAmmo;
+        CurrentAmmo.Anticipate(maxAmmo);
     }
 
 
     internal virtual void TriggerAnimation(string parameter, float time, bool reset = false)
     {
-        if(controller != null && controller.animator != null)
+        if (controller != null && controller.animator != null)
             controller.animator.TriggerAnimation(parameter, time, reset);
-        if(animator != null)
+        if (animator != null)
             animator.TriggerAnimation(parameter, time, reset);
     }
 
     internal virtual void SetBool(string parameter, bool value)
     {
-        if(controller != null && controller.animator != null)
+        if (controller != null && controller.animator != null)
             controller.animator.SetAnimationBool(parameter, value);
-        if(animator != null)
+        if (animator != null)
             animator.SetAnimationBool(parameter, value);
     }
 
     internal virtual void SetFloat(string parameter, float value)
     {
-        if(controller != null && controller.animator != null)
+        if (controller != null && controller.animator != null)
             controller.animator.SetAnimationFloat(parameter, value);
-        if(animator != null)
+        if (animator != null)
             animator.SetAnimationFloat(parameter, value);
     }
 

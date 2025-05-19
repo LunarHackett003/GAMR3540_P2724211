@@ -3,10 +3,11 @@ using UnityEngine;
 public class LunarManager : MonoBehaviour
 {
     public static LunarManager Instance { get; private set; }
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void IntialiseOnLoad()
     {
         Instance = new GameObject("Lunar Manager").AddComponent<LunarManager>();
+        DontDestroyOnLoad(Instance.gameObject);
     }
 
     public delegate void LUpdate(); 

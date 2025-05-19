@@ -50,7 +50,7 @@ public class NetEntity : NetDamageable
     {
         HealthModified?.Invoke(lastAuthHealthValue - deltaHealth, source);
         if(deltaHealth < 0)
-            regenerationDelay = 0;
+            currentRegenTime = 0;
     }
 
 
@@ -60,16 +60,20 @@ public class NetEntity : NetDamageable
         healthThisFrame = currentHealth.Value;
         if (canRegenerateHealth && !isDead.Value)
         {
-            if (currentRegenTime < regenerationDelay)
+            if (currentRegenTime >= regenerationDelay)
             {
                 if (IsServer)
                 {
-                    currentHealth.AuthoritativeValue += Time.fixedDeltaTime * regenerationRate;
+                    currentHealth.AuthoritativeValue = Mathf.Clamp(currentHealth.AuthoritativeValue + Time.fixedDeltaTime * regenerationRate, 0, maxHealth);
                 }
                 else
                 {
-                    currentHealth.Anticipate(currentHealth.Value + Time.fixedDeltaTime * regenerationRate);
+                    currentHealth.Anticipate(Mathf.Clamp(currentHealth.Value + Time.fixedDeltaTime * regenerationRate, 0, maxHealth));
                 }
+            }
+            else
+            {
+                currentRegenTime += Time.fixedDeltaTime;
             }
         }
 

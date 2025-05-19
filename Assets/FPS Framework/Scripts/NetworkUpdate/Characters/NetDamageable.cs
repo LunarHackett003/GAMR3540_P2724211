@@ -9,4 +9,60 @@ public class NetDamageable : LunarNetScript
 
     [SerializeField] internal int maxHealth;
     public int IntHealth => Mathf.RoundToInt(currentHealth.Value);
+
+    
+    public virtual void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
+    {
+        if(!IsServer) return;
+
+        switch (damageSourceType)
+        {
+            case DamageSourceType.world:
+                WorldDamage(delta);
+                break;
+            case DamageSourceType.weapon:
+                WeaponDamage(delta, isCrit, source);
+                break;
+            case DamageSourceType.hazard:
+                MeleeDamage(delta, source);
+                break;
+            case DamageSourceType.melee:
+                MeleeDamage(delta, source);
+                break;
+            default:
+                break;
+        }
+    }
+    public virtual void WorldDamage(float deltaHealth)
+    {
+        currentHealth.AuthoritativeValue += deltaHealth;
+    }
+    public virtual void WeaponDamage(float deltaHealth, bool isCrit, NetworkBehaviourReference reference)
+    {
+        if(reference.TryGet(out BaseNetWeapon weapon))
+        {
+            if (isCrit && weapon.canCrit)
+            {
+                deltaHealth *= weapon.critMultiplier;
+            }
+            currentHealth.AuthoritativeValue += deltaHealth;
+        }
+    }
+    public virtual void MeleeDamage(float deltaHealth, NetworkBehaviourReference reference)
+    {
+        currentHealth.AuthoritativeValue += deltaHealth;
+    }
+    public virtual void HazardDamage(float deltaHealth, NetworkBehaviourReference reference)
+    {
+        currentHealth.AuthoritativeValue += deltaHealth;
+    }
+}
+
+
+public enum DamageSourceType : int
+{
+    world = 0,
+    weapon = 1,
+    hazard = 2,
+    melee = 3
 }

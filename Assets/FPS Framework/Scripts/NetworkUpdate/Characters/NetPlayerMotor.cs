@@ -143,6 +143,22 @@ public class NetPlayerMotor : LunarNetScript
         upperStepTransform.localPosition = lowerStepTransform.localPosition + (Vector3.forward * stepParams.stepDistance)
             + (Vector3.up * stepParams.stepHeight);
     }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (IsOwner)
+        {
+            worldCamera.enabled = true;
+            viewCamera.enabled = true;
+        }
+        else
+        {
+            worldCamera.gameObject.SetActive(false);
+            viewCamera.gameObject.SetActive(false);
+        }
+    }
     #region Update
     public override void LTimestep()
     {
@@ -281,7 +297,7 @@ public class NetPlayerMotor : LunarNetScript
     {
         Physics.simulationMode = SimulationMode.Script;
 
-        StatePayload payload = ClientMovementProcess(inputPayload);
+        StatePayload payload = ServerMovementProcess(inputPayload);
 
         Physics.Simulate(Time.fixedDeltaTime);
         Physics.simulationMode = SimulationMode.FixedUpdate;
@@ -404,6 +420,13 @@ public class NetPlayerMotor : LunarNetScript
             lookInput = InputManager.LookInput;
             CheckAimState();
             RotatePlayer();
+        }
+        else
+        {
+            if (ikAimtransform != null)
+            {
+                ikAimtransform.localRotation = head.localRotation * ikAimOffset;
+            }
         }
     }
     #endregion Update

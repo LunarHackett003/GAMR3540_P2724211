@@ -73,7 +73,7 @@ MonoBehaviour:
   m_AssetVersion: 2
   m_OpaqueLayerMask:
     serializedVersion: 2
-    m_Bits: 311
+    m_Bits: 439
   m_TransparentLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -148,7 +148,8 @@ MonoBehaviour:
   m_Shader: {fileID: 4800000, guid: cba92fa286f80234db50615beb33eab2, type: 3}
   m_LutShader: {fileID: 4800000, guid: b2d9c6e519415af43a8d8e54c3ca5a4d, type: 3}
   m_Precomputation: 0
-  m_FallbackSkyMaterial: {fileID: 0}
+  m_FallbackSkyMaterial: {fileID: 2100000, guid: 9d9a06c1342314b459bbe4e28fde2781,
+    type: 2}
   m_VolumetricCloudsMaterial: {fileID: 2100000, guid: 3748131af20412e478461c6445c73923,
     type: 2}
 --- !u!114 &7795777641221010587
