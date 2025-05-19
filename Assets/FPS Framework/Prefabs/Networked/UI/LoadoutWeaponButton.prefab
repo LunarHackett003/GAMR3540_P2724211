@@ -134,9 +134,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c907d32340a8c84d91d267283c2b338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapon: {fileID: 0}
+  weaponIndex: 0
   iconDisplay: {fileID: 3917041750499929204}
   nameDisplay: {fileID: 6883545633260606375}
+  button: {fileID: 4749043467705787486}
 --- !u!1 &7428111021520938998
 GameObject:
   m_ObjectHideFlags: 0
@@ -229,7 +230,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 13.25
+  m_fontSize: 8
   m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 1

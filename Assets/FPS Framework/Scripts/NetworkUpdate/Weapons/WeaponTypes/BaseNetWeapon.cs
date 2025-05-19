@@ -17,7 +17,7 @@ public class BaseNetWeapon : LunarNetScript
     internal bool primaryInput, secondaryInput, primaryPressed, secondaryPressed;
 
     [SerializeField] internal NetWeaponController controller;
-    [SerializeField] NetWeaponAnimator animator;
+    [SerializeField] internal NetWeaponAnimator animator;
     [SerializeField] internal bool canCrit;
     [SerializeField] internal float critMultiplier;
 
@@ -67,6 +67,14 @@ public class BaseNetWeapon : LunarNetScript
     public virtual float GetDamage(float distance = 0)
     {
         return 0;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        controller = NetPlayerEntity.playersByID[OwnerClientId].weaponController;
+        controller.WeaponAdded(this);
     }
 
     public virtual void InitialiseWeapon(NetWeaponController controller)

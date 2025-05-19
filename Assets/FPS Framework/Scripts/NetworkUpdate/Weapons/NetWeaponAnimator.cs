@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 public class NetWeaponAnimator : LunarNetScript
 {
     [SerializeField] internal Animator animator;
-    [SerializeField] internal WeaponController controller;
+    [SerializeField] internal NetworkAnimator networkAnimator;
+    [SerializeField] internal NetWeaponController controller;
     [SerializeField] internal BaseNetWeapon weapon;
     public bool isWeapon;
 
@@ -18,7 +20,7 @@ public class NetWeaponAnimator : LunarNetScript
     {
         if (!TryGetComponent(out controller))
         {
-            controller = GetComponentInParent<WeaponController>();
+            controller = GetComponentInParent<NetWeaponController>();
         }
         if (isWeapon)
         {
@@ -26,6 +28,8 @@ public class NetWeaponAnimator : LunarNetScript
             UpdateAnimations();
             animator.tag = "Weapon";
         }
+
+        networkAnimator = animator.GetComponent<NetworkAnimator>();
     }
 
     public void UpdateAnimations()
@@ -39,7 +43,7 @@ public class NetWeaponAnimator : LunarNetScript
             aoc.GetOverrides(clipOverrides);
         }
 
-        AnimationClipPair[] clips = isWeapon ? weapon.animationSet.clips : controller.currentWeapon.animSet.clips;
+        AnimationClipPair[] clips = isWeapon ? weapon.animationSet.clips : controller.CurrentWeapon.animationSet.clips;
         for (int i = 0; i < clips.Length; i++)
         {
             AnimationClipPair acp = clips[i];
@@ -57,12 +61,15 @@ public class NetWeaponAnimator : LunarNetScript
         if (aoc != null)
         {
             clipOverrides["ChangeWeapon"] =
-                controller.currentWeapon.animSet.clips.First(x => x.targetClip.name == "ChangeWeapon").characterClip;
+                controller.CurrentWeapon.animationSet.clips.First(x => x.targetClip.name == "ChangeWeapon").characterClip;
         }
     }
 
     public virtual void SetAnimationBool(string parameter, bool value)
     {
+        if (!IsOwner)
+            return;
+
         if (animator != null)
         {
             animator.SetBool(parameter, value);
@@ -70,6 +77,9 @@ public class NetWeaponAnimator : LunarNetScript
     }
     public virtual void SetAnimationFloat(string parameter, float value)
     {
+        if (!IsOwner)
+            return;
+
         if (animator != null)
         {
             animator.SetFloat(parameter, value);
@@ -78,6 +88,9 @@ public class NetWeaponAnimator : LunarNetScript
 
     public virtual void TriggerAnimation(string trigger, float time, bool reset = false)
     {
+        if (!IsOwner)
+            return;
+
         if (animator != null)
         {
             StartCoroutine(AnimationTrigger(trigger, time, reset));
@@ -85,11 +98,11 @@ public class NetWeaponAnimator : LunarNetScript
     }
     protected virtual IEnumerator AnimationTrigger(string trigger, float time, bool reset = false)
     {
-        animator.SetTrigger(trigger);
+        networkAnimator.SetTrigger(trigger);
         if (reset)
         {
             yield return new WaitForSeconds(time);
-            animator.ResetTrigger(trigger);
+            networkAnimator.ResetTrigger(trigger);
         }
         yield break;
     }

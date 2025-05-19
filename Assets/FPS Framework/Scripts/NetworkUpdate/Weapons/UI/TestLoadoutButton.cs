@@ -6,12 +6,13 @@ using UnityEngine.UI;
 
 public class TestLoadoutButton : MonoBehaviour
 {
-    public BaseNetWeapon weapon;
+    public int weaponIndex;
     public Image iconDisplay;
     public TMP_Text nameDisplay;
-    public void Initialise(BaseNetWeapon weapon)
+    public Button button;
+    public void Initialise(BaseNetWeapon weapon, int index)
     {
-        this.weapon = weapon;
+        weaponIndex = index;
         iconDisplay.sprite = weapon.weaponIcon;
         nameDisplay.text = weapon.displayName;
     }

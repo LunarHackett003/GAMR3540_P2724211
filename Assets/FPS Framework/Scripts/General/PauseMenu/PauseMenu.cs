@@ -20,7 +20,6 @@ public class PauseMenu : LunarScript
             return;
         }
         Debug.Log("initialised pause menu");
-        SetPaused(false);
     }
     public void TogglePause()
     {

@@ -8,6 +8,7 @@ public class NetPlayerWeaponController : NetWeaponController
     [SerializeField] internal bool reloadInput, meleeInput, weaponSwitchInput;
     [SerializeField] internal NetPlayerEntity player;
 
+
     [SerializeField] float crouchAccuracyMultiplier;
     internal float currentFOV;
     [SerializeField] internal Transform weaponPositionOffset, weaponRotationInvert, weaponTargetTransform;
@@ -18,15 +19,8 @@ public class NetPlayerWeaponController : NetWeaponController
         return value * Mathf.Clamp01((1 - aimAmount) - (player.motor.currentCrouchLerp * crouchAccuracyMultiplier));
     }
 
-    public void InitialiseAfterSpawningWeapons()
-    {
-
-    }
-
     public override void LTimestep()
-    {
-
-        
+    {   
         if (IsOwner)
         {
             primaryInput = InputManager.PrimaryInput;

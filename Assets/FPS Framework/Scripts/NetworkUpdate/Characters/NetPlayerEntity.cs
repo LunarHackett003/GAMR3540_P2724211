@@ -18,6 +18,7 @@ public class NetPlayerEntity : NetEntity
 
     [SerializeField] internal NetBufferManager bufferManager;
 
+    [SerializeField] internal NetPlayerWeaponController weaponController;
     
 
     public override void OnNetworkSpawn()
@@ -30,6 +31,8 @@ public class NetPlayerEntity : NetEntity
         {
             GameplayCanvas.player = this;
         }
+
+        weaponController.Initialise();
     }
 
     public override void OnNetworkDespawn()

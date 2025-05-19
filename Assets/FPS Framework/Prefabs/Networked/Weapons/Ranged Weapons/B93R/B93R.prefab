@@ -505,7 +505,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7036213049465896255, guid: 48a27a765440ef741914e65980388543,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2547449374980973945}
+      addedObject: {fileID: 6281809609003618426}
   m_SourcePrefab: {fileID: 100100000, guid: 48a27a765440ef741914e65980388543, type: 3}
 --- !u!4 &379232263661487596 stripped
 Transform:
@@ -540,7 +540,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2547449374980973945
+--- !u!114 &6281809609003618426
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -549,7 +549,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2295859369337573286}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Script: {fileID: 11500000, guid: c0ade3a55cfbdfa438939768e2ee898c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   TransitionStateInfoList:
@@ -692,7 +692,8 @@ MonoBehaviour:
   maxChargeDamageMultiplier: 0.2
   fireOrigin: {fileID: 4533715594391698745}
   fireIterations: 1
-  ProjectilePrefab: {fileID: 0}
+  ProjectilePrefab: {fileID: 5209872433354348746, guid: 855a3d0dbb55fcd4ebc927cb03fdf648,
+    type: 3}
 --- !u!114 &3905362534145189597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -720,6 +721,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 9068203903266039709}
+  networkAnimator: {fileID: 0}
   controller: {fileID: 0}
   weapon: {fileID: 4767148707631472417}
   isWeapon: 1

@@ -8,14 +8,17 @@ public class NetWeaponController : LunarNetScript
 {
     [SerializeField] internal bool primaryInput, secondaryInput;
     internal bool lastPrimary, lastSecondary, lastReload;
+    internal int previousWeaponCount;
+
     [SerializeField] internal List<BaseNetWeapon> weapons;
+    [SerializeField] internal int lastWeaponCount;
     [SerializeField]
     internal AnticipatedNetworkVariable<int> weaponIndex = new(0, StaleDataHandling.Reanticipate);
     [SerializeField]
     internal AnticipatedNetworkVariable<int> nextWeaponIndex = new(0, StaleDataHandling.Reanticipate);
     public BaseNetWeapon CurrentWeapon => weapons[weaponIndex.Value];
 
-    internal Collider[] colliders;
+    [SerializeField] internal Collider[] colliders;
     internal HashSet<Collider> colliderSet; 
     internal Transform fireOrigin;
 
@@ -29,7 +32,25 @@ public class NetWeaponController : LunarNetScript
 
     public virtual float Spread(float value) => value * (1 - aimAmount);
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+    }
 
+    public void WeaponAdded(BaseNetWeapon weapon)
+    {
+        if(!weapons.Contains(weapon))
+            weapons.Add(weapon);
+        RePollWeapons();
+    }
+    public void RePollWeapons()
+    {
+        if (lastWeaponCount == 0)
+        {
+            Initialise();
+        }
+        lastWeaponCount = weapons.Count;
+    }
     public virtual void Initialise()
     {
         colliderSet = new(colliders);
@@ -39,15 +60,15 @@ public class NetWeaponController : LunarNetScript
             //We have no weapons, exit early.
             if (weapons.Count == 0)
                 return;
-            //ChangeCurrentWeapon(weapons[0], out _, out _);
+            ChangeCurrentWeapon(weapons[0], out _, out _);
 
             for (int i = 0; i < weapons.Count; i++)
             {
-                //if (weapons[i].animator != null)
-                //{
-                //    weapons[i].animator.controller = this;
-                //    weapons[i].animator.Initialise();
-                //}
+                if (weapons[i].animator != null)
+                {
+                    weapons[i].animator.controller = this;
+                    weapons[i].animator.Initialise();
+                }
                 weapons[i].InitialiseWeapon(this);
                 if (i == 0)
                     continue;
@@ -56,6 +77,16 @@ public class NetWeaponController : LunarNetScript
             }
         }
     }
+    public override void LTimestep()
+    {
+        base.LTimestep();
+
+        if (lastWeaponCount != weapons.Count)
+        {
+            RePollWeapons();
+        }
+    }
+
     public void ShowWeapon(GameObject weapon, bool show)
     {
         weapon.transform.localScale = show ? Vector3.one : Vector3.zero;

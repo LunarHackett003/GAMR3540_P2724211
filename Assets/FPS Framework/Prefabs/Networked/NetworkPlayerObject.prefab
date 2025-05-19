@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4236167667841383810}
   - component: {fileID: 3747310169740031796}
+  - component: {fileID: 7063636737516762336}
   m_Layer: 0
   m_Name: NetworkPlayerObject
   m_TagString: Untagged
@@ -44,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3482669927
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 3241041659
+  InScenePlacedSourceGlobalObjectIdHash: 3241041659
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -53,3 +54,20 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &7063636737516762336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6452239331618525258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd1f70f10dba444eb35e30306959625, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileSimulatorPrefab: {fileID: 3644418406885586667, guid: b291e32e79c362b4ebe74f52742b1e43,
+    type: 3}
+  playerPrefab: {fileID: 1922332407566924349, guid: 7d7bd2ab0fae2d043a4c32568d4fffe7,
+    type: 3}
+  weaponList: {fileID: 11400000, guid: 7f25549bfc93eff4d98435169bb0952f, type: 2}

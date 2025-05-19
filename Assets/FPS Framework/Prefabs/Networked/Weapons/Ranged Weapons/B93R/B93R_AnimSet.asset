@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: B93R_AnimSet
   m_EditorClassIdentifier: 
   clips:
-  - targetClip: {fileID: 0}
+  - targetClip: {fileID: 7400000, guid: 438cf89d5892ee2448206251db20dda8, type: 2}
     characterClip: {fileID: 7400000, guid: 4c5ae5ad18b48c541804bfa6e50e6b4a, type: 2}
-    weaponClip: {fileID: 0}
-  - targetClip: {fileID: 0}
+    weaponClip: {fileID: 7400000, guid: 6c68213804f455a4393241623dfb71b3, type: 2}
+  - targetClip: {fileID: 7400000, guid: 1de0b8596ccd1e041b82905acbcbaa08, type: 2}
     characterClip: {fileID: 7400000, guid: 1834985205fa62e4e9c3a9277d82a200, type: 2}
-    weaponClip: {fileID: 0}
-  - targetClip: {fileID: 0}
+    weaponClip: {fileID: 7400000, guid: 230617aaea9ae5a49b36dfc581aa6532, type: 2}
+  - targetClip: {fileID: 7400000, guid: b4dd95253c670e9428e605b16017d173, type: 2}
     characterClip: {fileID: 7400000, guid: 2018ed50c42af7f4589bac62369aa11e, type: 2}
     weaponClip: {fileID: 0}
-  - targetClip: {fileID: 0}
+  - targetClip: {fileID: 7400000, guid: d3939dcd22008324ab3fa261ace3e098, type: 2}
     characterClip: {fileID: 7400000, guid: 8c722e1a1b987194d935677870debf29, type: 2}
     weaponClip: {fileID: 7400000, guid: d2beefb1920d55c45839f8fd7e1c603b, type: 2}
   - targetClip: {fileID: 7400000, guid: 7ab4f5402fd260e4f9e720d295a5f048, type: 2}

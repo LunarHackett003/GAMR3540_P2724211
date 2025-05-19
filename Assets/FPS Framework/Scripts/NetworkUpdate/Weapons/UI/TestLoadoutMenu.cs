@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class TestLoadoutMenu : LunarScript
 {
     public static TestLoadoutMenu Instance { get; private set; }
-    public List<BaseNetWeapon> weapons;
+    public TestLoadoutWeaponCollection weaponList;
 
-    public List<BaseNetWeapon> selectedWeapons = new(4);
+    public List<int> selectedWeapons = new(4);
 
     public Button[] slotButtons;
 
@@ -16,7 +16,7 @@ public class TestLoadoutMenu : LunarScript
     List<TestLoadoutButton> loadoutButtons;
     public RectTransform weaponListRoot;
 
-    public enum SlotSelection : int
+    public enum SlotSelection
     {
         slot1 = 0,
         slot2 = 1,
@@ -36,33 +36,42 @@ public class TestLoadoutMenu : LunarScript
 
         for (int i = 0; i < slotButtons.Length; i++)
         {
+            int index = i;
+            Debug.Log($"setting up listener for button {i}");
             slotButtons[i].onClick.AddListener(() =>
             {
-                SetSelection(i);
+                SetSelection(index);
             });
         }
-
+        BuildUI();
+        weaponListRoot.gameObject.SetActive(false);
     }
 
     void SetSelection(int slotIndex)
     {
+        Debug.Log($"Selection enabled for slot {slotIndex}");
         currentSlotSelection = (SlotSelection)slotIndex;
+        Debug.Log($"That translates to {(int)currentSlotSelection}");
         weaponListRoot.gameObject.SetActive(true);
     }
 
-    public void SelectWeapon(BaseNetWeapon weapon)
+    public void SelectWeapon(int index)
     {
-        selectedWeapons[(int)currentSlotSelection] = weapon;
+        selectedWeapons[(int)currentSlotSelection] = index;
         weaponListRoot.gameObject.SetActive(false);
     }
 
     public void BuildUI()
     {
-        for (int i = 0; i < weapons.Count; i++)
+        loadoutButtons = new();
+        for (int i = 0; i < weaponList.weapons.Count; i++)
         {
+            int index = i;
             var button = Instantiate(buttonPrefab, weaponListRoot);
-            button.Initialise(weapons[i]);
+            button.Initialise(weaponList.weapons[index], index);
             loadoutButtons.Add(button);
+
+            button.button.onClick.AddListener(() => { SelectWeapon(index); });
         }
     }
 

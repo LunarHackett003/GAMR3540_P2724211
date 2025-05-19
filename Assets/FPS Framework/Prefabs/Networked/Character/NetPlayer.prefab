@@ -859,6 +859,7 @@ GameObject:
   - component: {fileID: -6841248656070245931}
   - component: {fileID: 7721887727038881306}
   - component: {fileID: 2927406344617015266}
+  - component: {fileID: 860630945268122133}
   m_Layer: 6
   m_Name: NetPlayer
   m_TagString: Untagged
@@ -1036,6 +1037,7 @@ MonoBehaviour:
       m_Calls: []
   motor: {fileID: 1611007650946771031}
   bufferManager: {fileID: 6327532313127820386}
+  weaponController: {fileID: 2927406344617015266}
 --- !u!114 &6327532313127820386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1118,7 +1120,31 @@ MonoBehaviour:
     m_AuthoritativeValue:
       m_InternalValue: 0
     StaleDataHandling: 1
+  colliders:
+  - {fileID: 5515138310644021310}
+  - {fileID: 7647502889170796587}
+  - {fileID: 4446286891529230673}
+  - {fileID: 4453541053222851250}
+  - {fileID: 7418248627133456820}
+  - {fileID: 3973742357063754791}
+  - {fileID: 1430726189135294972}
+  - {fileID: 2142267586954577572}
+  - {fileID: 1484971829948859078}
+  - {fileID: 2963752238801582998}
+  - {fileID: 4148457591510544460}
+  - {fileID: 7365879010403538637}
+  - {fileID: 9018802708380243416}
+  - {fileID: 8126584846237901401}
+  - {fileID: 1850565490489467711}
+  - {fileID: 6227282256413479202}
+  - {fileID: 7084166878919176050}
+  - {fileID: 1761824067243864417}
+  - {fileID: 9211509546078269679}
+  - {fileID: 5015575875107403823}
+  - {fileID: 686219911401879917}
+  - {fileID: 6771784988557355914}
   fireBlockedByAnimation: 0
+  animator: {fileID: 860630945268122133}
   reloadInput: 0
   meleeInput: 0
   weaponSwitchInput: 0
@@ -1127,6 +1153,23 @@ MonoBehaviour:
   weaponPositionOffset: {fileID: 4752557809316964030}
   weaponRotationInvert: {fileID: 337724956419922602}
   weaponTargetTransform: {fileID: 897516428711876209}
+--- !u!114 &860630945268122133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3229907142889673036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1045384fa00138840b02555c1abdff1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 5786238750598794529}
+  networkAnimator: {fileID: 7618320060755377556}
+  controller: {fileID: 2927406344617015266}
+  weapon: {fileID: 0}
+  isWeapon: 0
 --- !u!1 &3462235525880926267
 GameObject:
   m_ObjectHideFlags: 0
@@ -3645,6 +3688,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7493423277672852121}
   - component: {fileID: 6761915877911460006}
+  - component: {fileID: 6066235435950643369}
   m_Layer: 0
   m_Name: RotationTarget
   m_TagString: Untagged
@@ -3679,6 +3723,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48948dfe9d76b07488dacd46a7955fa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6066235435950643369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8937701316067118122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 382f896cff6d7724c9ed8948816205b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 0
+  SyncPositionY: 0
+  SyncPositionZ: 0
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+  authorityMode: 1
 --- !u!1 &8993738501397802103
 GameObject:
   m_ObjectHideFlags: 0
@@ -8295,6 +8371,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5509565892851492499}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1329da175fdf5e2429dfed879738e168,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7618320060755377556}
     - targetCorrespondingSourceObject: {fileID: 4831018558786363571, guid: 1329da175fdf5e2429dfed879738e168,
         type: 3}
       insertIndex: -1
@@ -8323,6 +8403,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1075454413439230169}
+    - targetCorrespondingSourceObject: {fileID: -7855745834211149319, guid: 1329da175fdf5e2429dfed879738e168,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 917805720518290563}
     - targetCorrespondingSourceObject: {fileID: -8949256913407988344, guid: 1329da175fdf5e2429dfed879738e168,
         type: 3}
       insertIndex: -1
@@ -8478,6 +8562,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48948dfe9d76b07488dacd46a7955fa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &917805720518290563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2546990917755655657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 382f896cff6d7724c9ed8948816205b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 0
+  SyncRotAngleY: 0
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  Interpolate: 1
+  SlerpPosition: 0
+  authorityMode: 1
 --- !u!4 &2589984553446962427 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1320411542853409003, guid: 1329da175fdf5e2429dfed879738e168,
@@ -8641,6 +8757,55 @@ MonoBehaviour:
   - m_Rig: {fileID: 1089824987665939026}
     m_Active: 1
   m_Effectors: []
+--- !u!114 &7618320060755377556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4423409659539558721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0ade3a55cfbdfa438939768e2ee898c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -118708495
+    DestinationState: 1562257414
+    TransitionDuration: 0.065812886
+    TriggerNameHash: 1562257414
+    TransitionIndex: 1
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -118708495
+    DestinationState: 1159952127
+    TransitionDuration: 0.30583507
+    TriggerNameHash: -1047320328
+    TransitionIndex: 2
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 2081823275
+    DestinationState: 2071894089
+    TransitionDuration: 0.065812886
+    TriggerNameHash: 2071894089
+    TransitionIndex: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 2081823275
+    DestinationState: 1562257414
+    TransitionDuration: 0.065812886
+    TriggerNameHash: 1562257414
+    TransitionIndex: 1
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 2081823275
+    DestinationState: 1159952127
+    TransitionDuration: 0.19881755
+    TriggerNameHash: -1047320328
+    TransitionIndex: 3
+  m_Animator: {fileID: 5786238750598794529}
 --- !u!4 &4752557809316964030 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -1128705506346104146, guid: 1329da175fdf5e2429dfed879738e168,
