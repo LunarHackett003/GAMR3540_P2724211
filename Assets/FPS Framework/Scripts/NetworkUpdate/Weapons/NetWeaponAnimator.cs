@@ -7,7 +7,7 @@ public class NetWeaponAnimator : LunarNetScript
 {
     [SerializeField] internal Animator animator;
     [SerializeField] internal WeaponController controller;
-    [SerializeField] internal BaseWeapon weapon;
+    [SerializeField] internal BaseNetWeapon weapon;
     public bool isWeapon;
 
     internal AnimatorOverrideController aoc;
@@ -22,7 +22,7 @@ public class NetWeaponAnimator : LunarNetScript
         }
         if (isWeapon)
         {
-            weapon = GetComponent<BaseWeapon>();
+            weapon = GetComponent<BaseNetWeapon>();
             UpdateAnimations();
             animator.tag = "Weapon";
         }
@@ -39,7 +39,7 @@ public class NetWeaponAnimator : LunarNetScript
             aoc.GetOverrides(clipOverrides);
         }
 
-        AnimationClipPair[] clips = isWeapon ? weapon.animSet.clips : controller.currentWeapon.animSet.clips;
+        AnimationClipPair[] clips = isWeapon ? weapon.animationSet.clips : controller.currentWeapon.animSet.clips;
         for (int i = 0; i < clips.Length; i++)
         {
             AnimationClipPair acp = clips[i];

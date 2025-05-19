@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ProjectileSimulator : LunarNetScript
@@ -100,11 +101,29 @@ public class ProjectileSimulator : LunarNetScript
                     weapon = proj.weapon,
                     damageAccumulated = damageDealt,
                     forceAccumulated = -hit.normal * damageDealt,
-
+                    hitPointAccumulated = hit.point,
+                    hits = 1,
                 });
             }
+            //Implement Ricochet and Penetration later on
 
 
+            //Ricochet + Penetration
+            Debug.DrawLine(castCommands[i].origin, hits[i].point, Random.ColorHSV(), raycastDebugTime);
+        }
+        if(colliderHitData.Count > 0)
+        {
+            foreach (var item in colliderHitData)
+            {
+                if(item.Key.attachedRigidbody != null)
+                {
+                    
+                }
+                if(item.Key.TryGetComponent(out NetDamageable d))
+                {
+                    d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
+                }
+            }
         }
     }
 

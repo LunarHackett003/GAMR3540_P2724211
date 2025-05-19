@@ -12,6 +12,7 @@ public class BaseNetWeapon : LunarNetScript
     public const float TRIGGERTIMETINY = 0.1f, TRIGGERTIMESHORT = 0.4f, TRIGGERTIMELONG = 0.8f;
 
     public string displayName = "Networked Weapon";
+    public Sprite weaponIcon;
     public WeaponAnimationSetScriptable animationSet;
     internal bool primaryInput, secondaryInput, primaryPressed, secondaryPressed;
 

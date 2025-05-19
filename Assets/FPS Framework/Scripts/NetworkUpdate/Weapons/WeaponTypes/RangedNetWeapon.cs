@@ -26,7 +26,7 @@ public class RangedNetWeapon : BaseNetWeapon
 
     NetProjectile CreatePooledItem()
     {
-        NetProjectile np = Instantiate(ProjectilePrefab, fireOrigin.position, Quaternion.identity, null).gameObject.GetComponent<NetProjectile>();
+        NetProjectile np = Instantiate(ProjectilePrefab, fireOrigin.position, Quaternion.identity, null).GetComponent<NetProjectile>();
         np.gameObject.hideFlags = HideFlags.HideInHierarchy;
         return np;
     }
