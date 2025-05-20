@@ -25,7 +25,7 @@ public class WeaponSwitchBehaviour : WeaponAnimationBehaviourBase
         if(canExecute && !triggered && stateInfo.normalizedTime >= 1)
         {
             controller.animator.UpdateAnimations();
-            controller.SwitchToWeaponIndex(controller.nextWeaponIndex);
+            controller.SwitchToWeaponIndex(controller.nextWeaponIndex.Value);
             triggered = true;
         }
     }

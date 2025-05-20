@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// The class that ties together all of the player related systems.
@@ -19,7 +20,8 @@ public class NetPlayerEntity : NetEntity
     [SerializeField] internal NetBufferManager bufferManager;
 
     [SerializeField] internal NetPlayerWeaponController weaponController;
-    
+
+    [SerializeField] internal Camera viewmodelCamera;
 
     public override void OnNetworkSpawn()
     {
@@ -27,10 +29,13 @@ public class NetPlayerEntity : NetEntity
 
         playersByID.Add(OwnerClientId, this);
 
-        if (IsOwner && GameplayCanvas.Instance != null)
+        if (IsOwner)
         {
-            GameplayCanvas.player = this;
+            if(GameplayCanvas.Instance != null)
+                GameplayCanvas.player = this;
+            Camera.main.GetUniversalAdditionalCameraData().cameraStack.Add(viewmodelCamera);
         }
+
 
         weaponController.Initialise();
     }

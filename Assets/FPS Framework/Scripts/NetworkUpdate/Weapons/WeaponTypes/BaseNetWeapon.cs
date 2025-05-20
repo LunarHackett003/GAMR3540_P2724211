@@ -21,8 +21,11 @@ public class BaseNetWeapon : LunarNetScript
     [SerializeField] internal bool canCrit;
     [SerializeField] internal float critMultiplier;
 
+    [SerializeField] internal AimParams aimParams;
+
     [SerializeField] internal float crosshairSpreadBase;
     [SerializeField] internal float crosshairSpreadMax;
+    [SerializeField] internal bool hideCrosshairWhenAiming;
     [SerializeField] internal bool useAttackSpread, spreadOnPrimary, spreadOnSecondary;
     [SerializeField] internal float attackSpreadIncrement;
     [SerializeField] internal float attackSpreadDecay;
@@ -47,7 +50,7 @@ public class BaseNetWeapon : LunarNetScript
     [SerializeField, Tooltip("How much charge the weapon loses every second when not charge")] protected float chargeDecayRate;
     [SerializeField, Tooltip("How much charge is required to fire the weapon?")] protected float minimumChargeToFire;
     [SerializeField, Tooltip("Resets charge to zero after firing")] protected bool resetChargeOnFire;
-    [SerializeField, Tooltip("How much charge the weapon currently has")] protected float chargeAmount;
+    [SerializeField, Tooltip("How much charge the weapon currently has")] internal float chargeAmount;
     [SerializeField, Tooltip("Will the weapon charge to full, even if the player releases the fire input?")] protected bool chargeUntilFire;
     [SerializeField, Tooltip("Will the forced charge end when we reach minimum charge, if we've released the fire input?")] protected bool chargeOnlyUntilMinimum;
     [SerializeField, Tooltip("Fires the weapon when we release the fire input")] protected bool fireOnRelease;
@@ -55,6 +58,8 @@ public class BaseNetWeapon : LunarNetScript
     protected virtual bool ChargeInput => (primaryUsesCharge && primaryInput) || (secondaryUsesCharge && secondaryInput) || chargeHoldFrame;
     internal bool animatedFirePending;
     internal bool animatedFireLast;
+
+
 
     [SerializeField] internal bool charging;
     internal bool chargeHoldFrame;
@@ -75,6 +80,18 @@ public class BaseNetWeapon : LunarNetScript
 
         controller = NetPlayerEntity.playersByID[OwnerClientId].weaponController;
         controller.WeaponAdded(this);
+
+        if (useAmmunition)
+        {
+            if (!IsServer)
+            {
+                CurrentAmmo.Anticipate(maxAmmo);
+            }
+            else
+            {
+                CurrentAmmo.AuthoritativeValue = maxAmmo;
+            }
+        }
     }
 
     public virtual void InitialiseWeapon(NetWeaponController controller)
@@ -88,11 +105,15 @@ public class BaseNetWeapon : LunarNetScript
         if(animatedFireLast != animatedFirePending)
         {
             animatedFireLast = animatedFirePending;
-            
+            SetBool(MANUALACTION, animatedFirePending);
+        }
+        
+        if(primaryUsesCharge || secondaryUsesCharge)
+        {
+            UpdateCharge();
         }
 
-
-        if(primaryInput && !secondaryPressed)
+        if (primaryInput && !secondaryPressed && !PrimaryBlocked)
         {
             PrimaryBehaviour();
         }
@@ -100,11 +121,17 @@ public class BaseNetWeapon : LunarNetScript
         {
             SecondaryBehaviour();
         }
+
+        if (useAttackSpread)
+        {
+            attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount - (Time.fixedDeltaTime * attackSpreadDecay));
+        }
     }
 
     protected virtual void PrimaryBehaviour()
     {
-
+        if (fired)
+            return;
     }
     protected virtual void SecondaryBehaviour()
     {
@@ -130,7 +157,7 @@ public class BaseNetWeapon : LunarNetScript
                 TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT, true);
             }
         }
-        if (primaryUsesCharge || secondaryUsesCharge && resetChargeOnFire)
+        if ((primaryUsesCharge || secondaryUsesCharge) && resetChargeOnFire)
         {
             chargeAmount = 0;
         }
@@ -153,6 +180,38 @@ public class BaseNetWeapon : LunarNetScript
         primaryPressed = false;
         animatedFirePending = false;
         CurrentAmmo.Anticipate(maxAmmo);
+    }
+
+    protected virtual void UpdateCharge()
+    {
+        bool charge = charging || ChargeInput || chargeHoldFrame;
+        //animator.SetAnimationBool(CHARGING, primaryUsesCharge ? primaryInput : (secondaryUsesCharge && secondaryInput));
+        SetBool(CHARGING, charge);
+
+        //if ((primaryUsesCharge && primaryInput) || (secondaryUsesCharge && secondaryInput))
+        //{
+        //    chargeAmount += Time.fixedDeltaTime * 
+        //}
+        //else
+        //{
+
+        //}
+
+
+        //If we are not charging this weapon via a coroutine...
+        if (!charging)
+        {
+            //Start charging 
+            if (chargeUntilFire && chargeAmount < (chargeOnlyUntilMinimum ? minimumChargeToFire : 1) && !charging && ChargeInput)
+            {
+                StartCoroutine(ChargeWeaponCoroutine());
+            }
+            if (!chargeHoldFrame)
+                chargeAmount += Time.fixedDeltaTime * (charge ? chargeRate : -chargeDecayRate);
+        }
+
+        chargeAmount = Mathf.Clamp01(chargeAmount);
+        SetFloat(CHARGEAMOUNT, chargeAmount);
     }
 
 

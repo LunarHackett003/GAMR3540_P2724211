@@ -1038,6 +1038,7 @@ MonoBehaviour:
   motor: {fileID: 1611007650946771031}
   bufferManager: {fileID: 6327532313127820386}
   weaponController: {fileID: 2927406344617015266}
+  viewmodelCamera: {fileID: 3356232319739446214}
 --- !u!114 &6327532313127820386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1112,6 +1113,7 @@ MonoBehaviour:
   primaryInput: 0
   secondaryInput: 0
   weapons: []
+  lastWeaponCount: 0
   weaponIndex:
     m_AuthoritativeValue:
       m_InternalValue: 0
@@ -1120,6 +1122,7 @@ MonoBehaviour:
     m_AuthoritativeValue:
       m_InternalValue: 0
     StaleDataHandling: 1
+  currentWeapon: {fileID: 0}
   colliders:
   - {fileID: 5515138310644021310}
   - {fileID: 7647502889170796587}
@@ -1143,6 +1146,7 @@ MonoBehaviour:
   - {fileID: 5015575875107403823}
   - {fileID: 686219911401879917}
   - {fileID: 6771784988557355914}
+  fireOrigin: {fileID: 7269716539852128244}
   fireBlockedByAnimation: 0
   animator: {fileID: 860630945268122133}
   reloadInput: 0
@@ -8382,7 +8386,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4831018558786363571, guid: 1329da175fdf5e2429dfed879738e168,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4350961869944273037}
+      addedObject: {fileID: 1257251220304352780}
     - targetCorrespondingSourceObject: {fileID: -259972160606440404, guid: 1329da175fdf5e2429dfed879738e168,
         type: 3}
       insertIndex: -1
@@ -8845,13 +8849,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ownerConfig:
-    shadowCastingMode: 3
+    shadowsOnly: 1
     updateOffscreen: 1
   remoteConfig:
-    shadowCastingMode: 1
+    shadowsOnly: 0
     updateOffscreen: 0
   meshRenderer: {fileID: 0}
-  skinnedMeshRenderer: {fileID: 7049822384966676870}
+  skinnedMeshRenderer: {fileID: 5123989794118495884}
+--- !u!137 &5123989794118495884 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -666985854777507172, guid: 1329da175fdf5e2429dfed879738e168,
+    type: 3}
+  m_PrefabInstance: {fileID: 3576546912883321872}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5501254918102552691 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -145786150660752285, guid: 1329da175fdf5e2429dfed879738e168,
@@ -8891,10 +8901,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ownerConfig:
-    shadowCastingMode: 3
+    shadowsOnly: 1
     updateOffscreen: 1
   remoteConfig:
-    shadowCastingMode: 1
+    shadowsOnly: 0
     updateOffscreen: 0
   meshRenderer: {fileID: 0}
   skinnedMeshRenderer: {fileID: 8311832150167202399}
@@ -9014,7 +9024,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ownerLayerIndex: 6
   remoteLayerIndex: 0
---- !u!114 &4350961869944273037
+--- !u!114 &1257251220304352780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9027,10 +9037,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ownerConfig:
-    shadowCastingMode: 1
+    shadowsOnly: 0
     updateOffscreen: 1
   remoteConfig:
-    shadowCastingMode: 1
+    shadowsOnly: 0
     updateOffscreen: 0
   meshRenderer: {fileID: 0}
   skinnedMeshRenderer: {fileID: 7049822384966676870}

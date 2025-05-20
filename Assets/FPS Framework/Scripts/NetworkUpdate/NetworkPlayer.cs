@@ -17,7 +17,7 @@ public class NetworkPlayer : LunarNetScript
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        if (IsServer)
+        if (IsServer && IsOwner)
         {
             NetworkManager.SpawnManager.InstantiateAndSpawn(projectileSimulatorPrefab, destroyWithScene: true);
         }

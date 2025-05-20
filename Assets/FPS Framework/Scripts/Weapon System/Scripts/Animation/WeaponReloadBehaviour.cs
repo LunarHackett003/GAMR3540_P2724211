@@ -16,7 +16,7 @@ public class WeaponReloadBehaviour : WeaponAnimationBehaviourBase
             return;
 
         Debug.Log($"reload time : {reloadAtTime}, state duration: {stateInfo.length}", animator.gameObject);
-        reloadAtTime = emptyReload ? controller.currentWeapon.emptyReloadTime : controller.currentWeapon.partialReloadTime;
+        reloadAtTime = emptyReload ? controller.CurrentWeapon.emptyReloadTime : controller.CurrentWeapon.partialReloadTime;
         normalisedTimeForReload = Mathf.InverseLerp(0, stateInfo.length, reloadAtTime);
         reloaded = false;
     }

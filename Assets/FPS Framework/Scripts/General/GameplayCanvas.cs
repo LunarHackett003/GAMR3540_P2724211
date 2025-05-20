@@ -17,11 +17,7 @@ public class GameplayCanvas : LunarScript
         {
             Instance = this;
         }
-        else
-        {
-            enabled = false;
-            return;
-        }
+        DontDestroyOnLoad(gameObject);
     }
 
     public UIModule healthModule, weaponModule;
@@ -29,6 +25,10 @@ public class GameplayCanvas : LunarScript
 
     public override void LPostUpdate()
     {
+        if (Instance == null)
+            Instance = this;
+
+
         base.LPostUpdate();
 
         if(player == null)

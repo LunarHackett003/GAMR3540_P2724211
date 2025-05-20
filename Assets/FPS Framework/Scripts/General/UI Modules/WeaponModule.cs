@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class WeaponModule : UIModule
 {
-    BaseWeapon Weapon => null;
+    BaseNetWeapon Weapon => Player.weaponController.CurrentWeapon;
     float lastAmmo; int lastAmmoPhase;
-    BaseWeapon lastWeapon;
+    BaseNetWeapon lastWeapon;
     public TMP_Text weaponNameText, weaponAmmoText;
     public GameObject weaponPhaseParent;
     public Image[] weaponPhaseIndicators;
@@ -34,10 +34,10 @@ public class WeaponModule : UIModule
     void UpdatePhaseDisplay()
     {
         bool @override = lastWeapon != Weapon;
-        if (lastAmmo != Weapon.CurrentAmmo || Weapon.currentAmmoPhase != lastAmmoPhase || @override)
+        if (lastAmmo != Weapon.CurrentAmmo.Value || Weapon.currentAmmoPhase != lastAmmoPhase || @override)
         {
-            lastAmmo = Weapon.CurrentAmmo;
-            weaponAmmoText.text = $"{Weapon.CurrentAmmo:0}/{Weapon.maxAmmo}";
+            lastAmmo = Weapon.CurrentAmmo.Value;
+            weaponAmmoText.text = $"{Weapon.CurrentAmmo.Value:0}/{Weapon.maxAmmo}";
             if (Weapon.useAmmoPhases)
             {
                 weaponPhaseParent.SetActive(true);

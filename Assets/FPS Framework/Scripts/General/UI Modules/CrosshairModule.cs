@@ -15,13 +15,14 @@ public class CrosshairModule : UIModule
     public Image weaponChargeImage;
     public float weaponChargeFillAmount;
 
-    public BaseWeapon Weapon => null;
+    public BaseNetWeapon Weapon => Player.weaponController.CurrentWeapon;
 
     public override void UpdateModule()
     {
         if (Weapon == null || Weapon.controller == null)
             return;
-        crosshairGroup.alpha = 1 - Weapon.controller.aimAmount;
+
+        crosshairGroup.alpha = Weapon.hideCrosshairWhenAiming ? 1 - Weapon.controller.aimAmount : 1;
 
         crosshairTargetSize = 1 + Weapon.controller.Spread(Weapon.baseAttackSpread + Weapon.attackSpreadAmount);
 

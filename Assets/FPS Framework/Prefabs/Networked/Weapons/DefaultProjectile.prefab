@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1819373237
+  GlobalObjectIdHash: 2545733086
   InScenePlacedSourceGlobalObjectIdHash: 2545733086
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -72,11 +72,13 @@ MonoBehaviour:
   damageMultiplier: 1
   velocityMultiplier: 1
   projectileEffect: {fileID: 5509863597144230507}
-  maxAliveTime: 10
-  maxDistance: 100
+  maxAliveTime: 3
+  maxDistance: 800
+  timeAlive: 0
+  returnTimeAfterTerminate: 3
   thickness: 0.0056
   direction: {x: 0, y: 0, z: 0}
-  velocity: 10
+  velocity: 15
   gravityMultiplier: 1
 --- !u!114 &1680747174228823866
 MonoBehaviour:

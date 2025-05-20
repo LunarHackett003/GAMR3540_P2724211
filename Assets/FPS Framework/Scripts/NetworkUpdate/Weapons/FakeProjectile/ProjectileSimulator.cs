@@ -48,6 +48,8 @@ public class ProjectileSimulator : LunarNetScript
 
         foreach (NetProjectile projectile in allProjectiles)
         {
+            if (projectile.terminated) continue;
+
             projectile.TickProjectile();
         }
     }
@@ -70,6 +72,9 @@ public class ProjectileSimulator : LunarNetScript
         job.Complete();
 
         int hitCount = 0;
+        if(hits.Length > 0)
+        {
+
         for (int i = 0; i < hits.Length; i++)
         {
             if (hits[i].collider == null)
@@ -82,6 +87,7 @@ public class ProjectileSimulator : LunarNetScript
             NetProjectile proj = allProjectiles[i];
             if (proj.ignoredColliders.Contains(c))
             {
+                Debug.Log("Ignoring this collider and continuing");
                 continue;
             }
             //If we progress past here, we hit something.
@@ -109,7 +115,13 @@ public class ProjectileSimulator : LunarNetScript
 
 
             //Ricochet + Penetration
-            Debug.DrawLine(castCommands[i].origin, hits[i].point, Random.ColorHSV(), raycastDebugTime);
+            proj.transform.position = hit.point;
+
+            proj.TerminateProjectile();
+
+            Debug.DrawRay(proj.transform.position, hits[i].point, Random.ColorHSV(), raycastDebugTime);
+
+
         }
         if(colliderHitData.Count > 0)
         {
@@ -117,13 +129,16 @@ public class ProjectileSimulator : LunarNetScript
             {
                 if(item.Key.attachedRigidbody != null)
                 {
-                    
+                    item.Key.attachedRigidbody.AddForceAtPosition(item.Value.forceAccumulated, item.Value.hitPointAccumulated / item.Value.hits);
                 }
-                if(item.Key.TryGetComponent(out NetDamageable d))
+                if (item.Key.TryGetComponent(out NetDamageable d))
                 {
                     d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
                 }
             }
+        }
+            castCommands.Dispose();
+            hits.Dispose();
         }
     }
 

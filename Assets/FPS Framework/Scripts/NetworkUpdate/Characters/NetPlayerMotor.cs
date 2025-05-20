@@ -34,6 +34,7 @@ public class NetPlayerMotor : LunarNetScript
     [SerializeField] internal Transform upperStepTransform, lowerStepTransform;
     [SerializeField] internal bool debugMantle;
 
+    internal bool aiming;
 
 
 
@@ -724,12 +725,14 @@ public class NetPlayerMotor : LunarNetScript
     void CheckAimState()
     {
         //Do more later
+        if (aiming)
+            sprinting = false;
     }
     void RotatePlayer()
     {
         if(InputManager.LookInput != Vector2.zero)
         {
-            Vector2 lookSpeed = viewParams.lookSpeed;
+            Vector2 lookSpeed = viewParams.lookSpeed * (aiming ? viewParams.aimLookModifier : 1);
             lookPitch = Mathf.Clamp(lookPitch - Time.deltaTime * lookSpeed.y * lookInput.y, -viewParams.lookPitchClamp, viewParams.lookPitchClamp);
             head.localRotation = Quaternion.Euler(lookPitch, 0, 0);
             transform.rotation *= Quaternion.Euler(0, lookInput.x * lookSpeed.x * Time.deltaTime, 0);

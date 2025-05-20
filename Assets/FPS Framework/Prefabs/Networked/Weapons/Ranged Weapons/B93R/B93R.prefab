@@ -256,6 +256,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 805564053615298844, guid: 48a27a765440ef741914e65980388543,
         type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d76d747ec5af71247a426c78848e55e0, type: 2}
+    - target: {fileID: 805564053615298844, guid: 48a27a765440ef741914e65980388543,
+        type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: d76d747ec5af71247a426c78848e55e0, type: 2}
@@ -498,6 +503,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 936669832742649924}
+    - targetCorrespondingSourceObject: {fileID: -3867463019558205977, guid: 48a27a765440ef741914e65980388543,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6918626406100431158}
     - targetCorrespondingSourceObject: {fileID: 7036213049465896255, guid: 48a27a765440ef741914e65980388543,
         type: 3}
       insertIndex: -1
@@ -506,6 +515,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6281809609003618426}
+    - targetCorrespondingSourceObject: {fileID: -5922622823359544968, guid: 48a27a765440ef741914e65980388543,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7581803381805354421}
   m_SourcePrefab: {fileID: 100100000, guid: 48a27a765440ef741914e65980388543, type: 3}
 --- !u!4 &379232263661487596 stripped
 Transform:
@@ -589,6 +602,46 @@ MonoBehaviour:
     TriggerNameHash: -1047320328
     TransitionIndex: 3
   m_Animator: {fileID: 9068203903266039709}
+--- !u!1 &3759700074787616638 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3867463019558205977, guid: 48a27a765440ef741914e65980388543,
+    type: 3}
+  m_PrefabInstance: {fileID: 9113352238402613913}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6918626406100431158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3759700074787616638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c057af5c9d311947995a90384b2f90b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerLayerIndex: 6
+  remoteLayerIndex: 0
+--- !u!1 &6032497451245974497 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5922622823359544968, guid: 48a27a765440ef741914e65980388543,
+    type: 3}
+  m_PrefabInstance: {fileID: 9113352238402613913}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7581803381805354421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6032497451245974497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c057af5c9d311947995a90384b2f90b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerLayerIndex: 6
+  remoteLayerIndex: 0
 --- !u!1 &8266436566070759368 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 48a27a765440ef741914e65980388543,
@@ -636,13 +689,14 @@ MonoBehaviour:
   animator: {fileID: 936669832742649924}
   canCrit: 1
   critMultiplier: 1.5
+  aimParams: {fileID: 11400000, guid: 8ca22edf018432d44a8c397bbccd5771, type: 2}
   crosshairSpreadBase: 1
   crosshairSpreadMax: 1.3
-  useAttackSpread: 0
+  useAttackSpread: 1
   spreadOnPrimary: 0
   spreadOnSecondary: 0
   attackSpreadIncrement: 0.5
-  attackSpreadDecay: 2.4
+  attackSpreadDecay: 4
   baseAttackSpread: 0
   attackSpreadAmount: 0
   useAmmunition: 1
@@ -657,8 +711,8 @@ MonoBehaviour:
   useAmmoPhases: 0
   ammoPhases: 0
   currentAmmoPhase: 0
-  partialReloadTime: 1.5
-  emptyReloadTime: 1.5
+  partialReloadTime: 2.2
+  emptyReloadTime: 2.2
   queuedReloadAnimation: 0
   fired: 0
   primaryUsesCharge: 0

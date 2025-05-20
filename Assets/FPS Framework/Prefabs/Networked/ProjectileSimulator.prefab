@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1544506213
+  GlobalObjectIdHash: 902077380
   InScenePlacedSourceGlobalObjectIdHash: 902077380
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c06f4ff1e034e764bb92081c1cdc8b70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raycastDebugTime: 0.1
+  raycastDebugTime: 10
   layermask:
     serializedVersion: 2
     m_Bits: 129

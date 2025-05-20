@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class NetProjectile : NetworkBehaviour
+public class NetProjectile : LunarNetScript
 {
     public float damageMultiplier = 1;
     public float velocityMultiplier = 1;
@@ -12,9 +12,13 @@ public class NetProjectile : NetworkBehaviour
     public float maxDistance = 100;
 
     internal float distanceTravelled;
-    internal float timeAlive;
+    [SerializeField] internal float timeAlive;
 
     internal RangedNetWeapon weapon;
+
+    internal bool terminated;
+
+    public float returnTimeAfterTerminate = 1;
 
     [SerializeField] internal float thickness;
     [SerializeField] internal Vector3 direction;
@@ -26,29 +30,72 @@ public class NetProjectile : NetworkBehaviour
     public void InitialiseProjectile(RangedNetWeapon weapon, Vector3 direction, float charge)
     {
 
-        ignoredColliders = weapon.controller.colliderSet;
+        if (NetworkManager.Singleton.IsServer)
+        {
+            ignoredColliders = weapon.controller.colliderSet;
 
-        this.weapon = weapon;
-        damageMultiplier = charge != 0 ? Mathf.Lerp(weapon.minChargeDamageMultiplier, weapon.maxChargeDamageMultiplier, charge) : 1;
-        transform.position = weapon.fireOrigin.position;
-        projectileEffect.Play();
+            this.weapon = weapon;
+            damageMultiplier = charge != 0 ? Mathf.Lerp(weapon.minChargeDamageMultiplier, weapon.maxChargeDamageMultiplier, charge) : 1;
+            transform.position = weapon.fireOrigin.position;
+            transform.forward = direction;
+            this.direction = direction;
+            projectileEffect.Play();
 
-        ProjectileSimulator.allProjectiles.Add(this);
+            ProjectileSimulator.allProjectiles.Add(this);
+
+            GetComponent<NetworkObject>().Spawn();
+        }
     }
     public void TerminateProjectile()
     {
+        timeAlive = 0;
+        terminated = true;
         ProjectileSimulator.allProjectiles.Remove(this);
+    }
+
+    public override void LTimestep()
+    {
+        if (IsServer)
+        {
+            if (terminated)
+            {
+                TerminatedTick();
+            }
+        }
     }
 
     public void TickProjectile()
     {
-        distanceTravelled += Time.fixedDeltaTime * velocity;
+        if (!terminated)
+        {
+
+            distanceTravelled += Time.fixedDeltaTime * velocity;
+            timeAlive += Time.fixedDeltaTime;
+
+        if(timeAlive >= maxAliveTime || distanceTravelled >= maxDistance)
+        {
+            RemoveProjectile();
+        }
+
+            transform.position += Time.fixedDeltaTime * velocity * direction;
+            direction += gravityMultiplier * Time.fixedDeltaTime * Time.fixedDeltaTime * Physics.gravity;
+        }
+    }
+    void TerminatedTick()
+    {
         timeAlive += Time.fixedDeltaTime;
-
-        transform.position += direction * velocity;
-        direction += Physics.gravity * gravityMultiplier;
-        velocity = direction.magnitude;
-
-        direction.Normalize();
+        if(timeAlive > returnTimeAfterTerminate)
+        {
+            RemoveProjectile();
+        }
+    }
+    public void RemoveProjectile()
+    {
+        if (terminated)
+        {
+            weapon.ProjectilePool.Release(this);
+            NetworkObject.Despawn(false);
+            terminated = false;
+        }
     }
 }

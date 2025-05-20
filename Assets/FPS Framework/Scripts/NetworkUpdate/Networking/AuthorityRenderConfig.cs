@@ -9,7 +9,8 @@ public class AuthorityRenderConfig : NetworkBehaviour
     [System.Serializable]
     public struct RendererConfig
     {
-        public ShadowCastingMode shadowCastingMode;
+        //public ShadowCastingMode shadowCastingMode;
+        public bool shadowsOnly;
         public bool updateOffscreen;
     }
     public RendererConfig ownerConfig, remoteConfig;
@@ -26,12 +27,12 @@ public class AuthorityRenderConfig : NetworkBehaviour
     {
         if (skinnedMeshRenderer)
         {
-            skinnedMeshRenderer.shadowCastingMode = config.shadowCastingMode;
+            skinnedMeshRenderer.shadowCastingMode = config.shadowsOnly ? ShadowCastingMode.ShadowsOnly : ShadowCastingMode.On;
             skinnedMeshRenderer.updateWhenOffscreen = config.updateOffscreen;
         }
         if (meshRenderer)
         {
-            meshRenderer.shadowCastingMode = config.shadowCastingMode;
+            meshRenderer.shadowCastingMode = config.shadowsOnly ? ShadowCastingMode.ShadowsOnly : ShadowCastingMode.On;
         }
     }
 }

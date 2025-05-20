@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponFireSwitchBehaviour : WeaponAnimationBehaviourBase
 {
-    RangedWeapon rweapon;
+    RangedNetWeapon rweapon;
     bool switched;
     public float timeToSwitch;
     float normTime;
@@ -14,7 +14,7 @@ public class WeaponFireSwitchBehaviour : WeaponAnimationBehaviourBase
         base.OnStateEnter(animator, stateInfo, layerIndex);
         if (!canExecute)
             return;
-        rweapon = (RangedWeapon)weapon;
+        rweapon = (RangedNetWeapon)weapon;
         if(rweapon != null)
         {
             timeToSwitch = rweapon.fireModeSwitchTime;

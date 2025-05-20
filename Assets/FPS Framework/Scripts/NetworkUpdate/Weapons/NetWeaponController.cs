@@ -16,11 +16,13 @@ public class NetWeaponController : LunarNetScript
     internal AnticipatedNetworkVariable<int> weaponIndex = new(0, StaleDataHandling.Reanticipate);
     [SerializeField]
     internal AnticipatedNetworkVariable<int> nextWeaponIndex = new(0, StaleDataHandling.Reanticipate);
-    public BaseNetWeapon CurrentWeapon => weapons[weaponIndex.Value];
+    public BaseNetWeapon CurrentWeapon => weaponIndex.Value < weapons.Count ? weapons[weaponIndex.Value] : null;
+
+    [SerializeField] BaseNetWeapon currentWeapon;
 
     [SerializeField] internal Collider[] colliders;
     internal HashSet<Collider> colliderSet; 
-    internal Transform fireOrigin;
+    [SerializeField] internal Transform fireOrigin;
 
     internal bool FireBlocked => fireBlockedByAnimation;
     [SerializeField] internal bool fireBlockedByAnimation;
@@ -39,27 +41,25 @@ public class NetWeaponController : LunarNetScript
 
     public void WeaponAdded(BaseNetWeapon weapon)
     {
-        if(!weapons.Contains(weapon))
+        if (!weapons.Contains(weapon))
             weapons.Add(weapon);
         RePollWeapons();
     }
     public void RePollWeapons()
     {
+        Debug.Log("Repolling weapons");
         if (lastWeaponCount == 0)
         {
+            Debug.Log("Repolled weapons and re-initialised");
             Initialise();
         }
-        lastWeaponCount = weapons.Count;
     }
     public virtual void Initialise()
     {
         colliderSet = new(colliders);
-        if (weapons.Count == 0)
+
+        if (weapons.Count > 0)
         {
-            weapons.AddRange(GetComponentsInChildren<BaseWeapon>());
-            //We have no weapons, exit early.
-            if (weapons.Count == 0)
-                return;
             ChangeCurrentWeapon(weapons[0], out _, out _);
 
             for (int i = 0; i < weapons.Count; i++)
@@ -76,7 +76,27 @@ public class NetWeaponController : LunarNetScript
                 ShowWeapon(weapons[i].gameObject, false);
             }
         }
+        lastWeaponCount = weapons.Count;
     }
+
+    public override void LUpdate()
+    {
+        if(CurrentWeapon != null)
+        {
+            if(lastPrimary != primaryInput)
+            {
+                CurrentWeapon.primaryInput = primaryInput;
+                lastPrimary = primaryInput;
+            }
+            if(lastSecondary != secondaryInput)
+            {
+                CurrentWeapon.secondaryInput = secondaryInput;
+                lastSecondary = secondaryInput;
+            }
+        }
+    }
+
+
     public override void LTimestep()
     {
         base.LTimestep();
@@ -95,14 +115,15 @@ public class NetWeaponController : LunarNetScript
     public virtual void ChangeCurrentWeapon(BaseNetWeapon newWeapon, out BaseNetWeapon oldWeapon, out bool success)
     {
         oldWeapon = CurrentWeapon;
+        currentWeapon = newWeapon;
         success = newWeapon != null && newWeapon != CurrentWeapon;
 
         if (oldWeapon != null)
             ShowWeapon(oldWeapon.gameObject, false);
         ShowWeapon(newWeapon.gameObject, true);
 
-        //if (animator != null)
-        //    animator.UpdateAnimations();
+        if (animator != null)
+            animator.UpdateAnimations();
 
     }
     public virtual void SwitchToWeaponIndex(int index)

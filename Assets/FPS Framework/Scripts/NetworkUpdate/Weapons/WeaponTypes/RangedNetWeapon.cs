@@ -12,15 +12,15 @@ using UnityEngine.Pool;
 public class RangedNetWeapon : BaseNetWeapon
 {
 
-    IObjectPool<NetProjectile> tracerPool;
+    IObjectPool<NetProjectile> projectilePool;
     public int poolStartCapacity = 50, poolMaxCapacity = 500;
 
-    public IObjectPool<NetProjectile> TracerPool
+    public IObjectPool<NetProjectile> ProjectilePool
     {
         get
         {
-            tracerPool ??= new ObjectPool<NetProjectile>(CreatePooledItem, TakeFromPool, ReturnToPool, DestroyPoolObject, true, poolStartCapacity, poolMaxCapacity);
-            return tracerPool;
+            projectilePool ??= new ObjectPool<NetProjectile>(CreatePooledItem, TakeFromPool, ReturnToPool, DestroyPoolObject, true, poolStartCapacity, poolMaxCapacity);
+            return projectilePool;
         }
     }
 
@@ -73,6 +73,9 @@ public class RangedNetWeapon : BaseNetWeapon
         (baseSpreadPerUnit + (maxInfluencedSpreadPerUnit * controller.Spread(baseAttackSpread + attackSpreadAmount))))
         + Vector3.forward).normalized;
 
+    public Quaternion FireRotation => controller.fireOrigin != null ? controller.fireOrigin.rotation : fireOrigin.rotation;
+    public Vector3 FirePosition => controller.fireOrigin != null ? controller.fireOrigin.position : fireOrigin.position;
+
     public FireMode[] allowedFireModes = new FireMode[] { FireMode.automatic };
     public int fireModeIndex = 0;
     public float fireModeSwitchTime;
@@ -83,6 +86,8 @@ public class RangedNetWeapon : BaseNetWeapon
     public float timeBetweenRounds;
     public float TrueTimeBetweenRounds => timeBetweenRounds /
         (chargeAffectsFireRate ? Mathf.Lerp(minChargeFireRateMultiplier, maxChargeFireRateMultiplier, chargeAmount) : 1);
+
+    public float debugdisplay_truetime;
     public float burstCooldown;
     public bool autoBurst;
 
@@ -92,7 +97,7 @@ public class RangedNetWeapon : BaseNetWeapon
     [Tooltip("")] public float minChargeDamageMultiplier = 0.2f;
     [Tooltip("")] public float maxChargeDamageMultiplier = 0.2f;
 
-    float currentFireCooldown;
+    [SerializeField] internal float currentFireCooldown;
     protected bool burstFiring = false;
 
     public Transform fireOrigin;
@@ -114,10 +119,12 @@ public class RangedNetWeapon : BaseNetWeapon
             fired = false;
             currentFireCooldown = 0;
         }
+
+        debugdisplay_truetime = TrueTimeBetweenRounds;
     }
 
-    [Rpc(SendTo.Everyone)]
-    protected void FireWeapon_RPC(bool primary = true)
+    [Rpc(SendTo.Everyone, DeferLocal = true)]
+    protected void FireWeapon_RPC(Quaternion rotation, Vector3 origin, bool primary = true)
     {
         if (IsOwner)
         {
@@ -125,15 +132,16 @@ public class RangedNetWeapon : BaseNetWeapon
         }
         if (IsServer)
         {
-            ServerFire();
+            ServerFire(rotation, origin);
         }
         PostAttackBehaviour();
     }
-    public virtual void ServerFire()
+    public virtual void ServerFire(Quaternion rotation, Vector3 origin)
     {
         for (int i = 0; i < fireIterations; i++)
         {
-
+            ProjectilePool.Get(out NetProjectile v);
+            v.InitialiseProjectile(this, rotation * SpreadVector, chargeAmount);
         }
     }
     protected override void PrimaryBehaviour()
@@ -159,19 +167,19 @@ public class RangedNetWeapon : BaseNetWeapon
             case FireMode.single:
                 if (!primaryPressed || fireOnRelease)
                 {
-                    FireWeapon_RPC();
+                    FireWeapon_RPC(FireRotation, FirePosition);
                     fired = true;
                 }
                 break;
             case FireMode.automatic:
-                FireWeapon_RPC();
+                FireWeapon_RPC(FireRotation, FirePosition);
                 fired = true;
                 break;
             case FireMode.animated:
                 if (!animatedFirePending)
                 {
                     animatedFirePending = true;
-                    FireWeapon_RPC();
+                    FireWeapon_RPC(FireRotation, FirePosition);
                 }
                 break;
             case FireMode.burst:
@@ -198,7 +206,7 @@ public class RangedNetWeapon : BaseNetWeapon
         while (burstRoundsFired < roundsInBurst && (!useAmmunition || CurrentAmmo.Value > 0))
         {
             burstRoundsFired++;
-            FireWeapon_RPC();
+            FireWeapon_RPC(FireRotation, FirePosition);
             yield return new WaitForSeconds(timeBetweenRounds);
         }
         yield return new WaitForSeconds(burstCooldown);

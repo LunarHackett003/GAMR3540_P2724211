@@ -82,7 +82,7 @@ AvatarMask:
   - m_Path: metarig/IK.Torso.Lower/IK.knee.R/IK.knee.R_end
     m_Weight: 0
   - m_Path: metarig/IK.Upper.Root
-    m_Weight: 1
+    m_Weight: 0
   - m_Path: metarig/IK.Upper.Root/IK.hand.L
     m_Weight: 1
   - m_Path: metarig/IK.Upper.Root/IK.hand.L/IK.hand.L_end
