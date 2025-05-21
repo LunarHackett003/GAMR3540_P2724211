@@ -45,7 +45,12 @@ public class RangedNetWeapon : BaseNetWeapon
     {
         if (trace != null)
         {
-            trace.NetworkObject.Despawn(true);
+            if (trace.NetworkObject != null && trace.NetworkObject.IsSpawned)
+            {
+                trace.NetworkObject.Despawn(true);
+                return;
+            }
+            Destroy(trace.gameObject);
         }
     }
 
