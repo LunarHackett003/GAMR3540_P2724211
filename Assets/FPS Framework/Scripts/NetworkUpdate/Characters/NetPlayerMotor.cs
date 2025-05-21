@@ -662,6 +662,8 @@ public class NetPlayerMotor : LunarNetScript
     }
     IEnumerator MantleToPoint(Vector3 point, float speed)
     {
+        if (mantling)
+            yield break;
         mantleStart = transform.position;
         InputManager.JumpInput = false;
         mantling = true;
@@ -694,8 +696,8 @@ public class NetPlayerMotor : LunarNetScript
         {
             rigidbody.velocity = transform.rotation * new Vector3(mantleParams.mantleDismountSpeed * moveInput.x, rigidbody.velocity.y, mantleParams.mantleDismountSpeed * moveInput.y);
         }
-
         mantling = false;
+        yield break;
     }
     void UpdateMantleParams(Vector3 point, bool initialise = false, float speed = 2)
     {

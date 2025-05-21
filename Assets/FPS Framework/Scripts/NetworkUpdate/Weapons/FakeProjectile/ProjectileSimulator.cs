@@ -8,7 +8,7 @@ using UnityEngine;
 public class ProjectileSimulator : LunarNetScript
 {
 
-    public HashSet<NetProjectile> projectilesToTerminate = new();
+    public static HashSet<NetProjectile> projectilesToTerminate = new();
     public static List<NetProjectile> allProjectiles;
     public struct HitData
     {
@@ -55,6 +55,7 @@ public class ProjectileSimulator : LunarNetScript
 
             projectile.TickProjectile();
         }
+        CheckAndTerminateProjectiles();
     }
 
     void SimulateProjectiles()
@@ -63,6 +64,7 @@ public class ProjectileSimulator : LunarNetScript
         {
             layerMask = layermask,
             hitTriggers = QueryTriggerInteraction.Collide,
+            hitMultipleFaces = true
         };
         castCommands = new(allProjectiles.Count, Allocator.TempJob);
         for (int i = 0; i < castCommands.Length; i++)
@@ -70,86 +72,104 @@ public class ProjectileSimulator : LunarNetScript
             NetProjectile proj = allProjectiles[i];
             castCommands[i] = new(proj.transform.position, proj.thickness, proj.direction, qp, proj.velocity * Time.fixedDeltaTime);
         }
-        hits = new NativeArray<RaycastHit>(allProjectiles.Count, Allocator.TempJob);
-        JobHandle job = SpherecastCommand.ScheduleBatch(castCommands, hits, 1);
+
+        //Multiply by 16 to allow us to hit UP TO 16 targets.
+        hits = new NativeArray<RaycastHit>(allProjectiles.Count * 16, Allocator.TempJob);
+        JobHandle job = SpherecastCommand.ScheduleBatch(castCommands, hits, 1, 16);
         job.Complete();
 
-        int hitCount = 0;
+        int rayCount = 0;
+        float distance = 0;
+        int indexOfClosestCollider = 0;
         if(hits.Length > 0)
         {
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            if (hits[i].collider == null)
+            for (int i = 0; i < hits.Length; i += 16)
             {
-                continue;
-            }
-
-            Collider c = hits[i].collider;
-            RaycastHit hit = hits[i];
-            NetProjectile proj = allProjectiles[i];
-            if (proj.ignoredColliders.Contains(c))
-            {
-                Debug.Log("Ignoring this collider and continuing");
-                continue;
-            }
-            //If we progress past here, we hit something.
-            float damageDealt = proj.weapon.GetDamage(proj.distanceTravelled + hit.distance);
-            if(colliderHitData.TryGetValue(c, out HitData chd))
-            {
-                chd.damageAccumulated += damageDealt;
-                chd.forceAccumulated += -hit.normal * damageDealt;
-                chd.hitPointAccumulated += hit.point;
-                chd.hits++;
-                colliderHitData[c] = chd;
-            }
-            else
-            {
-                colliderHitData.TryAdd(c, new()
+                SpherecastCommand command = castCommands[rayCount];
+                Debug.DrawRay(command.origin, 5 * command.distance * command.direction, Color.red, raycastDebugTime);
+                distance = float.MaxValue;
+                RaycastHit hit = hits[i];
+                NetProjectile proj = allProjectiles[rayCount];
+                rayCount++;
+                for (int j = 0; j < 16; j++)
                 {
-                    weapon = proj.weapon,
-                    damageAccumulated = damageDealt,
-                    forceAccumulated = -hit.normal * damageDealt,
-                    hitPointAccumulated = hit.point,
-                    hits = 1,
-                });
+                    if (hits[i + j].collider == null || !proj.ignoredColliders.Contains(hits[i + j].collider))
+                        continue;
+                    float compareDistance = Vector3.Distance(command.origin, hit.point);
+                    if (compareDistance <= distance)
+                    {
+                        indexOfClosestCollider = i + j;
+                        distance = compareDistance;
+                    }
+                }
+
+                //Now that we've found the closest collider, we can replace the hit used to query the above bit
+                hit = hits[indexOfClosestCollider];
+                //Cache the collider, and now everything SHOULD function as it did before, right?
+                Collider c = hit.collider;
+                if (c == null)
+                    continue;
+                //If we progress past here, we hit something.
+                float damageDealt = proj.weapon.GetDamage(proj.distanceTravelled + hit.distance);
+                if(colliderHitData.TryGetValue(c, out HitData chd))
+                {
+                    chd.damageAccumulated += damageDealt;
+                    chd.forceAccumulated += -hit.normal * damageDealt;
+                    chd.hitPointAccumulated += hit.point;
+                    chd.hits++;
+                    colliderHitData[c] = chd;
+                }
+                else
+                {
+                    colliderHitData.TryAdd(c, new()
+                    {
+                        weapon = proj.weapon,
+                        damageAccumulated = damageDealt,
+                        forceAccumulated = -hit.normal * damageDealt,
+                        hitPointAccumulated = hit.point,
+                        hits = 1,
+                    });
+                }
+                //Implement Ricochet and Penetration later on
+
+
+                //Ricochet + Penetration
+                proj.transform.position = hit.point;
+                projectilesToTerminate.Add(proj);
+
+                Debug.DrawRay(proj.transform.position, hits[i].point, Color.green, raycastDebugTime);
+
             }
-            //Implement Ricochet and Penetration later on
-
-
-            //Ricochet + Penetration
-            proj.transform.position = hit.point;
-
-            projectilesToTerminate.Add(proj);
-
-            Debug.DrawRay(proj.transform.position, hits[i].point, Random.ColorHSV(), raycastDebugTime);
-
-
+            if(colliderHitData.Count > 0)
+            {
+                foreach (var item in colliderHitData)
+                {
+                    if(item.Key.attachedRigidbody != null)
+                    {
+                        item.Key.attachedRigidbody.AddForceAtPosition(item.Value.forceAccumulated, item.Value.hitPointAccumulated / item.Value.hits);
+                    }
+                    if (item.Key.TryGetComponent(out NetDamageable d))
+                    {
+                        d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
+                    }
+                }
+            }
         }
-        if(colliderHitData.Count > 0)
+        castCommands.Dispose();
+        hits.Dispose();
+        colliderHitData.Clear();
+        CheckAndTerminateProjectiles();
+    }
+    void CheckAndTerminateProjectiles()
+    {
+        if (projectilesToTerminate.Count > 0)
         {
-            foreach (var item in colliderHitData)
+            foreach (var item in projectilesToTerminate)
             {
-                if(item.Key.attachedRigidbody != null)
-                {
-                    item.Key.attachedRigidbody.AddForceAtPosition(item.Value.forceAccumulated, item.Value.hitPointAccumulated / item.Value.hits);
-                }
-                if (item.Key.TryGetComponent(out NetDamageable d))
-                {
-                    d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
-                }
+                item.TerminateProjectile(true);
+                allProjectiles.Remove(item);
             }
-        }
-            castCommands.Dispose();
-            hits.Dispose();
-            if(projectilesToTerminate.Count > 0)
-            {
-                foreach (var item in projectilesToTerminate)
-                {
-                    allProjectiles.Remove(item);
-                }
-                projectilesToTerminate.Clear();
-            }
+            projectilesToTerminate.Clear();
         }
     }
 

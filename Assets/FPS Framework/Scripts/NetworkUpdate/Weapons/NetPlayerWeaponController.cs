@@ -66,7 +66,7 @@ public class NetPlayerWeaponController : NetWeaponController
         {
             if(!switchingWeapons && weaponSwitchInput)
             {
-                CurrentWeapon.TriggerAnimation(BaseNetWeapon.CHANGEWEAPON, BaseNetWeapon.TRIGGERTIMETINY);
+                CurrentWeapon.TriggerAnimation(BaseNetWeapon.CHANGEWEAPON, BaseNetWeapon.TRIGGERTIMETINY, true);
                 if (IsOwner)
                 {
                     nextWeaponIndex.Anticipate((nextWeaponIndex.Value + 1) % weapons.Count);
@@ -77,7 +77,7 @@ public class NetPlayerWeaponController : NetWeaponController
             if (reloadInput)
             {
                 if(CurrentWeapon.useAmmunition && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) || (CurrentWeapon.useAmmoPhases && CurrentWeapon.currentAmmoPhase != 0)){
-                    CurrentWeapon.TriggerAnimation(CurrentWeapon.CurrentAmmo.Value > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f);
+                    CurrentWeapon.TriggerAnimation(CurrentWeapon.CurrentAmmo.Value > 0 ? BaseWeapon.PARTIALRELOAD : BaseWeapon.EMPTYRELOAD, 0.2f, true);
                 }
                 if (IsOwner)
                 {

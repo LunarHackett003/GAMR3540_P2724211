@@ -33,7 +33,13 @@ public class NetworkPlayer : LunarNetScript
         ulong clientID = parameters.Receive.SenderClientId;
         if (NetPlayerEntity.playersByID.ContainsKey(clientID))
         {
-            NetPlayerEntity.playersByID[clientID].NetworkObject.Despawn();
+            NetPlayerEntity thisplayer = NetPlayerEntity.playersByID[clientID];
+
+            foreach (var item in thisplayer.weaponController.weapons)
+            {
+                item.NetworkObject.Despawn();
+            }
+            thisplayer.NetworkObject.Despawn();
         }
 
         NetworkObject player = NetworkManager.SpawnManager.InstantiateAndSpawn(playerPrefab, clientID);

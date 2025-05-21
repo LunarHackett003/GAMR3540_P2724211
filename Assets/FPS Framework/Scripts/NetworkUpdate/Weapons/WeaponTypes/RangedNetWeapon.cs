@@ -32,7 +32,7 @@ public class RangedNetWeapon : BaseNetWeapon
     }
     void ReturnToPool(NetProjectile trace)
     {
-        trace.gameObject.hideFlags = HideFlags.HideInHierarchy;
+        trace.gameObject.hideFlags = HideFlags.HideAndDontSave;
         trace.projectileEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         trace.gameObject.SetActive(false);
     }
@@ -44,7 +44,9 @@ public class RangedNetWeapon : BaseNetWeapon
     void DestroyPoolObject(NetProjectile trace)
     {
         if (trace != null)
-            Destroy(trace.gameObject);
+        {
+            trace.NetworkObject.Despawn(true);
+        }
     }
 
 
@@ -230,5 +232,14 @@ public class RangedNetWeapon : BaseNetWeapon
     {
         fireModeIndex++;
         fireModeIndex %= allowedFireModes.Length;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+
+        ProjectilePool.Clear();
+
+        base.OnNetworkDespawn();
+
     }
 }

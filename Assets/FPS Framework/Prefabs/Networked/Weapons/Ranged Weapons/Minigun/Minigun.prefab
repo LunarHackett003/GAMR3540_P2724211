@@ -341,6 +341,7 @@ MonoBehaviour:
   charging: 0
   poolStartCapacity: 50
   poolMaxCapacity: 500
+  damageConfig: {fileID: 11400000, guid: a8ff663f9397ef04abdba5d966887adb, type: 2}
   baseSpreadPerUnit: 0.05
   maxInfluencedSpreadPerUnit: 0.1
   currentMovementInfluence: 0
@@ -361,7 +362,7 @@ MonoBehaviour:
   currentFireCooldown: 0
   fireOrigin: {fileID: 8676971905106484528}
   fireIterations: 1
-  ProjectilePrefab: {fileID: 5209872433354348746, guid: 855a3d0dbb55fcd4ebc927cb03fdf648,
+  ProjectilePrefab: {fileID: 5209872433354348746, guid: a7e657c52e879f2459a1462fefedcedc,
     type: 3}
 --- !u!114 &2841051524993774806
 MonoBehaviour:

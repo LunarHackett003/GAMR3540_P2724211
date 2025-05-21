@@ -692,6 +692,7 @@ MonoBehaviour:
   aimParams: {fileID: 11400000, guid: 8ca22edf018432d44a8c397bbccd5771, type: 2}
   crosshairSpreadBase: 1
   crosshairSpreadMax: 1.3
+  hideCrosshairWhenAiming: 0
   useAttackSpread: 1
   spreadOnPrimary: 0
   spreadOnSecondary: 0
@@ -728,6 +729,7 @@ MonoBehaviour:
   charging: 0
   poolStartCapacity: 50
   poolMaxCapacity: 500
+  damageConfig: {fileID: 11400000, guid: 1c7a1bf2750a632439d0f06b5535d666, type: 2}
   baseSpreadPerUnit: 0
   maxInfluencedSpreadPerUnit: 0.1
   currentMovementInfluence: 0
@@ -737,16 +739,18 @@ MonoBehaviour:
   roundsPerMinute: 1000
   roundsInBurst: 3
   timeBetweenRounds: 0.06
-  burstCooldown: 0.4
+  debugdisplay_truetime: 0
+  burstCooldown: 0.2
   autoBurst: 0
   chargeAffectsFireRate: 0
   minChargeFireRateMultiplier: 0.4
   maxChargeFireRateMultiplier: 1
   minChargeDamageMultiplier: 0.2
   maxChargeDamageMultiplier: 0.2
+  currentFireCooldown: 0
   fireOrigin: {fileID: 4533715594391698745}
   fireIterations: 1
-  ProjectilePrefab: {fileID: 5209872433354348746, guid: 855a3d0dbb55fcd4ebc927cb03fdf648,
+  ProjectilePrefab: {fileID: 5209872433354348746, guid: b38e5848b93df164aa9175e7393224bc,
     type: 3}
 --- !u!114 &3905362534145189597
 MonoBehaviour:
@@ -775,7 +779,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 9068203903266039709}
-  networkAnimator: {fileID: 0}
+  networkAnimator: {fileID: 6281809609003618426}
   controller: {fileID: 0}
   weapon: {fileID: 4767148707631472417}
   isWeapon: 1

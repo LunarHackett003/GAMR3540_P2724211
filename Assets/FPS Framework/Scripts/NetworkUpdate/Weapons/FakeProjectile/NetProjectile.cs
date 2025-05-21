@@ -16,10 +16,11 @@ public class NetProjectile : LunarNetScript
 
     internal RangedNetWeapon weapon;
 
-    internal bool terminated;
+    [SerializeField] internal bool terminated;
 
     public float returnTimeAfterTerminate = 1;
-
+    [SerializeField] protected float terminateTime;
+    [SerializeField] protected bool waitingToFire = true;
     [SerializeField] internal float thickness;
     [SerializeField] internal Vector3 direction;
     [SerializeField] internal float velocity = 10;
@@ -39,27 +40,34 @@ public class NetProjectile : LunarNetScript
             transform.position = weapon.fireOrigin.position;
             transform.forward = direction;
             this.direction = direction;
-            timeAlive = 0;
             terminated = false;
+            timeAlive = 0;
+            distanceTravelled = 0;
+            terminateTime = 0;
+            waitingToFire = false;
             projectileEffect.Play();
 
             ProjectileSimulator.allProjectiles.Add(this);
 
-            GetComponent<NetworkObject>().Spawn();
+            GetComponent<NetworkObject>().SpawnWithOwnership(weapon.OwnerClientId);
         }
     }
-    public void TerminateProjectile()
+    public void TerminateProjectile(bool reasonIsHit)
     {
+
+        Debug.Log($"Terminating projectile - reason: {(reasonIsHit ? "Hit Object" : "Ran Out Of Time")}");
+
         timeAlive = 0;
         terminated = true;
-        ProjectileSimulator.allProjectiles.Remove(this);
+
+        ProjectileSimulator.projectilesToTerminate.Add(this);
     }
 
     public override void LTimestep()
     {
         if (IsServer)
         {
-            if (terminated)
+            if (terminated && !waitingToFire)
             {
                 TerminatedTick();
             }
@@ -76,7 +84,7 @@ public class NetProjectile : LunarNetScript
 
             if(timeAlive >= maxAliveTime || distanceTravelled >= maxDistance)
             {
-                TerminateProjectile();
+                TerminateProjectile(false);
             }
 
             transform.position += Time.fixedDeltaTime * velocity * direction;
@@ -85,8 +93,8 @@ public class NetProjectile : LunarNetScript
     }
     void TerminatedTick()
     {
-        timeAlive += Time.fixedDeltaTime;
-        if(timeAlive > returnTimeAfterTerminate)
+        terminateTime += Time.fixedDeltaTime;
+        if(terminateTime > returnTimeAfterTerminate)
         {
             RemoveProjectile();
         }
@@ -97,7 +105,7 @@ public class NetProjectile : LunarNetScript
         {
             weapon.ProjectilePool.Release(this);
             NetworkObject.Despawn(false);
-            terminated = false;
+            waitingToFire = true;
         }
     }
 }

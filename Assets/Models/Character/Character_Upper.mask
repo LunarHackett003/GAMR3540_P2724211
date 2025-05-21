@@ -108,11 +108,11 @@ AvatarMask:
   - m_Path: metarig/IK.Upper.Root/IK.ViewmodelCam.Target/IK.ViewmodelCam.Target_end
     m_Weight: 0
   - m_Path: metarig/IK.Upper.Root/WeaponRoot
-    m_Weight: 1
+    m_Weight: 0
   - m_Path: metarig/IK.Upper.Root/WeaponRoot/WeaponTarget
     m_Weight: 1
   - m_Path: metarig/IK.Upper.Root/WeaponRoot/WeaponTarget/WeaponRotationInvert
-    m_Weight: 1
+    m_Weight: 0
   - m_Path: metarig/IK.Upper.Root/WeaponRoot/WeaponTarget/WeaponRotationInvert/WeaponHand_L
     m_Weight: 1
   - m_Path: metarig/IK.Upper.Root/WeaponRoot/WeaponTarget/WeaponRotationInvert/WeaponHand_L/WeaponHand_L_end
