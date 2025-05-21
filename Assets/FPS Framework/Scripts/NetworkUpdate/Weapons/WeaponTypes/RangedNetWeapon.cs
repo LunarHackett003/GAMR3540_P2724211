@@ -60,6 +60,7 @@ public class RangedNetWeapon : BaseNetWeapon
         automatic = 4,
         animated = 8
     }
+    [SerializeField] internal RangedWeaponDamageConfig damageConfig;
 
     [Tooltip("the radius of the base spread per unit distance covered by the shot.")]
     public float baseSpreadPerUnit = 0.1f;
@@ -100,11 +101,18 @@ public class RangedNetWeapon : BaseNetWeapon
     [SerializeField] internal float currentFireCooldown;
     protected bool burstFiring = false;
 
+
     public Transform fireOrigin;
     [Tooltip("How many rays a rweapon will shoot when firing.")]
     public int fireIterations = 1;
 
     public GameObject ProjectilePrefab;
+
+    public override float GetDamage(float distance = 0)
+    {
+        float damageLerp = Mathf.Clamp01(Mathf.InverseLerp(damageConfig.damageFalloffStart, damageConfig.damageFalloffEnd, distance));
+        return Mathf.Lerp(damageConfig.maxDamage, damageConfig.minDamage, damageConfig.damageFalloffCurve.Evaluate(damageLerp));
+    }
 
     public override void LTimestep()
     {

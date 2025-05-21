@@ -172,7 +172,61 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 899975645299420650}
+    - targetCorrespondingSourceObject: {fileID: 4101161180453605438, guid: 5b333e7677a2e21479b0510b8884e6f8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3532588966265413082}
+    - targetCorrespondingSourceObject: {fileID: 4101161180453605438, guid: 5b333e7677a2e21479b0510b8884e6f8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2009698079329806446}
   m_SourcePrefab: {fileID: 100100000, guid: 5b333e7677a2e21479b0510b8884e6f8, type: 3}
+--- !u!1 &593238223064499060 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4101161180453605438, guid: 5b333e7677a2e21479b0510b8884e6f8,
+    type: 3}
+  m_PrefabInstance: {fileID: 3517833955216626506}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3532588966265413082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593238223064499060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c057af5c9d311947995a90384b2f90b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerLayerIndex: 6
+  remoteLayerIndex: 0
+--- !u!114 &2009698079329806446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593238223064499060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1a63128dbd1f6a48a8a40ca0e57658d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerConfig:
+    shadowsOnly: 0
+    updateOffscreen: 0
+  remoteConfig:
+    shadowsOnly: 0
+    updateOffscreen: 0
+  meshRenderer: {fileID: 0}
+  skinnedMeshRenderer: {fileID: 2336690150581662891}
+--- !u!137 &2336690150581662891 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -8017449571587430431, guid: 5b333e7677a2e21479b0510b8884e6f8,
+    type: 3}
+  m_PrefabInstance: {fileID: 3517833955216626506}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2873520804209621122 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7552236775999706168, guid: 5b333e7677a2e21479b0510b8884e6f8,
@@ -218,7 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1829186527
+  GlobalObjectIdHash: 2791183356
   InScenePlacedSourceGlobalObjectIdHash: 2791183356
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -254,14 +308,14 @@ MonoBehaviour:
   useAttackSpread: 1
   spreadOnPrimary: 1
   spreadOnSecondary: 0
-  attackSpreadIncrement: 0
-  attackSpreadDecay: 0
-  baseAttackSpread: 0.1
+  attackSpreadIncrement: 0.1
+  attackSpreadDecay: 2
+  baseAttackSpread: 0.05
   attackSpreadAmount: 0
   useAmmunition: 1
   ammoConsumeOnPrimary: 0
   ammoConsumeOnSecondary: 0
-  maxAmmo: 100
+  maxAmmo: 150
   ammoPerShot: 1
   CurrentAmmo:
     m_AuthoritativeValue:
@@ -275,10 +329,10 @@ MonoBehaviour:
   queuedReloadAnimation: 0
   fired: 0
   primaryUsesCharge: 1
-  secondaryUsesCharge: 0
-  chargeRate: 1
+  secondaryUsesCharge: 1
+  chargeRate: 0.7
   chargeDecayRate: 2
-  minimumChargeToFire: 0.2
+  minimumChargeToFire: 0.1
   resetChargeOnFire: 0
   chargeAmount: 0
   chargeUntilFire: 0
@@ -287,15 +341,15 @@ MonoBehaviour:
   charging: 0
   poolStartCapacity: 50
   poolMaxCapacity: 500
-  baseSpreadPerUnit: 0.1
+  baseSpreadPerUnit: 0.05
   maxInfluencedSpreadPerUnit: 0.1
   currentMovementInfluence: 0
   allowedFireModes: 04000000
   fireModeIndex: 0
   fireModeSwitchTime: 0
-  roundsPerMinute: 100
+  roundsPerMinute: 1000
   roundsInBurst: 0
-  timeBetweenRounds: 0.6
+  timeBetweenRounds: 0.06
   debugdisplay_truetime: 0
   burstCooldown: 0
   autoBurst: 0

@@ -97,6 +97,7 @@ public class BaseNetWeapon : LunarNetScript
     public virtual void InitialiseWeapon(NetWeaponController controller)
     {
         this.controller = controller;
+        animator.controller = controller;
     }
 
     public override void LTimestep()

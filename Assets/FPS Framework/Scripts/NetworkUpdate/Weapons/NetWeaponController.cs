@@ -141,14 +141,16 @@ public class NetWeaponController : LunarNetScript
     {
         if (IsServer)
         {
-            weaponIndex.AuthoritativeValue = oldIndex;
+            weaponIndex.AuthoritativeValue = newIndex;
             nextWeaponIndex.AuthoritativeValue = newIndex;
         }
         else
         {
-            weaponIndex.Anticipate(oldIndex);
+            weaponIndex.Anticipate(newIndex);
             nextWeaponIndex.Anticipate(newIndex);
         }
+
+        animator.UpdateAnimations();
     }
     public virtual void WeaponIndexUpdated()
     {

@@ -13,15 +13,32 @@ public class GameplayCanvas : LunarScript
     public static NetPlayerEntity player;
     private void Awake()
     {
-        if(Instance == null)
+        Initialise();
+    }
+    public void Initialise()
+    {
+        if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
     }
 
     public UIModule healthModule, weaponModule;
     public UIModule crosshairModule, compassModule;
+
+    private void OnGUI()
+    {
+        GUILayout.Space(100);
+        if (Instance)
+        {
+            GUILayout.Label("Gameplay Canvas Active!");
+        }
+        else
+        {
+            GUILayout.Label("Gameplay Canvas Not Working!");
+        }
+    }
 
     public override void LPostUpdate()
     {

@@ -5,7 +5,7 @@ public class InputManager : SingletonBehaviour<InputManager>
 {
     public PlayerInput playerInput;
     public PauseMenu pauseMenu;
-
+    public GameplayCanvas gameplayCanvas;
 
     private Vector2 lookInput;
     private bool crouchInput;
@@ -134,6 +134,8 @@ public class InputManager : SingletonBehaviour<InputManager>
         }
         Debug.Log("Input Manager Created!");
         pauseMenu.SetPaused(true);
+        gameplayCanvas.Initialise();
+
     }
     public void PauseGame(bool paused)
     {

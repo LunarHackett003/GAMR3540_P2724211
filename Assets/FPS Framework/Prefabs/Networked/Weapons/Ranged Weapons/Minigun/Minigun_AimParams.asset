@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed3a36ca30c1554fbadd86fa1131307, type: 3}
   m_Name: Minigun_AimParams
   m_EditorClassIdentifier: 
-  aimFOV: 0
+  aimFOV: -1
   altAimFOV: 0
-  aimSpeed: 4
+  aimSpeed: 5
   baseAimPositionOffset: {x: 0, y: 0, z: 0}
   aimedWeaponPositionScale: {x: 0, y: 0, z: 0}
   aimPositionOffsetAngled: {x: 0, y: 0, z: 0}
-  aimRotationReduction: 1
+  aimRotationReduction: 0
   aimRotationOffset: {x: 0, y: 0, z: 0, w: 1}
   crouchPositionOffset: {x: 0, y: 0, z: 0}
   crouchLerpCurve:
@@ -70,4 +70,4 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   crouchRotationOffset: {x: 0, y: 0, z: 0, w: 1}
-  viewmodelFOV: 0
+  viewmodelFOV: -5

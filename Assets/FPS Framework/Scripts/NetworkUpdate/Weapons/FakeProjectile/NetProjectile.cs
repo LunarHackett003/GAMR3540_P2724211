@@ -39,6 +39,8 @@ public class NetProjectile : LunarNetScript
             transform.position = weapon.fireOrigin.position;
             transform.forward = direction;
             this.direction = direction;
+            timeAlive = 0;
+            terminated = false;
             projectileEffect.Play();
 
             ProjectileSimulator.allProjectiles.Add(this);
@@ -72,10 +74,10 @@ public class NetProjectile : LunarNetScript
             distanceTravelled += Time.fixedDeltaTime * velocity;
             timeAlive += Time.fixedDeltaTime;
 
-        if(timeAlive >= maxAliveTime || distanceTravelled >= maxDistance)
-        {
-            RemoveProjectile();
-        }
+            if(timeAlive >= maxAliveTime || distanceTravelled >= maxDistance)
+            {
+                TerminateProjectile();
+            }
 
             transform.position += Time.fixedDeltaTime * velocity * direction;
             direction += gravityMultiplier * Time.fixedDeltaTime * Time.fixedDeltaTime * Physics.gravity;

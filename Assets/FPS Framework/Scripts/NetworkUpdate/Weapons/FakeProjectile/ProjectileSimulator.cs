@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class ProjectileSimulator : LunarNetScript
 {
+
+    public HashSet<NetProjectile> projectilesToTerminate = new();
     public static List<NetProjectile> allProjectiles;
     public struct HitData
     {
@@ -46,8 +48,9 @@ public class ProjectileSimulator : LunarNetScript
             return;
         SimulateProjectiles();
 
-        foreach (NetProjectile projectile in allProjectiles)
+        for (int i = allProjectiles.Count - 1; i >= 0; i--)
         {
+            NetProjectile projectile = allProjectiles[i];
             if (projectile.terminated) continue;
 
             projectile.TickProjectile();
@@ -117,7 +120,7 @@ public class ProjectileSimulator : LunarNetScript
             //Ricochet + Penetration
             proj.transform.position = hit.point;
 
-            proj.TerminateProjectile();
+            projectilesToTerminate.Add(proj);
 
             Debug.DrawRay(proj.transform.position, hits[i].point, Random.ColorHSV(), raycastDebugTime);
 
@@ -139,6 +142,14 @@ public class ProjectileSimulator : LunarNetScript
         }
             castCommands.Dispose();
             hits.Dispose();
+            if(projectilesToTerminate.Count > 0)
+            {
+                foreach (var item in projectilesToTerminate)
+                {
+                    allProjectiles.Remove(item);
+                }
+                projectilesToTerminate.Clear();
+            }
         }
     }
 

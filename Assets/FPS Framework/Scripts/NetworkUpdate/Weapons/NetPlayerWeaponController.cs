@@ -69,7 +69,7 @@ public class NetPlayerWeaponController : NetWeaponController
                 CurrentWeapon.TriggerAnimation(BaseNetWeapon.CHANGEWEAPON, BaseNetWeapon.TRIGGERTIMETINY);
                 if (IsOwner)
                 {
-                    UpdateWeaponIndex_RPC(weaponIndex.Value, (nextWeaponIndex.Value + 1) % weapons.Count);
+                    nextWeaponIndex.Anticipate((nextWeaponIndex.Value + 1) % weapons.Count);
                 }
                 switchingWeapons = true;
                 return;

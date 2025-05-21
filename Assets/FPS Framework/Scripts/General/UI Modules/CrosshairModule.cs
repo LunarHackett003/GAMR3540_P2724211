@@ -13,10 +13,13 @@ public class CrosshairModule : UIModule
 
     public RectTransform crosshairRect;
     public Image weaponChargeImage;
+    public RectTransform weaponChargeRoot;
     public float weaponChargeFillAmount;
 
     public BaseNetWeapon Weapon => Player.weaponController.CurrentWeapon;
 
+    public BaseNetWeapon lastWeapon;
+    bool weaponUsesCharge;
     public override void UpdateModule()
     {
         if (Weapon == null || Weapon.controller == null)
@@ -28,5 +31,16 @@ public class CrosshairModule : UIModule
 
         currentCrosshairSize = Mathf.Lerp(currentCrosshairSize, Weapon.crosshairSpreadBase * (crosshairTargetSize * Weapon.crosshairSpreadMax), Time.deltaTime * crosshairLerpSpeed);
         crosshairRect.sizeDelta = new Vector2(currentCrosshairSize, currentCrosshairSize) * baseCrosshairSize;
+
+        if(lastWeapon != Weapon)
+        {
+            weaponUsesCharge = Weapon.primaryUsesCharge || Weapon.secondaryUsesCharge;
+            weaponChargeRoot.gameObject.SetActive(weaponUsesCharge);
+        }
+        if (weaponUsesCharge)
+        {
+            weaponChargeFillAmount = Weapon.chargeAmount;
+            weaponChargeImage.fillAmount = weaponChargeFillAmount;
+        }
     }
 }
