@@ -20,6 +20,7 @@ public class ProjectileSimulator : LunarNetScript
     }
     public Dictionary<Collider, HitData> colliderHitData;
     public float raycastDebugTime = 0.1f;
+    public int maxHits = 8;
 
     public LayerMask layermask;
 
@@ -35,6 +36,7 @@ public class ProjectileSimulator : LunarNetScript
             colliderHitData = new();
             allProjectiles = new();
         }
+        
     }
 
     public override void LTimestep()
@@ -44,18 +46,23 @@ public class ProjectileSimulator : LunarNetScript
         if (!IsServer)
             return;
 
-        if (allProjectiles.Count == 0)
-            return;
-        SimulateProjectiles();
+        //Old simulation code
 
-        for (int i = allProjectiles.Count - 1; i >= 0; i--)
-        {
-            NetProjectile projectile = allProjectiles[i];
-            if (projectile.terminated) continue;
+        //if (allProjectiles.Count == 0)
+        //    return;
+        //SimulateProjectiles();
 
-            projectile.TickProjectile();
-        }
-        CheckAndTerminateProjectiles();
+        //for (int i = allProjectiles.Count - 1; i >= 0; i--)
+        //{
+        //    NetProjectile projectile = allProjectiles[i];
+        //    if (projectile.terminated) continue;
+
+        //    projectile.TickProjectile();
+        //}
+        //CheckAndTerminateProjectiles();
+
+        //New simulation code
+        New_ProjectileSimulate();
     }
 
     void SimulateProjectiles()
@@ -70,7 +77,7 @@ public class ProjectileSimulator : LunarNetScript
         for (int i = 0; i < castCommands.Length; i++)
         {
             NetProjectile proj = allProjectiles[i];
-            castCommands[i] = new(proj.transform.position, proj.thickness, proj.direction, qp, proj.velocity * Time.fixedDeltaTime);
+            castCommands[i] = new(proj.transform.position, proj.radius, proj.direction, qp, proj.velocity * Time.fixedDeltaTime);
         }
 
         //Multiply by 16 to allow us to hit UP TO 16 targets.
@@ -86,14 +93,15 @@ public class ProjectileSimulator : LunarNetScript
             for (int i = 0; i < hits.Length; i += 16)
             {
                 SpherecastCommand command = castCommands[rayCount];
-                Debug.DrawRay(command.origin, 5 * command.distance * command.direction, Color.red, raycastDebugTime);
+                Debug.DrawRay(command.origin, command.distance * command.direction, Color.red, raycastDebugTime);
                 distance = float.MaxValue;
                 RaycastHit hit = hits[i];
                 NetProjectile proj = allProjectiles[rayCount];
                 rayCount++;
+                int offset = rayCount * 16;
                 for (int j = 0; j < 16; j++)
                 {
-                    if (hits[i + j].collider == null || !proj.ignoredColliders.Contains(hits[i + j].collider))
+                    if (hits[offset + j].collider == null || !proj.ignoredColliders.Contains(hits[i + j].collider))
                         continue;
                     float compareDistance = Vector3.Distance(command.origin, hit.point);
                     if (compareDistance <= distance)
@@ -160,6 +168,148 @@ public class ProjectileSimulator : LunarNetScript
         colliderHitData.Clear();
         CheckAndTerminateProjectiles();
     }
+
+    void New_ProjectileSimulate()
+    {
+        //Something about the previous one is broken. We're going to do EVERYTHING just in this new method, and hopefully it works alright.
+        //If we have no projectiles, we'll exit.
+        if (allProjectiles.Count == 0)
+            return;
+
+        colliderHitData = new();
+
+        //Find all the projectiles that need to be terminated.
+        projectilesToTerminate.AddRange(allProjectiles.FindAll(x => x.timeAlive >= x.maxAliveTime));
+        if(projectilesToTerminate.Count > 0)
+        {
+            //...And then take them out back and tell them to think of the rabbits.
+            foreach (var item in projectilesToTerminate)
+            {
+                item.TerminateProjectile(false);
+                allProjectiles.RemoveAll(x => x == item);
+            }
+            allProjectiles.RemoveAll(x => x == null);
+            projectilesToTerminate.Clear();
+        }
+        //You killed them all! How could you?!
+        if (allProjectiles.Count == 0)
+            return;
+
+        //Oh no, they're fine, lets keep simulating.
+        castCommands = new NativeArray<SpherecastCommand>(allProjectiles.Count, Allocator.TempJob);
+        QueryParameters qp = new()
+        {
+            layerMask = layermask,
+            hitMultipleFaces = true,
+            hitTriggers = QueryTriggerInteraction.Collide,
+            hitBackfaces = false,
+        };
+        for (int i = 0; i < allProjectiles.Count; i++)
+        {
+            NetProjectile np = allProjectiles[i];
+            Vector3 dirNorm = np.direction.normalized;
+            castCommands[i] = new(np.transform.position - (dirNorm * 0.02f), np.radius, dirNorm, qp, np.velocity * Time.fixedDeltaTime * 1.02f);
+            Debug.DrawRay(castCommands[i].origin, castCommands[i].direction * castCommands[i].distance, Color.red, raycastDebugTime);
+        }
+        //compiled our cast command array, now we create our hits array.
+        hits = new(castCommands.Length * maxHits, Allocator.TempJob);
+
+        //Now we complete the job
+        JobHandle job = SpherecastCommand.ScheduleBatch(castCommands, hits, 1, maxHits);
+        job.Complete();
+
+        for (int x = 0; x < castCommands.Length; x++)
+        {
+            float distance = float.MaxValue;
+            bool validHit = false;
+            NetProjectile np = allProjectiles[x];
+            //Big up @peturdarri on the Unity Discord Server <3
+            //Thanks for letting me know about this, no clue how I mucked that up lol. Why was i just ADDING x and y??
+            int offset = x * maxHits;
+            int indexOfClosestHit = -1;
+            for (int y = 0; y < maxHits; y++)
+            {
+                RaycastHit hit = hits[offset + y];
+                if (hit.collider == null || np.ignoredColliders.Contains(hit.collider))
+                {
+                    continue;
+                }
+                if(hit.distance != 0 && hit.distance < distance)
+                {
+                    //Debug.Log($"Found new closest collider at {hit.distance} metres from origin", hit.collider);
+                    //Debug.Log(hit.point);
+                    distance = hit.distance;
+                    validHit = true;
+                    indexOfClosestHit = offset + y;
+                }
+            }
+            if (validHit)
+            {
+                ProcessHit(ref np, hits[indexOfClosestHit]);
+                continue;
+            }
+            np.TickProjectile();
+        }
+
+        DamageColliders();
+        castCommands.Dispose();
+        hits.Dispose();
+        colliderHitData.Clear();
+    }
+    void ProcessHit(ref NetProjectile np, RaycastHit hit)
+    {
+
+        Debug.Log($"Hit {hit.collider.gameObject.name} with {np.weapon.displayName}", hit.collider.gameObject);
+        //If we've hit something valid, then we want to do the maths on that bit
+        QueryColliderAndAddStats(np, hit, hit.collider);
+        //move the projectile to the hit point
+        np.transform.position = hit.point;
+        //Terminate it. Think of the rabbits, Projectile...
+        np.timeAlive = np.maxAliveTime;
+        projectilesToTerminate.Add(np);
+    }
+    void QueryColliderAndAddStats(NetProjectile proj, RaycastHit hit, Collider c)
+    {
+        float damageDealt = proj.weapon.GetDamage(proj.distanceTravelled + hit.distance);
+        if (colliderHitData.TryGetValue(c, out HitData chd))
+        {
+            chd.damageAccumulated += damageDealt;
+            chd.forceAccumulated += -hit.normal * damageDealt;
+            chd.hitPointAccumulated += hit.point;
+            chd.hits++;
+            colliderHitData[c] = chd;
+        }
+        else
+        {
+            colliderHitData.TryAdd(c, new()
+            {
+                weapon = proj.weapon,
+                damageAccumulated = damageDealt,
+                forceAccumulated = -hit.normal * damageDealt,
+                hitPointAccumulated = hit.point,
+                hits = 1,
+            });
+        }
+    }
+
+    void DamageColliders()
+    {
+        if (colliderHitData.Count > 0)
+        {
+            foreach (var item in colliderHitData)
+            {
+                if (item.Key.attachedRigidbody != null)
+                {
+                    item.Key.attachedRigidbody.AddForceAtPosition(item.Value.forceAccumulated, item.Value.hitPointAccumulated / item.Value.hits);
+                }
+                if (item.Key.TryGetComponent(out NetDamageable d))
+                {
+                    d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
+                }
+            }
+        }
+    }
+
     void CheckAndTerminateProjectiles()
     {
         if (projectilesToTerminate.Count > 0)
@@ -167,7 +317,7 @@ public class ProjectileSimulator : LunarNetScript
             foreach (var item in projectilesToTerminate)
             {
                 item.TerminateProjectile(true);
-                allProjectiles.Remove(item);
+                allProjectiles.RemoveAll((x) => x == item);
             }
             projectilesToTerminate.Clear();
         }

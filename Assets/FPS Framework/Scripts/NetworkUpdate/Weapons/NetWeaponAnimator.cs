@@ -100,7 +100,7 @@ public class NetWeaponAnimator : LunarNetScript
     }
     protected virtual IEnumerator AnimationTrigger(string trigger, float time, bool reset = false)
     {
-        Debug.Log($"Triggered {trigger} on {gameObject.name}'s animator for {time} seconds");
+        //Debug.Log($"Triggered {trigger} on {gameObject.name}'s animator for {time} seconds");
         networkAnimator.SetTrigger(trigger);
         if (reset)
         {

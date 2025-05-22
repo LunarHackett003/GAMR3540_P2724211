@@ -4,6 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.Pool;
+using static UnityEngine.UI.Image;
 
 /// <summary>
 /// The latest iteration in the weapon system, combining hitscan AND projectile weapons.<br></br>
@@ -40,6 +41,7 @@ public class RangedNetWeapon : BaseNetWeapon
     {
         trace.gameObject.SetActive(true);
         trace.gameObject.hideFlags = HideFlags.None;
+        trace.terminated = false;
     }
     void DestroyPoolObject(NetProjectile trace)
     {
@@ -138,16 +140,12 @@ public class RangedNetWeapon : BaseNetWeapon
         debugdisplay_truetime = TrueTimeBetweenRounds;
     }
 
-    [Rpc(SendTo.Everyone, DeferLocal = true)]
-    protected void FireWeapon_RPC(Quaternion rotation, Vector3 origin, bool primary = true)
+    [Rpc(SendTo.NotOwner, DeferLocal = true)]
+    protected void FireWeapon_RPC(bool primary = true)
     {
         if (IsOwner)
         {
             TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, TRIGGERTIMETINY);
-        }
-        if (IsServer)
-        {
-            ServerFire(rotation, origin);
         }
         PostAttackBehaviour();
     }
@@ -156,12 +154,26 @@ public class RangedNetWeapon : BaseNetWeapon
         for (int i = 0; i < fireIterations; i++)
         {
             ProjectilePool.Get(out NetProjectile v);
+            Debug.Log("Fired weapon");
             v.InitialiseProjectile(this, rotation * SpreadVector, chargeAmount);
+        }
+    }
+    public void FireWeaponBeforeSend(Quaternion rotation, Vector3 origin)
+    {
+        if (IsServer)
+        {
+            ServerFire(rotation, origin);
+            PostAttackBehaviour();
+
+        }
+        else
+        {
+            FireWeapon_RPC();
         }
     }
     protected override void PrimaryBehaviour()
     {
-        //base.PrimaryBehaviour();
+        base.PrimaryBehaviour();
 
 
         bool chargeMet = (chargeRate <= 0 || chargeAmount >= (chargeOnlyUntilMinimum ? minimumChargeToFire : 1));
@@ -182,19 +194,19 @@ public class RangedNetWeapon : BaseNetWeapon
             case FireMode.single:
                 if (!primaryPressed || fireOnRelease)
                 {
-                    FireWeapon_RPC(FireRotation, FirePosition);
+                    FireWeaponBeforeSend(FireRotation, FirePosition);
                     fired = true;
                 }
                 break;
             case FireMode.automatic:
-                FireWeapon_RPC(FireRotation, FirePosition);
+                FireWeaponBeforeSend(FireRotation, FirePosition);
                 fired = true;
                 break;
             case FireMode.animated:
                 if (!animatedFirePending)
                 {
                     animatedFirePending = true;
-                    FireWeapon_RPC(FireRotation, FirePosition);
+                    FireWeaponBeforeSend(FireRotation, FirePosition);
                 }
                 break;
             case FireMode.burst:
@@ -221,7 +233,7 @@ public class RangedNetWeapon : BaseNetWeapon
         while (burstRoundsFired < roundsInBurst && (!useAmmunition || CurrentAmmo.Value > 0))
         {
             burstRoundsFired++;
-            FireWeapon_RPC(FireRotation, FirePosition);
+            FireWeaponBeforeSend(FireRotation, FirePosition);
             yield return new WaitForSeconds(timeBetweenRounds);
         }
         yield return new WaitForSeconds(burstCooldown);

@@ -303,13 +303,13 @@ MonoBehaviour:
   critMultiplier: 1.1
   aimParams: {fileID: 11400000, guid: 1a6d153eabfc9464988cb3bad689cd16, type: 2}
   crosshairSpreadBase: 1
-  crosshairSpreadMax: 1
+  crosshairSpreadMax: 1.5
   hideCrosshairWhenAiming: 0
   useAttackSpread: 1
   spreadOnPrimary: 1
   spreadOnSecondary: 0
-  attackSpreadIncrement: 0.1
-  attackSpreadDecay: 2
+  attackSpreadIncrement: 0.07
+  attackSpreadDecay: 0.5
   baseAttackSpread: 0.05
   attackSpreadAmount: 0
   useAmmunition: 1
@@ -331,7 +331,7 @@ MonoBehaviour:
   primaryUsesCharge: 1
   secondaryUsesCharge: 1
   chargeRate: 0.7
-  chargeDecayRate: 2
+  chargeDecayRate: 1
   minimumChargeToFire: 0.1
   resetChargeOnFire: 0
   chargeAmount: 0
@@ -342,7 +342,7 @@ MonoBehaviour:
   poolStartCapacity: 50
   poolMaxCapacity: 500
   damageConfig: {fileID: 11400000, guid: a8ff663f9397ef04abdba5d966887adb, type: 2}
-  baseSpreadPerUnit: 0.05
+  baseSpreadPerUnit: 0.03
   maxInfluencedSpreadPerUnit: 0.1
   currentMovementInfluence: 0
   allowedFireModes: 04000000

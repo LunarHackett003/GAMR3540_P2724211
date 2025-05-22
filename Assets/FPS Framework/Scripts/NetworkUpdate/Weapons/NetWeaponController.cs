@@ -37,12 +37,16 @@ public class NetWeaponController : LunarNetScript
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+
+        colliderSet = new(colliders);
     }
 
     public void WeaponAdded(BaseNetWeapon weapon)
     {
         if (!weapons.Contains(weapon))
             weapons.Add(weapon);
+        weapon.InitialiseWeapon(this);
+
         RePollWeapons();
     }
     public void RePollWeapons()
@@ -56,7 +60,6 @@ public class NetWeaponController : LunarNetScript
     }
     public virtual void Initialise()
     {
-        colliderSet = new(colliders);
 
         if (weapons.Count > 0)
         {
@@ -70,10 +73,8 @@ public class NetWeaponController : LunarNetScript
                     weapons[i].animator.Initialise();
                 }
                 weapons[i].InitialiseWeapon(this);
-                if (i == 0)
-                    continue;
 
-                ShowWeapon(weapons[i].gameObject, false);
+                ShowWeapon(weapons[i].gameObject, i == weaponIndex.Value);
             }
         }
         lastWeaponCount = weapons.Count;
@@ -125,6 +126,7 @@ public class NetWeaponController : LunarNetScript
         if (animator != null)
             animator.UpdateAnimations();
 
+        switchingWeapons = false;
     }
     public virtual void SwitchToWeaponIndex(int index)
     {
@@ -151,6 +153,10 @@ public class NetWeaponController : LunarNetScript
         }
 
         animator.UpdateAnimations();
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            ShowWeapon(weapons[i].gameObject, i == weaponIndex.Value);
+        }
     }
     public virtual void WeaponIndexUpdated()
     {

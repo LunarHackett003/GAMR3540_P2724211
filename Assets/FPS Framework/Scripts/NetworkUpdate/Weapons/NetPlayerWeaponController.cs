@@ -18,25 +18,6 @@ public class NetPlayerWeaponController : NetWeaponController
     {
         return value * Mathf.Clamp01((1 - aimAmount) - (player.motor.currentCrouchLerp * crouchAccuracyMultiplier));
     }
-
-    public override void LTimestep()
-    {   
-        if (IsOwner)
-        {
-            primaryInput = InputManager.PrimaryInput;
-            secondaryInput = InputManager.SecondaryInput;
-            reloadInput = InputManager.ReloadInput;
-            //Implement later
-            //meleeInput = InputManager.MeleeInput;
-            weaponSwitchInput = InputManager.WeaponSwitchInput;
-
-
-            if(primaryInput != lastPrimary || secondaryInput != lastSecondary || reloadInput != lastReload)
-            {
-                SendInputToServer_RPC(primaryInput, secondaryInput, reloadInput);
-            }
-        }
-    }
     public override void LPostUpdate()
     {
         base.LPostUpdate();
@@ -58,8 +39,15 @@ public class NetPlayerWeaponController : NetWeaponController
             primaryInput = InputManager.PrimaryInput && !FireBlocked;
             secondaryInput = InputManager.SecondaryInput && !FireBlocked;
 
+
             weaponSwitchInput = InputManager.WeaponSwitchInput;
             reloadInput = InputManager.ReloadInput;
+
+
+            if (primaryInput != lastPrimary || secondaryInput != lastSecondary || reloadInput != lastReload)
+            {
+                SendInputToServer_RPC(primaryInput, secondaryInput, reloadInput);
+            }
         }
 
         if(CurrentWeapon != null)

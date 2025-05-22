@@ -13,8 +13,10 @@ public class NetDamageable : LunarNetScript
     
     public virtual void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
     {
-        if(!IsServer) return;
-
+        if (IsServer)
+        {
+            HealthUpdated_RPC(delta, source, damageSourceType, isCrit);
+        }
         switch (damageSourceType)
         {
             case DamageSourceType.world:
@@ -33,9 +35,21 @@ public class NetDamageable : LunarNetScript
                 break;
         }
     }
+    [Rpc(SendTo.NotServer)]
+    public void HealthUpdated_RPC(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
+    {
+        ModifyHealth(delta, source, damageSourceType, isCrit);
+    }
     public virtual void WorldDamage(float deltaHealth)
     {
-        currentHealth.AuthoritativeValue += deltaHealth;
+        if (IsServer)
+        {
+            currentHealth.AuthoritativeValue += deltaHealth;
+        }
+        else
+        {
+            currentHealth.Anticipate(currentHealth.Value + deltaHealth);
+        }
     }
     public virtual void WeaponDamage(float deltaHealth, bool isCrit, NetworkBehaviourReference reference)
     {
@@ -45,16 +59,37 @@ public class NetDamageable : LunarNetScript
             {
                 deltaHealth *= weapon.critMultiplier;
             }
-            currentHealth.AuthoritativeValue += deltaHealth;
+            if (IsServer)
+            {
+                currentHealth.AuthoritativeValue += deltaHealth;
+            }
+            else
+            {
+                currentHealth.Anticipate(currentHealth.Value + deltaHealth);
+            }
         }
     }
     public virtual void MeleeDamage(float deltaHealth, NetworkBehaviourReference reference)
     {
-        currentHealth.AuthoritativeValue += deltaHealth;
+        if (IsServer)
+        {
+            currentHealth.AuthoritativeValue += deltaHealth;
+        }
+        else
+        {
+            currentHealth.Anticipate(currentHealth.Value + deltaHealth);
+        }
     }
     public virtual void HazardDamage(float deltaHealth, NetworkBehaviourReference reference)
     {
-        currentHealth.AuthoritativeValue += deltaHealth;
+        if (IsServer)
+        {
+            currentHealth.AuthoritativeValue += deltaHealth;
+        }
+        else
+        {
+            currentHealth.Anticipate(currentHealth.Value + deltaHealth);
+        }
     }
 }
 

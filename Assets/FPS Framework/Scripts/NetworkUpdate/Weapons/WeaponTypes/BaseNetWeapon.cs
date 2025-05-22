@@ -59,7 +59,7 @@ public class BaseNetWeapon : LunarNetScript
     internal bool animatedFirePending;
     internal bool animatedFireLast;
 
-
+    public HashSet<Collider> ignoredColliders;
 
     [SerializeField] internal bool charging;
     internal bool chargeHoldFrame;
@@ -96,8 +96,12 @@ public class BaseNetWeapon : LunarNetScript
 
     public virtual void InitialiseWeapon(NetWeaponController controller)
     {
+        Debug.Log("Initialised weapon", gameObject);
+
         this.controller = controller;
         animator.controller = controller;
+
+        ignoredColliders = new(controller.colliderSet);
     }
 
     public override void LTimestep()

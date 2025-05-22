@@ -6,8 +6,9 @@ public class ChargeRotator : LunarScript
 {
     public BaseNetWeapon weapon;
 
+    public float targetSpinLerpSpeed = 4;
     public float spinSpeed = 5;
-
+    float targetSpeed;
     public Vector3 axis = Vector3.up;
 
     private void Start()
@@ -24,7 +25,8 @@ public class ChargeRotator : LunarScript
 
         if (weapon)
         {
-            transform.Rotate(axis, spinSpeed * Time.deltaTime * weapon.chargeAmount, Space.Self);
+            targetSpeed = Mathf.Lerp(targetSpeed, weapon.chargeAmount, Time.deltaTime * targetSpinLerpSpeed * targetSpinLerpSpeed);
+            transform.Rotate(axis, targetSpeed * Time.deltaTime * spinSpeed, Space.Self);
         }
     }
 }

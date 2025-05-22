@@ -21,19 +21,25 @@ public class NetProjectile : LunarNetScript
     public float returnTimeAfterTerminate = 1;
     [SerializeField] protected float terminateTime;
     [SerializeField] protected bool waitingToFire = true;
-    [SerializeField] internal float thickness;
+    [SerializeField] internal float radius;
     [SerializeField] internal Vector3 direction;
     [SerializeField] internal float velocity = 10;
     [SerializeField] internal float gravityMultiplier = 1;
-
     public HashSet<Collider> ignoredColliders;
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        projectileEffect.Play();
+    }
 
     public void InitialiseProjectile(RangedNetWeapon weapon, Vector3 direction, float charge)
     {
 
         if (NetworkManager.Singleton.IsServer)
         {
-            ignoredColliders = weapon.controller.colliderSet;
+            ignoredColliders = new(weapon.ignoredColliders);
 
             this.weapon = weapon;
             damageMultiplier = charge != 0 ? Mathf.Lerp(weapon.minChargeDamageMultiplier, weapon.maxChargeDamageMultiplier, charge) : 1;
@@ -45,7 +51,6 @@ public class NetProjectile : LunarNetScript
             distanceTravelled = 0;
             terminateTime = 0;
             waitingToFire = false;
-            projectileEffect.Play();
 
             ProjectileSimulator.allProjectiles.Add(this);
 
@@ -54,13 +59,9 @@ public class NetProjectile : LunarNetScript
     }
     public void TerminateProjectile(bool reasonIsHit)
     {
-
         Debug.Log($"Terminating projectile - reason: {(reasonIsHit ? "Hit Object" : "Ran Out Of Time")}");
-
-        timeAlive = 0;
         terminated = true;
-
-        ProjectileSimulator.projectilesToTerminate.Add(this);
+        timeAlive = maxAliveTime;
     }
 
     public override void LTimestep()
@@ -74,24 +75,17 @@ public class NetProjectile : LunarNetScript
         }
     }
 
-    public void TickProjectile()
+    public virtual void TickProjectile()
     {
         if (!terminated)
         {
-
             distanceTravelled += Time.fixedDeltaTime * velocity;
             timeAlive += Time.fixedDeltaTime;
-
-            if(timeAlive >= maxAliveTime || distanceTravelled >= maxDistance)
-            {
-                TerminateProjectile(false);
-            }
-
             transform.position += Time.fixedDeltaTime * velocity * direction;
             direction += gravityMultiplier * Time.fixedDeltaTime * Time.fixedDeltaTime * Physics.gravity;
         }
     }
-    void TerminatedTick()
+    public virtual void TerminatedTick()
     {
         terminateTime += Time.fixedDeltaTime;
         if(terminateTime > returnTimeAfterTerminate)

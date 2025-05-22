@@ -11,7 +11,7 @@ public class NetEntity : NetDamageable
 
     [SerializeField] protected bool canRegenerateHealth = false;
     [SerializeField] protected float regenerationDelay = 5;
-    protected float currentRegenTime = 0;
+    [SerializeField] protected float currentRegenTime = 0;
     [SerializeField] protected float regenerationRate = 5;
     [SerializeField] protected bool immuneToDamage = false;
 
@@ -53,6 +53,15 @@ public class NetEntity : NetDamageable
             currentRegenTime = 0;
     }
 
+    public override void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = DamageSourceType.world, bool isCrit = false)
+    {
+        base.ModifyHealth(delta, source, damageSourceType, isCrit);
+
+        if(delta < 0)
+        {
+            currentRegenTime = 0;
+        }
+    }
 
     public override void LTimestep()
     {
@@ -60,20 +69,23 @@ public class NetEntity : NetDamageable
         healthThisFrame = currentHealth.Value;
         if (canRegenerateHealth && !isDead.Value)
         {
-            if (currentRegenTime >= regenerationDelay)
+            if(currentHealth.Value < maxHealth)
             {
-                if (IsServer)
+                if (currentRegenTime >= regenerationDelay)
                 {
-                    currentHealth.AuthoritativeValue = Mathf.Clamp(currentHealth.AuthoritativeValue + Time.fixedDeltaTime * regenerationRate, 0, maxHealth);
+                    if (IsServer)
+                    {
+                        currentHealth.AuthoritativeValue = Mathf.Clamp(currentHealth.AuthoritativeValue + Time.fixedDeltaTime * regenerationRate, 0, maxHealth);
+                    }
+                    else
+                    {
+                        currentHealth.Anticipate(Mathf.Clamp(currentHealth.Value + Time.fixedDeltaTime * regenerationRate, 0, maxHealth));
+                    }
                 }
                 else
                 {
-                    currentHealth.Anticipate(Mathf.Clamp(currentHealth.Value + Time.fixedDeltaTime * regenerationRate, 0, maxHealth));
+                    currentRegenTime += Time.fixedDeltaTime;
                 }
-            }
-            else
-            {
-                currentRegenTime += Time.fixedDeltaTime;
             }
         }
 
