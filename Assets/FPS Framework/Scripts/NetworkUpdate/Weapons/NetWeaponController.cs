@@ -99,6 +99,7 @@ public class NetWeaponController : LunarNetScript
         if (lastWeaponCount != weapons.Count)
         {
             RePollWeapons();
+            lastWeaponCount = weapons.Count;
         }
     }
 

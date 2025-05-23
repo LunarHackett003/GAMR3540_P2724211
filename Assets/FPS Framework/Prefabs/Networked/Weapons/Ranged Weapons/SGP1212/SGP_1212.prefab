@@ -133,22 +133,22 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 755e54ece6e164e4b881f6cc5d1f41fc, type: 2}
+      objectReference: {fileID: 2100000, guid: 81d78255a28d28b4bad19239b79dadc2, type: 2}
     - target: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: f5dcbb014a7c8de4fb84da38cabf801b, type: 2}
+      objectReference: {fileID: 2100000, guid: a24c674535f0f654d97a1136bcf6572b, type: 2}
     - target: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Materials.Array.data[2]
       value: 
-      objectReference: {fileID: 2100000, guid: 52a5b61e29f7ce849829b8406a43a575, type: 2}
+      objectReference: {fileID: 2100000, guid: 7194696dcabb9b040b50073858dcb506, type: 2}
     - target: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Materials.Array.data[3]
       value: 
-      objectReference: {fileID: 2100000, guid: 7acec067f04d0bb4b80ea3be285b8ace, type: 2}
+      objectReference: {fileID: 2100000, guid: 5de13f7661141244abd2e5021198417f, type: 2}
     - target: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       propertyPath: m_Name
@@ -234,15 +234,31 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8429981282044506423}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3186947292507736985}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
-        type: 3}
-      insertIndex: -1
       addedObject: {fileID: 2144131535093995190}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 98520474444900849}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8737690487519827806}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2840339417751032144}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7256348790612261608}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 609970521828946643}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a403992dcff11740999f13273d77f88,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8394720579186082127}
   m_SourcePrefab: {fileID: 100100000, guid: 2a403992dcff11740999f13273d77f88, type: 3}
 --- !u!4 &2636527759282066816 stripped
 Transform:
@@ -277,134 +293,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8429981282044506423
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6011691946470104996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2687c5bf2b0e2254b95519ab3ef3922c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 3737877566551122370}
-  controller: {fileID: 0}
-  weapon: {fileID: 3186947292507736985}
-  isWeapon: 1
---- !u!114 &3186947292507736985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6011691946470104996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6517f9cfa2f4f9449a325a6ef4fe85c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  displayName: SGP 1212
-  animSet: {fileID: 11400000, guid: 65850372d1f9f624e895bad678e073b9, type: 2}
-  attackOnPrimary: 1
-  attackOnSecondary: 0
-  primaryBlocksSecondary: 0
-  secondaryBlocksPrimary: 0
-  aimOnSecondary: 0
-  aimParams: {fileID: 11400000, guid: dc072120578f0764785d9ae3a53b9626, type: 2}
-  controller: {fileID: 0}
-  crosshairSpreadBase: 1
-  crosshairSpreadMax: 1.5
-  useAttackSpread: 1
-  spreadOnPrimary: 1
-  spreadOnSecondary: 0
-  attackSpreadIncrement: 0.7
-  attackSpreadDecay: 0.8
-  baseAttackSpread: 0.05
-  attackSpreadAmount: 0
-  useAmmunition: 1
-  ammoConsumeOnPrimary: 0
-  ammoConsumeOnSecondary: 0
-  maxAmmo: 3
-  ammoPerShot: 1
-  CurrentAmmo: 0
-  useAmmoPhases: 1
-  ammoPhases: 4
-  currentAmmoPhase: 0
-  partialReloadTime: 2.8
-  emptyReloadTime: 2.8
-  queuedReloadAnimation: 0
-  fired: 0
-  primaryUsesCharge: 0
-  secondaryUsesCharge: 0
-  chargeRate: 0
-  chargeDecayRate: 0
-  minimumChargeToFire: 0
-  resetChargeOnFire: 0
-  chargeAmount: 0
-  chargeUntilFire: 0
-  chargeOnlyUntilMinimum: 0
-  fireOnRelease: 0
-  animator: {fileID: 8429981282044506423}
-  charging: 0
-  baseSpreadPerUnit: 0.1
-  maxInfluencedSpreadPerUnit: 0.14
-  currentMovementInfluence: 0
-  allowedFireModes: 08000000
-  fireModeIndex: 0
-  fireModeSwitchTime: 0
-  roundsPerMinute: 10
-  roundsInBurst: 0
-  timeBetweenRounds: 6
-  burstCooldown: 0
-  autoBurst: 0
-  chargeAffectsFireRate: 0
-  minChargeFireRateMultiplier: 0.4
-  maxChargeFireRateMultiplier: 1
-  minChargeDamageMultiplier: 0.2
-  maxChargeDamageMultiplier: 0.2
-  fireOrigin: {fileID: 4979490576160884970}
-  fireIterations: 12
-  poolStartCapacity: 50
-  poolMaxCapacity: 500
-  shotsCanRichochet: 0
-  shotsCanPenetrate: 0
-  shotMaxRange: 75
-  shotRicochetRangeLoss: 0.5
-  shotPenetrateRangeLoss: 0.2
-  maxRicochetNormal: 0.2
-  minRicochetNormal: 0.2
-  minPenetrateNormal: 0.5
-  maxDamage: 10
-  knockbackForceMultiplier: 0.1
-  damageFalloff:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -2.9907475
-      outSlope: -2.9907475
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.033078622
-    - serializedVersion: 3
-      time: 1.0012817
-      value: 0
-      inSlope: -0.03428548
-      outSlope: -0.03428548
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.0966672
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  tracerPrefab: {fileID: 3937423659732281253, guid: c23d85e845ad20e4198880685d105867,
-    type: 3}
-  tracerSpeed: 150
 --- !u!114 &2144131535093995190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -421,6 +309,210 @@ MonoBehaviour:
   - {fileID: 6306477283575243946}
   layerName: Character
   layerIndex: 6
+--- !u!114 &98520474444900849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011691946470104996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &8737690487519827806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011691946470104996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2373818f8c7e30d4e89f17ad35a31d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayName: SGP-1212
+  weaponIcon: {fileID: -493944041507664129, guid: 202e9363508ef614b8b2bccff034f518,
+    type: 3}
+  animationSet: {fileID: 11400000, guid: 65850372d1f9f624e895bad678e073b9, type: 2}
+  controller: {fileID: 0}
+  animator: {fileID: 7256348790612261608}
+  canCrit: 1
+  critMultiplier: 1.2
+  aimParams: {fileID: 11400000, guid: 266aedf6a346484479a394b3e92d2f91, type: 2}
+  crosshairSpreadBase: 1
+  crosshairSpreadMax: 1.5
+  hideCrosshairWhenAiming: 0
+  useAttackSpread: 0
+  spreadOnPrimary: 0
+  spreadOnSecondary: 0
+  attackSpreadIncrement: 0.5
+  attackSpreadDecay: 1
+  baseAttackSpread: 0.1
+  attackSpreadAmount: 0
+  useAmmunition: 1
+  ammoConsumeOnPrimary: 1
+  ammoConsumeOnSecondary: 0
+  maxAmmo: 3
+  ammoPerShot: 1
+  CurrentAmmo:
+    m_AuthoritativeValue:
+      m_InternalValue: 0
+    StaleDataHandling: 1
+  useAmmoPhases: 1
+  ammoPhases: 4
+  currentAmmoPhase: 0
+  partialReloadTime: 2
+  emptyReloadTime: 2
+  queuedReloadAnimation: 0
+  fired: 0
+  primaryUsesCharge: 0
+  secondaryUsesCharge: 0
+  chargeRate: 0
+  chargeDecayRate: 0
+  minimumChargeToFire: 0
+  resetChargeOnFire: 0
+  chargeAmount: 0
+  chargeUntilFire: 0
+  chargeOnlyUntilMinimum: 0
+  fireOnRelease: 0
+  charging: 0
+  poolStartCapacity: 50
+  poolMaxCapacity: 500
+  damageConfig: {fileID: 11400000, guid: a8ff663f9397ef04abdba5d966887adb, type: 2}
+  baseSpreadPerUnit: 0.1
+  maxInfluencedSpreadPerUnit: 0.1
+  currentMovementInfluence: 0
+  allowedFireModes: 08000000
+  fireModeIndex: 0
+  fireModeSwitchTime: 0
+  roundsPerMinute: 100
+  roundsInBurst: 0
+  timeBetweenRounds: 0.6
+  debugdisplay_truetime: 0
+  burstCooldown: 0
+  autoBurst: 0
+  chargeAffectsFireRate: 0
+  minChargeFireRateMultiplier: 0.4
+  maxChargeFireRateMultiplier: 1
+  minChargeDamageMultiplier: 1
+  maxChargeDamageMultiplier: 1
+  currentFireCooldown: 0
+  fireOrigin: {fileID: 4979490576160884970}
+  fireIterations: 12
+  ProjectilePrefab: {fileID: 5209872433354348746, guid: deaa57cd7a1bf87439a4b07b469d8c1a,
+    type: 3}
+--- !u!114 &2840339417751032144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011691946470104996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0ade3a55cfbdfa438939768e2ee898c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -118708495
+    DestinationState: 1562257414
+    TransitionDuration: 0.065812886
+    TriggerNameHash: 1562257414
+    TransitionIndex: 1
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -118708495
+    DestinationState: 1159952127
+    TransitionDuration: 0.30583507
+    TriggerNameHash: -1047320328
+    TransitionIndex: 2
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 2081823275
+    DestinationState: 2071894089
+    TransitionDuration: 0.065812886
+    TriggerNameHash: 2071894089
+    TransitionIndex: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 2081823275
+    DestinationState: 1562257414
+    TransitionDuration: 0.065812886
+    TriggerNameHash: 1562257414
+    TransitionIndex: 1
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 2081823275
+    DestinationState: 1159952127
+    TransitionDuration: 0.19881755
+    TriggerNameHash: -1047320328
+    TransitionIndex: 3
+  m_Animator: {fileID: 3737877566551122370}
+--- !u!114 &7256348790612261608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011691946470104996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1045384fa00138840b02555c1abdff1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 3737877566551122370}
+  networkAnimator: {fileID: 2840339417751032144}
+  controller: {fileID: 0}
+  weapon: {fileID: 8737690487519827806}
+  isWeapon: 1
+--- !u!114 &609970521828946643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011691946470104996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1a63128dbd1f6a48a8a40ca0e57658d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerConfig:
+    shadowsOnly: 0
+    updateOffscreen: 1
+  remoteConfig:
+    shadowsOnly: 0
+    updateOffscreen: 0
+  meshRenderer: {fileID: 0}
+  skinnedMeshRenderer: {fileID: 6306477283575243946}
+--- !u!114 &8394720579186082127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6011691946470104996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c057af5c9d311947995a90384b2f90b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerLayerIndex: 6
+  remoteLayerIndex: 0
 --- !u!137 &6306477283575243946 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 588181020725134943, guid: 2a403992dcff11740999f13273d77f88,

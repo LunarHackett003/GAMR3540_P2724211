@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e498dc239bed1b4e86338383f19bfc0, type: 3}
-  m_Name: New Test Loadout Weapon Collection
+  m_Name: Loadout Weapons
   m_EditorClassIdentifier: 
   weapons:
   - {fileID: 4767148707631472417, guid: a5bbba68c96c71b4caa87cc82a7235ad, type: 3}
   - {fileID: 4767148707631472417, guid: a5bbba68c96c71b4caa87cc82a7235ad, type: 3}
-  - {fileID: 4767148707631472417, guid: a5bbba68c96c71b4caa87cc82a7235ad, type: 3}
+  - {fileID: 8737690487519827806, guid: 8927e02d8d56e1a4992b1e1621109015, type: 3}
   - {fileID: 8626052139001016270, guid: d66a2d8eccbaaf54fba8763ee7118d5a, type: 3}
