@@ -143,10 +143,7 @@ public class RangedNetWeapon : BaseNetWeapon
     [Rpc(SendTo.NotOwner, DeferLocal = true)]
     protected void FireWeapon_RPC(bool primary = true)
     {
-        if (IsOwner)
-        {
-            TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, TRIGGERTIMETINY);
-        }
+
         PostAttackBehaviour();
     }
     public virtual void ServerFire(Quaternion rotation, Vector3 origin)
@@ -158,17 +155,20 @@ public class RangedNetWeapon : BaseNetWeapon
             v.InitialiseProjectile(this, rotation * SpreadVector, chargeAmount);
         }
     }
-    public void FireWeaponBeforeSend(Quaternion rotation, Vector3 origin)
+    public void FireWeaponBeforeSend(Quaternion rotation, Vector3 origin, bool primary = true)
     {
         if (IsServer)
         {
             ServerFire(rotation, origin);
             PostAttackBehaviour();
-
         }
         else
         {
-            FireWeapon_RPC();
+            if (IsOwner)
+            {
+                TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, TRIGGERTIMETINY);
+            }
+            FireWeapon_RPC(primary);
         }
     }
     protected override void PrimaryBehaviour()
