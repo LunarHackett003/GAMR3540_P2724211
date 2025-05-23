@@ -55,6 +55,7 @@ public class NetWeaponController : LunarNetScript
         if (lastWeaponCount == 0)
         {
             Debug.Log("Repolled weapons and re-initialised");
+            lastWeaponCount = weapons.Count;
             Initialise();
         }
     }
@@ -67,13 +68,6 @@ public class NetWeaponController : LunarNetScript
 
             for (int i = 0; i < weapons.Count; i++)
             {
-                if (weapons[i].animator != null)
-                {
-                    weapons[i].animator.controller = this;
-                    weapons[i].animator.Initialise();
-                }
-                weapons[i].InitialiseWeapon(this);
-
                 ShowWeapon(weapons[i].gameObject, i == weaponIndex.Value);
             }
         }

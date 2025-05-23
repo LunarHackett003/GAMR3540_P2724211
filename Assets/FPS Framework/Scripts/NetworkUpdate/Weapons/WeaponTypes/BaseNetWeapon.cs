@@ -101,6 +101,8 @@ public class BaseNetWeapon : LunarNetScript
         this.controller = controller;
         animator.controller = controller;
 
+        animator.Initialise();
+
         ignoredColliders = new(controller.colliderSet);
     }
 
