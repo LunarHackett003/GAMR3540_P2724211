@@ -162,7 +162,8 @@ public class RangedNetWeapon : BaseNetWeapon
             ServerFire(rotation, origin);
             PostAttackBehaviour();
         }
-        else
+
+        if(IsClient)
         {
             if (IsOwner)
             {
