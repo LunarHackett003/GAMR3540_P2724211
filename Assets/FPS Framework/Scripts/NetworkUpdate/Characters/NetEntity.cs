@@ -97,6 +97,11 @@ public class NetEntity : NetDamageable
         }
     }
 
+    public override void DamageableDied(NetworkBehaviourReference sourceObj, bool isCrit)
+    {
+        base.DamageableDied(sourceObj, isCrit);
+    }
+
 }
 
 

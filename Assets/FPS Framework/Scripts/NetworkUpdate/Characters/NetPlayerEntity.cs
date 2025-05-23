@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -44,5 +45,10 @@ public class NetPlayerEntity : NetEntity
     {
         playersByID.Remove(OwnerClientId);
         base.OnNetworkDespawn();
+    }
+
+    public override void DamageableDied(NetworkBehaviourReference sourceObj, bool isCrit)
+    {
+        base.DamageableDied(sourceObj, isCrit);
     }
 }

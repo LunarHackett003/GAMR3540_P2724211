@@ -34,6 +34,10 @@ public class NetDamageable : LunarNetScript
             default:
                 break;
         }
+        if(currentHealth.Value <= 0 || currentHealth.AuthoritativeValue <= 0)
+        {
+            DamageableDied(source, isCrit);
+        }
     }
     [Rpc(SendTo.NotServer)]
     public void HealthUpdated_RPC(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
@@ -90,6 +94,11 @@ public class NetDamageable : LunarNetScript
         {
             currentHealth.Anticipate(currentHealth.Value + deltaHealth);
         }
+    }
+
+    public virtual void DamageableDied(NetworkBehaviourReference sourceObj, bool isCrit)
+    {
+
     }
 }
 
