@@ -168,9 +168,29 @@ public class NetPlayerMotor : LunarNetScript
             if (MyBufferManager.ShouldTick)
             {
                 ClientTick();
-                ServerTick();   
+                if(!IsHost)
+                    ServerTick();   
             }
+
+            UpdateAnimationParameters();
         }
+    }
+
+    void UpdateAnimationParameters()
+    {
+
+        float moveMultiplier = sprinting ? 1.5f : 1f;
+
+        playerEntity.Animator.SetAnimationFloat("Vertical", moveInput.y * moveMultiplier, 0.2f, true);
+        playerEntity.Animator.SetAnimationFloat("Horizontal", moveInput.x * moveMultiplier, 0.2f, true);
+
+        playerEntity.Animator.SetAnimationBool("Moving", moveInput != Vector2.zero);
+
+        playerEntity.Animator.SetAnimationBool("InAir", !isGrounded);
+
+        playerEntity.Animator.SetAnimationBool("Sliding", sliding);
+
+        playerEntity.Animator.SetAnimationFloat("Crouch", currentCrouchLerp);
     }
 
     void ClientTick()
@@ -499,7 +519,7 @@ public class NetPlayerMotor : LunarNetScript
             }
         }
 
-        sprinting = sprintInput && !sliding;
+        sprinting = sprintInput && !aiming && !sliding && moveInput.y > 0.7f;
         if(crouching && sprinting)
         {
             crouching = false;
@@ -542,6 +562,7 @@ public class NetPlayerMotor : LunarNetScript
                 if (IsOwner)
                 {
                     InputManager.JumpInput = false;
+                    playerEntity.Animator.TriggerAnimation("Jump", 0.2f, true);
                 }
                 jumpInput = false;
                 rigidbody.velocity.Scale(new(1, 0, 1));
@@ -554,11 +575,24 @@ public class NetPlayerMotor : LunarNetScript
     {
         currentCrouchLerp = Mathf.MoveTowards(currentCrouchLerp, crouching || sliding ? 1 : 0, moveParams.crouchHeadSpeed * Time.fixedDeltaTime);
         head.localPosition = Vector3.Lerp(Vector3.up * viewParams.standingHeadHeight, Vector3.up * viewParams.crouchedHeadHeight, currentCrouchLerp);
-        if (crouchTransform != null)
+
+        if (IsOwner)
         {
-            crouchTransform.localPosition = Vector3.Lerp(crouchTransformAxis * crouchTransformStandHeight, crouchTransformAxis * crouchTransformCrouchHeight, currentCrouchLerp);
+            if(lastCrouchLerp != currentCrouchLerp)
+            {
+                UpdateCapsule_RPC(currentCrouchLerp);
+                lastCrouchLerp = currentCrouchLerp;
+            }
         }
     }
+    float lastCrouchLerp = 0;
+    [Rpc(SendTo.Everyone)]
+    public void UpdateCapsule_RPC(float crouchLerp)
+    {
+        playerEntity.capsule.height = 2 - (crouchLerp * crouchTransformCrouchHeight);
+        playerEntity.capsule.center = Vector3.up * ((playerEntity.capsule.height / 2) - 1);
+    }
+
     void MovePlayer()
     {
         if (isGrounded)

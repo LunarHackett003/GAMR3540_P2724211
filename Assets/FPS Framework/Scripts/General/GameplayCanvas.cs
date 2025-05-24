@@ -30,11 +30,7 @@ public class GameplayCanvas : LunarScript
     private void OnGUI()
     {
         GUILayout.Space(100);
-        if (Instance)
-        {
-            GUILayout.Label("Gameplay Canvas Active!");
-        }
-        else
+        if (Instance == null)
         {
             GUILayout.Label("Gameplay Canvas Not Working!");
         }

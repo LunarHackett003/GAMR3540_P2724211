@@ -24,6 +24,9 @@ public class NetPlayerEntity : NetEntity
 
     [SerializeField] internal Camera viewmodelCamera;
 
+    internal NetWeaponAnimator Animator => weaponController.animator;
+
+    [SerializeField] internal CapsuleCollider capsule;
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();

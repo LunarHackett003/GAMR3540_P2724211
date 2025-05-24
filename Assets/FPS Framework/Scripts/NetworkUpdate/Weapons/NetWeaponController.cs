@@ -61,7 +61,7 @@ public class NetWeaponController : LunarNetScript
     }
     public virtual void Initialise()
     {
-
+        animator.Initialise();
         if (weapons.Count > 0)
         {
             ChangeCurrentWeapon(weapons[0], out _, out _);

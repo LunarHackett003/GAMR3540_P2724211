@@ -55,11 +55,6 @@ public class NetBufferManager : LunarNetScript
         serverStateBuffer = new((int)bufferSize);
         serverInputQueue = new();
     }
-    private void OnGUI()
-    {
-        GUILayout.Space(200);
-        GUILayout.Label($"Tick: {Tick}");
-    }
     [Rpc(SendTo.Server)]
     public void SendInputPayload_RPC(InputPayload payload)
     {

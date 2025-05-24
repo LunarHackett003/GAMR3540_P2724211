@@ -75,7 +75,7 @@ public class NetPlayerWeaponController : NetWeaponController
             }
         }
 
-        player.motor.aiming = secondaryInput;
+        player.motor.aiming = secondaryInput && !player.motor.sliding;
 
         UpdateFOV();
         UpdateWeaponOrientation();

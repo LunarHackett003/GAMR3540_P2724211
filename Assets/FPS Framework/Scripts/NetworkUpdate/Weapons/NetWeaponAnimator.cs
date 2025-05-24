@@ -29,6 +29,10 @@ public class NetWeaponAnimator : LunarNetScript
             animator.tag = "Weapon";
             animator.SetLayerWeight(1, 1);
         }
+        else
+        {
+            animator.SetLayerWeight(2, 1);
+        }
 
         networkAnimator = animator.GetComponent<NetworkAnimator>();
 
@@ -77,14 +81,21 @@ public class NetWeaponAnimator : LunarNetScript
             animator.SetBool(parameter, value);
         }
     }
-    public virtual void SetAnimationFloat(string parameter, float value)
+    public virtual void SetAnimationFloat(string parameter, float value, float dampTime = 0, bool useFixedDelta = true)
     {
         if (!IsOwner)
             return;
 
         if (animator != null)
         {
-            animator.SetFloat(parameter, value);
+            if(dampTime > 0)
+            {
+                animator.SetFloat(parameter, value, dampTime, useFixedDelta ? Time.fixedDeltaTime : Time.deltaTime);
+            }
+            else
+            {
+                animator.SetFloat(parameter, value);
+            }
         }
     }
 
