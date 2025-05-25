@@ -39,7 +39,13 @@ public class NetworkPlayer : LunarNetScript
             return false;
         }
     }
+    public static bool IsPlayerOnMyTeam(ulong myID, ulong theirID)
+    {
+        GetPlayerTeam(myID, out int myteam);
+        GetPlayerTeam(theirID, out int theirTeam);
 
+        return myteam == theirTeam && myteam != -1 && theirTeam != -1;
+    }
 
 
     public override void OnNetworkSpawn()

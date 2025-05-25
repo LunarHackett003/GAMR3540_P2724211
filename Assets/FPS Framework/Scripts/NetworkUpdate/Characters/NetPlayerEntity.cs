@@ -55,13 +55,27 @@ public class NetPlayerEntity : NetEntity
     [SerializeField] internal CapsuleCollider capsule;
 
 
+    [SerializeField] internal Material friendlyMaterial, enemyMaterial;
+    [SerializeField] internal Renderer[] materialOverrideRenderers;
     [SerializeField] internal InteractionConfig interactConfig;
+
+    public bool isFriendly;
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
         playersByID.Add(OwnerClientId, this);
+
+        if (!IsOwner)
+        {
+            isFriendly = NetworkPlayer.IsPlayerOnMyTeam(NetworkManager.LocalClientId, OwnerClientId);
+
+            for (int i = 0; i < materialOverrideRenderers.Length; i++)
+            {
+                materialOverrideRenderers[i].material = isFriendly ? friendlyMaterial : enemyMaterial;
+            }
+        }
 
         if (IsOwner)
         {
@@ -206,7 +220,8 @@ public class NetPlayerEntity : NetEntity
 
         if (IsServer)
         {
-            reviveItemInstance = NetworkManager.SpawnManager.InstantiateAndSpawn(playerReviveItemPrefab, OwnerClientId, position: transform.position);
+            if(reviveItemInstance == null)
+                reviveItemInstance = NetworkManager.SpawnManager.InstantiateAndSpawn(playerReviveItemPrefab, OwnerClientId, position: transform.position);
         }
 
         capsule.enabled = false;

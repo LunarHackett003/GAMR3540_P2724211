@@ -1100,8 +1100,17 @@ MonoBehaviour:
   playerReviveItemPrefab: {fileID: 6586053292940609100, guid: 8e4980b1c151cdb479b989ffab241039,
     type: 3}
   deathParticle: {fileID: 3413898351482589500}
+  currentInteractTarget: {fileID: 0}
+  carryTargetRequested: {fileID: 0}
+  interactTargetRigidbody: {fileID: 0}
+  carryConfirmed: 0
+  heldInteraction: 0
   capsule: {fileID: 5515138310644021310}
+  friendlyMaterial: {fileID: 2100000, guid: 1aed238a21834d74487bfc282c822e22, type: 2}
+  enemyMaterial: {fileID: 2100000, guid: 544d0abfe0e7c39459f1dfe28b8bf542, type: 2}
+  materialOverrideRenderers: []
   interactConfig: {fileID: 11400000, guid: e5762a6c223da3445910c2add6d41741, type: 2}
+  isFriendly: 0
 --- !u!114 &6327532313127820386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1212,6 +1221,7 @@ MonoBehaviour:
   fireOrigin: {fileID: 7269716539852128244}
   fireBlockedByAnimation: 0
   animator: {fileID: 860630945268122133}
+  hideWeapons: 0
   reloadInput: 0
   meleeInput: 0
   weaponSwitchInput: 0
