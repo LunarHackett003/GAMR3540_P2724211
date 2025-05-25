@@ -304,7 +304,15 @@ public class ProjectileSimulator : LunarNetScript
                 }
                 if (item.Key.TryGetComponent(out NetDamageable d))
                 {
-                    d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
+                    NetworkPlayer.GetPlayerTeam(d.OwnerClientId, out int teamIndex_Target);
+                    NetworkPlayer.GetPlayerTeam(d.OwnerClientId, out int teamIndex_Me);
+
+                    bool teamIgnored = item.Value.damageAccumulated > 0 || (teamIndex_Target != teamIndex_Me) || (teamIndex_Me == -1) || (teamIndex_Target == -1);
+
+                    if (d.receiveDamageFromTeamOrOwner || (d.OwnerClientId != item.Value.weapon.OwnerClientId && teamIgnored))
+                    {
+                        d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
+                    }
                 }
             }
         }

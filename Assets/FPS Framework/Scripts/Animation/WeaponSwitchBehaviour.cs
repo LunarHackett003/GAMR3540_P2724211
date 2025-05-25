@@ -15,6 +15,8 @@ public class WeaponSwitchBehaviour : WeaponAnimationBehaviourBase
         */
         if (!canExecute)
             return;
+
+        controller.switchingWeapons = true;
         //controller.animator.ChangeEquipAnimation();
     }
     

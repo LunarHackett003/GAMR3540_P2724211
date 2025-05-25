@@ -10,6 +10,7 @@ public class NetDamageable : LunarNetScript
     [SerializeField] internal int maxHealth;
     public int IntHealth => Mathf.RoundToInt(currentHealth.Value);
 
+    public bool receiveDamageFromTeamOrOwner = false;
     
     public virtual void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
     {

@@ -24,7 +24,7 @@ public class NetWeaponController : LunarNetScript
     internal HashSet<Collider> colliderSet; 
     [SerializeField] internal Transform fireOrigin;
 
-    internal bool FireBlocked => fireBlockedByAnimation;
+    internal virtual bool FireBlocked => fireBlockedByAnimation;
     [SerializeField] internal bool fireBlockedByAnimation;
     internal float aimLerp = 0;
     internal float aimAmount;
@@ -32,6 +32,8 @@ public class NetWeaponController : LunarNetScript
 
     [SerializeField] internal NetWeaponAnimator animator;
 
+    [SerializeField] internal bool hideWeapons;
+    internal bool weaponsHiddenLast;
     public virtual float Spread(float value) => value * (1 - aimAmount);
 
     public override void OnNetworkSpawn()
@@ -46,6 +48,8 @@ public class NetWeaponController : LunarNetScript
         if (!weapons.Contains(weapon))
             weapons.Add(weapon);
         weapon.InitialiseWeapon(this);
+
+        ShowWeapon(weaponIndex.Value, false);
 
         RePollWeapons();
     }
@@ -66,16 +70,21 @@ public class NetWeaponController : LunarNetScript
         {
             ChangeCurrentWeapon(weapons[0], out _, out _);
 
-            for (int i = 0; i < weapons.Count; i++)
-            {
-                ShowWeapon(weapons[i].gameObject, i == weaponIndex.Value);
-            }
+            ShowWeapon(0, false);
         }
         lastWeaponCount = weapons.Count;
     }
 
     public override void LUpdate()
     {
+        if(weaponsHiddenLast != hideWeapons)
+        {
+            ShowWeapon(weaponIndex.Value, hideWeapons);
+            weaponsHiddenLast = hideWeapons;
+        }
+
+
+
         if(CurrentWeapon != null)
         {
             if(lastPrimary != primaryInput)
@@ -103,9 +112,12 @@ public class NetWeaponController : LunarNetScript
         }
     }
 
-    public void ShowWeapon(GameObject weapon, bool show)
+    public void ShowWeapon(int indexToShow, bool hideAll = false)
     {
-        weapon.transform.localScale = show ? Vector3.one : Vector3.zero;
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            weapons[i].transform.localScale = hideAll ? Vector3.zero : (i == indexToShow ? Vector3.one : Vector3.zero);
+        }
     }
 
     public virtual void ChangeCurrentWeapon(BaseNetWeapon newWeapon, out BaseNetWeapon oldWeapon, out bool success)
@@ -113,10 +125,6 @@ public class NetWeaponController : LunarNetScript
         oldWeapon = CurrentWeapon;
         currentWeapon = newWeapon;
         success = newWeapon != null && newWeapon != CurrentWeapon;
-
-        if (oldWeapon != null)
-            ShowWeapon(oldWeapon.gameObject, false);
-        ShowWeapon(newWeapon.gameObject, true);
 
         if (animator != null)
             animator.UpdateAnimations();
@@ -148,10 +156,7 @@ public class NetWeaponController : LunarNetScript
         }
 
         animator.UpdateAnimations();
-        for (int i = 0; i < weapons.Count; i++)
-        {
-            ShowWeapon(weapons[i].gameObject, i == weaponIndex.Value);
-        }
+        ShowWeapon(newIndex, false);
     }
     public virtual void WeaponIndexUpdated()
     {

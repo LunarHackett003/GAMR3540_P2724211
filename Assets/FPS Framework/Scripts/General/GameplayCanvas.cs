@@ -24,6 +24,8 @@ public class GameplayCanvas : LunarScript
         }
     }
 
+    public CanvasGroup hud, deathUI;
+
     public UIModule healthModule, weaponModule;
     public UIModule crosshairModule, compassModule;
 
@@ -48,6 +50,13 @@ public class GameplayCanvas : LunarScript
         {
             return;
         }
+
+        if(player.currentHealth.Value <= 0)
+        {
+
+        }
+
+
 
         UpdateModule(healthModule);
         UpdateModule(weaponModule);

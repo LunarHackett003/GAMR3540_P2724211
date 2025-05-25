@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class NetEntity : NetDamageable
 {
+    
 
     public AnticipatedNetworkVariable<bool> isDead = new(false, StaleDataHandling.Reanticipate);
 
@@ -26,6 +27,8 @@ public class NetEntity : NetDamageable
     /// Invokes an event on all subscribers, passing the new health and the source entity's ID.
     /// </summary>
     public UnityEvent<float, long> HealthModified;
+
+    
 
     float healthThisFrame;
 
@@ -67,6 +70,12 @@ public class NetEntity : NetDamageable
     {
         base.LTimestep();
         healthThisFrame = currentHealth.Value;
+
+        if(transform.position.y < -50 && currentHealth.AuthoritativeValue > 0)
+        {
+            ModifyHealth(-999, null, DamageSourceType.world, false);
+        }
+
         if (canRegenerateHealth && !isDead.Value)
         {
             if(currentHealth.Value < maxHealth)
@@ -100,6 +109,15 @@ public class NetEntity : NetDamageable
     public override void DamageableDied(NetworkBehaviourReference sourceObj, bool isCrit)
     {
         base.DamageableDied(sourceObj, isCrit);
+
+        if (IsServer)
+        {
+            isDead.AuthoritativeValue = true;
+        }
+        else
+        {
+            isDead.Anticipate(true);
+        }
     }
 
 }

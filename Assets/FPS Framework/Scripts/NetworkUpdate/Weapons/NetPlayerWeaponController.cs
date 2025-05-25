@@ -13,7 +13,14 @@ public class NetPlayerWeaponController : NetWeaponController
     internal float currentFOV;
     [SerializeField] internal Transform weaponPositionOffset, weaponRotationInvert, weaponTargetTransform;
     internal float fovLerp = 0;
-    
+
+    internal override bool FireBlocked => base.FireBlocked || player.isDead.Value || player.heldInteraction || player.carryConfirmed;
+
+
+
+
+
+
     public override float Spread(float value)
     {
         return value * Mathf.Clamp01((1 - aimAmount) - (player.motor.currentCrouchLerp * crouchAccuracyMultiplier));
@@ -50,7 +57,7 @@ public class NetPlayerWeaponController : NetWeaponController
             }
         }
 
-        if(CurrentWeapon != null)
+        if(CurrentWeapon != null && !FireBlocked)
         {
             if(!switchingWeapons && weaponSwitchInput)
             {
@@ -59,7 +66,6 @@ public class NetPlayerWeaponController : NetWeaponController
                 {
                     nextWeaponIndex.Anticipate((nextWeaponIndex.Value + 1) % weapons.Count);
                 }
-                switchingWeapons = true;
                 return;
             }
             if (reloadInput)

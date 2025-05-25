@@ -1,0 +1,163 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Netcode;
+using UnityEngine;
+
+public class InteractableObject : LunarNetScript
+{
+
+    public bool canCarry;
+
+    public NetworkVariable<bool> beingCarried = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public bool holdToInteract;
+    public float interactTime;
+
+    public bool hasInteraction;
+
+    public Collider[] colliders;
+
+    public virtual bool CanInteract(ulong attemptedInteractor)
+    {
+        return !interactionInProgress && !beingCarried.Value;
+    }
+
+    float currentInteractTime;
+
+    public bool interactionInProgress;
+    bool cancelled = true;
+    public ulong currentInteractingPlayer;
+
+
+
+    internal NetPlayerEntity currentInteractor;
+
+    [SerializeField] internal Rigidbody rb;
+
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        CarriedUpdated(false, beingCarried.Value);
+        beingCarried.OnValueChanged += CarriedUpdated;
+    }
+
+    void CarriedUpdated(bool previous, bool current)
+    {
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = !current;
+        }
+        if (IsOwner)
+        {
+            rb.useGravity = !current;
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void InteractStart_RPC(ulong clientID)
+    {
+        currentInteractingPlayer = clientID;
+        if (holdToInteract)
+        {
+            interactionInProgress = true;
+            InteractionStarted();
+        }
+        else
+        {
+            InteractionCompleted();
+        }
+
+        currentInteractor = NetPlayerEntity.playersByID[currentInteractingPlayer];
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void InteractEnd_RPC(bool finished)
+    {
+        interactionInProgress = false;
+
+        currentInteractor.InteractionCompleted(holdToInteract, finished);
+    }
+
+    public override void LTimestep()
+    {
+        base.LTimestep();
+
+        if (IsOwner)
+        {
+            if (!interactionInProgress && !cancelled)
+            {
+                InteractionCancelled();
+                return;
+            }
+
+            if (interactionInProgress)
+            {
+                if(currentInteractTime < interactTime)
+                {
+                    currentInteractTime += Time.fixedDeltaTime;
+                }
+                else
+                {
+                    InteractionCompleted();
+                }
+            }
+        }
+    }
+
+    public virtual void InteractionStarted()
+    {
+        cancelled = false;
+    }
+
+    public virtual void InteractionCompleted()
+    {
+        cancelled = true;
+        InteractEnd_RPC(true);
+    }
+
+    public virtual void InteractionCancelled()
+    {
+        cancelled = true;
+    }
+
+    [Rpc(SendTo.Server)]
+    public void TryGrab_RPC(ulong clientID)
+    {
+        if (!interactionInProgress && OwnerClientId != clientID)
+        {
+            NetworkObject.ChangeOwnership(clientID);
+        }
+        beingCarried.Value = true;
+
+        NetPlayerEntity.playersByID.TryGetValue(clientID, out var player);
+        player.ConfirmGrabRequest_RPC(this);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void GrabReleased_RPC(Vector3 throwDirection, Vector3 throwOrigin)
+    {
+        if ((IsHost && OwnerClientId != 0) || !IsOwnedByServer)
+        {
+            NetworkObject.RemoveOwnership();
+        }
+
+        beingCarried.Value = false;
+
+        if (!rb.isKinematic)
+        {
+            rb.position = throwOrigin;
+            if(throwDirection != Vector3.zero)
+            {
+                rb.velocity = throwDirection;
+            }
+        }
+
+    }
+
+    public virtual void GrabbedCarriable()
+    {
+        
+    }
+}
