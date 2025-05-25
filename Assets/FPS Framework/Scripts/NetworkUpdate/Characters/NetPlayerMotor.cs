@@ -411,7 +411,7 @@ public class NetPlayerMotor : LunarNetScript
         {
             CheckMantle();
         }
-        rigidbody.isKinematic = mantling;
+        rigidbody.isKinematic = playerEntity.isDead.AuthoritativeValue || mantling;
 
         if (mantleTargetRigidbody != null && mantling)
         {

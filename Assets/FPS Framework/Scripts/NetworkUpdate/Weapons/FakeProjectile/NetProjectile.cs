@@ -14,6 +14,8 @@ public class NetProjectile : LunarNetScript
     internal float distanceTravelled;
     [SerializeField] internal float timeAlive;
 
+    public bool projectileAlive;
+
     internal RangedNetWeapon weapon;
 
     [SerializeField] internal bool terminated;
@@ -27,11 +29,24 @@ public class NetProjectile : LunarNetScript
     [SerializeField] internal float gravityMultiplier = 1;
     public HashSet<Collider> ignoredColliders;
 
+
+    bool firstSpawn;
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
         projectileEffect.Play();
+
+        if (IsServer)
+        {
+            if (!firstSpawn)
+            {
+                ProjectileSimulator.allProjectiles.Add(this);
+                Debug.Log("Spawning projectile for the first time", gameObject);
+                firstSpawn = true;
+            }
+        }
     }
 
     public void InitialiseProjectile(RangedNetWeapon weapon, Vector3 direction, float charge)
@@ -52,7 +67,9 @@ public class NetProjectile : LunarNetScript
             terminateTime = 0;
             waitingToFire = false;
 
-            ProjectileSimulator.allProjectiles.Add(this);
+            projectileAlive = true;
+
+            Debug.Log("Initialised Projectile");
 
             GetComponent<NetworkObject>().SpawnWithOwnership(weapon.OwnerClientId);
         }
@@ -61,6 +78,7 @@ public class NetProjectile : LunarNetScript
     {
         Debug.Log($"Terminating projectile - reason: {(reasonIsHit ? "Hit Object" : "Ran Out Of Time")}");
         terminated = true;
+        projectileAlive = false;
         timeAlive = maxAliveTime;
     }
 

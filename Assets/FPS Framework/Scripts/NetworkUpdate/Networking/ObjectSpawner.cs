@@ -26,7 +26,8 @@ public class ObjectSpawner : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-
+        if (!IsServer)
+            return;
         for (int i = 0; i < prefabLocations.Length; i++)
         {
             PrefabLocation pl = prefabLocations[i];

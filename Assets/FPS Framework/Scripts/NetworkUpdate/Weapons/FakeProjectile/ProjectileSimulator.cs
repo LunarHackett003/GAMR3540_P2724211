@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ProjectileSimulator : LunarNetScript
@@ -166,7 +166,6 @@ public class ProjectileSimulator : LunarNetScript
         castCommands.Dispose();
         hits.Dispose();
         colliderHitData.Clear();
-        CheckAndTerminateProjectiles();
     }
 
     void New_ProjectileSimulate()
@@ -177,26 +176,34 @@ public class ProjectileSimulator : LunarNetScript
             return;
 
         colliderHitData = new();
-
-        //Find all the projectiles that need to be terminated.
-        projectilesToTerminate.AddRange(allProjectiles.FindAll(x => x.timeAlive >= x.maxAliveTime));
-        if(projectilesToTerminate.Count > 0)
-        {
-            //...And then take them out back and tell them to think of the rabbits.
-            foreach (var item in projectilesToTerminate)
+        /*
+            //Find all the projectiles that need to be terminated.
+            projectilesToTerminate.AddRange(allProjectiles.FindAll(x => x.timeAlive >= x.maxAliveTime));
+            if(projectilesToTerminate.Count > 0)
             {
-                item.TerminateProjectile(false);
-                allProjectiles.RemoveAll(x => x == item);
+                //...And then take them out back and tell them to think of the rabbits.
+                foreach (var item in projectilesToTerminate)
+                {
+                    item.TerminateProjectile(false);
+                    allProjectiles.RemoveAll(x => x == item);
+                }
+                allProjectiles.RemoveAll(x => x == null);
+                projectilesToTerminate.Clear();
             }
-            allProjectiles.RemoveAll(x => x == null);
-            projectilesToTerminate.Clear();
+            //You killed them all! How could you?!
+            if (allProjectiles.Count == 0)
+                return;
+        */
+        foreach (var item in projectilesToTerminate)
+        {
+            item.TerminateProjectile(false);
         }
-        //You killed them all! How could you?!
-        if (allProjectiles.Count == 0)
+        projectilesToTerminate.Clear();
+        NetProjectile[] activeProjectileArray = allProjectiles.FindAll(x => x.projectileAlive).ToArray();
+        if (activeProjectileArray.Length == 0)
             return;
 
-        //Oh no, they're fine, lets keep simulating.
-        castCommands = new NativeArray<SpherecastCommand>(allProjectiles.Count, Allocator.TempJob);
+        castCommands = new NativeArray<SpherecastCommand>(activeProjectileArray.Length, Allocator.TempJob);
         QueryParameters qp = new()
         {
             layerMask = layermask,
@@ -204,11 +211,11 @@ public class ProjectileSimulator : LunarNetScript
             hitTriggers = QueryTriggerInteraction.Collide,
             hitBackfaces = false,
         };
-        for (int i = 0; i < allProjectiles.Count; i++)
+        for (int i = 0; i < activeProjectileArray.Length; i++)
         {
-            NetProjectile np = allProjectiles[i];
-            Vector3 dirNorm = np.direction.normalized;
-            castCommands[i] = new(np.transform.position - (dirNorm * 0.02f), np.radius, dirNorm, qp, np.velocity * Time.fixedDeltaTime * 1.02f);
+            NetProjectile item = activeProjectileArray[i];
+            Vector3 dirNorm = item.direction.normalized;
+            castCommands[i] = new(item.transform.position - (dirNorm * 0.02f), item.radius, dirNorm, qp, item.velocity * Time.fixedDeltaTime * 1.02f);
             Debug.DrawRay(castCommands[i].origin, castCommands[i].direction * castCommands[i].distance, Color.red, raycastDebugTime);
         }
         //compiled our cast command array, now we create our hits array.
@@ -217,12 +224,11 @@ public class ProjectileSimulator : LunarNetScript
         //Now we complete the job
         JobHandle job = SpherecastCommand.ScheduleBatch(castCommands, hits, 1, maxHits);
         job.Complete();
-
         for (int x = 0; x < castCommands.Length; x++)
         {
             float distance = float.MaxValue;
             bool validHit = false;
-            NetProjectile np = allProjectiles[x];
+            NetProjectile np = activeProjectileArray[x];
             //Big up @peturdarri on the Unity Discord Server <3
             //Thanks for letting me know about this, no clue how I mucked that up lol. Why was i just ADDING x and y??
             int offset = x * maxHits;
@@ -249,6 +255,11 @@ public class ProjectileSimulator : LunarNetScript
                 continue;
             }
             np.TickProjectile();
+            //If our projectile has gone too far/been alive too long, terminate it on the next frame
+            if(np.timeAlive > np.maxAliveTime || np.distanceTravelled > np.maxDistance)
+            {
+                projectilesToTerminate.Add(np);
+            }
         }
 
         DamageColliders();
@@ -317,18 +328,12 @@ public class ProjectileSimulator : LunarNetScript
             }
         }
     }
-
-    void CheckAndTerminateProjectiles()
+    public override void OnNetworkDespawn()
     {
-        if (projectilesToTerminate.Count > 0)
-        {
-            foreach (var item in projectilesToTerminate)
-            {
-                item.TerminateProjectile(true);
-                allProjectiles.RemoveAll((x) => x == item);
-            }
-            projectilesToTerminate.Clear();
-        }
+        base.OnNetworkDespawn();
+        if(castCommands.IsCreated)
+            castCommands.Dispose();
+        if(hits.IsCreated)
+            hits.Dispose();
     }
-
 }
