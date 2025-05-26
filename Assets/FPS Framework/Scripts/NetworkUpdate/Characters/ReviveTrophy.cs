@@ -2,13 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ReviveTrophy : InteractableObject
 {
 
     public MeshRenderer renderer;
     public Material friendlyMaterial, enemyMaterial;
 
+    public ulong targetClientID;
+
     protected bool friendly;
+
+    public override bool CanInteract(ulong attemptedInteractor)
+    {
+        return base.CanInteract(attemptedInteractor) && friendly;
+    }
 
     public override void OnNetworkSpawn()
     {
@@ -16,6 +24,10 @@ public class ReviveTrophy : InteractableObject
 
         NetworkPlayer.GetPlayerTeam(NetworkManager.LocalClientId, out int reviveTeam);
         NetworkPlayer.GetPlayerTeam(OwnerClientId, out int myTeam);
+
+        targetClientID = OwnerClientId;
+
+        NetPlayerEntity.playersByID[targetClientID].reviveItemInstance = NetworkObject;
 
         friendly = reviveTeam == myTeam && reviveTeam != -1 && myTeam != -1;
 
@@ -27,14 +39,14 @@ public class ReviveTrophy : InteractableObject
     {
         base.InteractionCompleted();
 
-        NetPlayerEntity.playersByID[OwnerClientId].Revive_RPC(currentInteractor.OwnerClientId, false);
+        NetPlayerEntity.playersByID[targetClientID].Revive_RPC(currentInteractor.OwnerClientId, false);
     }
 
     public bool HitByQuickRevive(ulong clientID)
     {
         if (friendly)
         {
-            NetPlayerEntity.playersByID[OwnerClientId].Revive_RPC(clientID, true);
+            NetPlayerEntity.playersByID[targetClientID].Revive_RPC(clientID, true);
             return true;
         }
         return false;

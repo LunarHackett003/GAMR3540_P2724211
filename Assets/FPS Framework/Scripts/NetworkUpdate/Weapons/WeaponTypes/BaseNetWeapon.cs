@@ -146,22 +146,29 @@ public class BaseNetWeapon : LunarNetScript
     }
     protected virtual void PostAttackBehaviour()
     {
-        if (useAttackSpread)
+        if (IsOwner || IsServer)
         {
-            attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount + attackSpreadIncrement);
-        }
-        if (useAmmunition)
-        {
-            CurrentAmmo.Anticipate(CurrentAmmo.Value - ammoPerShot);
-            if (CurrentAmmo.Value <= 0)
+            if (useAttackSpread)
             {
-                if (useAmmoPhases && currentAmmoPhase < ammoPhases)
+                attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount + attackSpreadIncrement);
+            }
+            if (useAmmunition)
+            {
+                if (IsServer)
                 {
-                    TriggerAnimation(AMMOPHASE, TRIGGERTIMELONG, true);
-
-                    return;
+                    Debug.Log("decremented ammo");
+                    CurrentAmmo.AuthoritativeValue -= ammoPerShot;
                 }
-                TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT, true);
+                if (CurrentAmmo.Value <= 0)
+                {
+                    if (useAmmoPhases && currentAmmoPhase < ammoPhases)
+                    {
+                        TriggerAnimation(AMMOPHASE, TRIGGERTIMELONG, true);
+
+                        return;
+                    }
+                    TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT, true);
+                }
             }
         }
         if ((primaryUsesCharge || secondaryUsesCharge) && resetChargeOnFire)

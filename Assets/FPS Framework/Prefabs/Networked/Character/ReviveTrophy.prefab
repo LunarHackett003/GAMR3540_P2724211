@@ -255,10 +255,15 @@ MonoBehaviour:
   canCarry: 1
   beingCarried:
     m_InternalValue: 0
-  holdToInteract: 0
+  displayInteractText: 1
+  interactText: Hold to Revive
+  holdToInteract: 1
   interactTime: 5
-  hasInteraction: 0
-  colliders: []
+  hasInteraction: 1
+  colliders:
+  - {fileID: 1052191921309506392}
+  - {fileID: 4087805354037179132}
+  - {fileID: 5350669454920475650}
   interactionInProgress: 0
   currentInteractingPlayer: 0
   rb: {fileID: 6210780870332164839}

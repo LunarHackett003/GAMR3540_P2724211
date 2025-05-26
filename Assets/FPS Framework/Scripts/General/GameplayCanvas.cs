@@ -11,6 +11,9 @@ public class GameplayCanvas : LunarScript
 {
     public static GameplayCanvas Instance { get; private set; }
     public static NetPlayerEntity player;
+
+    bool playerAliveLast;
+
     private void Awake()
     {
         Initialise();
@@ -26,8 +29,7 @@ public class GameplayCanvas : LunarScript
 
     public CanvasGroup hud, deathUI;
 
-    public UIModule healthModule, weaponModule;
-    public UIModule crosshairModule, compassModule;
+    public UIModule[] uiModules;
 
     private void OnGUI()
     {
@@ -51,18 +53,23 @@ public class GameplayCanvas : LunarScript
             return;
         }
 
-        if(player.currentHealth.Value <= 0)
+        if(playerAliveLast != player.isDead.Value)
         {
-
+            ProcessPlayerDeath(player.isDead.Value);
+            playerAliveLast = player.isDead.Value;
         }
 
-
-
-        UpdateModule(healthModule);
-        UpdateModule(weaponModule);
-        UpdateModule(crosshairModule);
-        UpdateModule(compassModule);
+        for (int i = 0; i < uiModules.Length; i++)
+        {
+            UpdateModule(uiModules[i]);
+        }
     }
+    void ProcessPlayerDeath(bool died)
+    {
+        hud.alpha = died ? 0 : 1;
+        deathUI.alpha = died ? 1 : 0;
+    }
+
 
     public void UpdateModule(UIModule module)
     {

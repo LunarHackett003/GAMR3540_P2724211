@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
@@ -37,7 +38,7 @@ public class NetPlayerEntity : NetEntity
 
     [SerializeField] internal NetworkObject playerReviveItemPrefab;
 
-    internal NetworkObject reviveItemInstance;
+    [SerializeField] internal NetworkObject reviveItemInstance;
 
     internal NetWeaponAnimator Animator => weaponController.animator;
 
@@ -59,6 +60,8 @@ public class NetPlayerEntity : NetEntity
     [SerializeField] internal Renderer[] materialOverrideRenderers;
     [SerializeField] internal InteractionConfig interactConfig;
 
+    [SerializeField] internal NetHitbox[] playerHitboxes;
+
     public bool isFriendly;
 
     public override void OnNetworkSpawn()
@@ -67,16 +70,12 @@ public class NetPlayerEntity : NetEntity
 
         playersByID.Add(OwnerClientId, this);
 
-        if (!IsOwner)
-        {
-            isFriendly = NetworkPlayer.IsPlayerOnMyTeam(NetworkManager.LocalClientId, OwnerClientId);
+        playerHitboxes = GetComponentsInChildren<NetHitbox>();
 
-            for (int i = 0; i < materialOverrideRenderers.Length; i++)
-            {
-                materialOverrideRenderers[i].material = isFriendly ? friendlyMaterial : enemyMaterial;
-            }
-        }
 
+
+        NetworkPlayer.netPlayers[OwnerClientId].teamIndex.OnValueChanged += UpdateMaterials;
+        UpdateMaterials(0, NetworkPlayer.netPlayers[OwnerClientId].teamIndex.Value);
         if (IsOwner)
         {
             if(GameplayCanvas.Instance != null)
@@ -87,6 +86,19 @@ public class NetPlayerEntity : NetEntity
         ;
 
         weaponController.Initialise();
+    }
+
+    void UpdateMaterials(int previous, int current)
+    {
+        if (!IsOwner)
+        {
+            isFriendly = NetworkPlayer.IsPlayerOnMyTeam(NetworkManager.LocalClientId, OwnerClientId);
+
+            for (int i = 0; i < materialOverrideRenderers.Length; i++)
+            {
+                materialOverrideRenderers[i].material = isFriendly ? friendlyMaterial : enemyMaterial;
+            }
+        }
     }
 
     public override void LTimestep()
@@ -111,16 +123,17 @@ public class NetPlayerEntity : NetEntity
         }
         else
         {
+
+            Debug.DrawRay(weaponController.fireOrigin.position, weaponController.fireOrigin.forward * interactConfig.maxInteractDistance);
+
+
             if (!heldInteraction && !carryConfirmed)
             {
                 if (Physics.SphereCast(weaponController.fireOrigin.position, interactConfig.interactThickness, weaponController.fireOrigin.forward, out RaycastHit hit, interactConfig.maxInteractDistance, interactConfig.interactLayerMask))
                 {
                     if (hit.rigidbody != null)
                     {
-                        if(interactTargetRigidbody == null || hit.rigidbody != interactTargetRigidbody)
-                        {
-                            interactTargetRigidbody = hit.rigidbody;
-                        }
+                        interactTargetRigidbody = hit.rigidbody;
                     }
                     else
                     {
@@ -163,7 +176,11 @@ public class NetPlayerEntity : NetEntity
             {
                 currentInteractTarget.InteractEnd_RPC(false);
             }
-
+            
+            if(!InputManager.InteractInput && interactTargetRigidbody == null)
+            {
+                currentInteractTarget = null;
+            }
 
 
 
@@ -204,6 +221,14 @@ public class NetPlayerEntity : NetEntity
     public override void OnNetworkDespawn()
     {
         playersByID.Remove(OwnerClientId);
+
+        if(reviveItemInstance != null && IsServer)
+        {
+            reviveItemInstance.Despawn();
+        }
+
+        NetworkPlayer.netPlayers[OwnerClientId].teamIndex.OnValueChanged -= UpdateMaterials;
+
         base.OnNetworkDespawn();
     }
 
@@ -221,16 +246,25 @@ public class NetPlayerEntity : NetEntity
         if (IsServer)
         {
             if(reviveItemInstance == null)
+            {
                 reviveItemInstance = NetworkManager.SpawnManager.InstantiateAndSpawn(playerReviveItemPrefab, OwnerClientId, position: transform.position);
+                Debug.Log($"Spawned trophy - revive item instance null: {reviveItemInstance == null}");
+            }
         }
 
         capsule.enabled = false;
 
         ToggleRenderers(false);
 
+        ToggleHitboxes(false);
+    }
+    [Rpc(SendTo.Everyone)]
+    public void Revive_RPC(ulong helperClientID, bool quickRevive)
+    {
+        Revive(helperClientID, quickRevive);
     }
 
-    public virtual void Revive_RPC(ulong helperClientID, bool quickRevive)
+    public virtual void Revive(ulong helperClientID, bool quickRevive)
     {
         if (quickRevive)
         {
@@ -239,14 +273,28 @@ public class NetPlayerEntity : NetEntity
 
         weaponController.ShowWeapon(weaponController.weaponIndex.Value, false);
 
+        if (IsOwner)
+        {
+            if(reviveItemInstance != null)
+                GetComponent<NetworkTransform>().Teleport(reviveItemInstance.transform.position, transform.rotation, Vector3.one);
+        }
+
         if (IsServer)
         {
-            reviveItemInstance.Despawn();
+            if(reviveItemInstance != null)
+                reviveItemInstance.Despawn();
+
+            isDead.AuthoritativeValue = false;
+
+            currentHealth.AuthoritativeValue = maxHealth * (quickRevive ? quickReviveHealthPortion : 1);
         }
 
         capsule.enabled = true;
 
         ToggleRenderers(true);
+
+        ToggleHitboxes(true);
+
     }
 
     public void ToggleRenderers(bool enabled)
@@ -256,10 +304,21 @@ public class NetPlayerEntity : NetEntity
             allRenderers[i].enabled = enabled;
         }
     }
+    public void ToggleHitboxes(bool enabled)
+    {
+        for (int i = 0; i < playerHitboxes.Length; i++)
+        {
+            playerHitboxes[i].enabled = enabled;
+        }
+    }
 
     public void InteractionCompleted(bool holdInteraction, bool finished)
     {
         heldInteraction = false;
+        if (IsOwner)
+        {
+            InputManager.InteractInput = false;
+        }
         currentInteractTarget = null;
     }
 

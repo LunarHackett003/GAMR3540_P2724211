@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21e925e5e0114d142be26c2d7dc4ad10, type: 3}
   m_Name: Player Interaction Config
   m_EditorClassIdentifier: 
-  maxInteractDistance: 8
-  interactThickness: 0.025
+  maxInteractDistance: 6
+  interactThickness: 0.01
   interactLayerMask:
     serializedVersion: 2
     m_Bits: 2048

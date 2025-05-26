@@ -140,7 +140,7 @@ public class RangedNetWeapon : BaseNetWeapon
         debugdisplay_truetime = TrueTimeBetweenRounds;
     }
 
-    [Rpc(SendTo.NotOwner, DeferLocal = true)]
+    [Rpc(SendTo.NotServer, DeferLocal = true)]
     protected void FireWeapon_RPC(bool primary = true)
     {
 

@@ -197,6 +197,7 @@ MonoBehaviour:
   prefabLocations:
   - prefabs:
     - {fileID: 7505797153837643927, guid: e85de396d94513440b8da8a1ed9e3b24, type: 3}
+    - {fileID: 7505797153837643927, guid: b0cd64b3d334bc7409b0b50c247a1fc4, type: 3}
     locations:
     - {fileID: 1431009718434865686}
     - {fileID: 1865889128422119678}

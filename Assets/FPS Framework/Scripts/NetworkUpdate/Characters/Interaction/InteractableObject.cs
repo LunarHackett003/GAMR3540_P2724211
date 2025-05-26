@@ -10,6 +10,9 @@ public class InteractableObject : LunarNetScript
 
     public NetworkVariable<bool> beingCarried = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+    public bool displayInteractText;
+    public string interactText = "Interact with me!";
+
     public bool holdToInteract;
     public float interactTime;
 
@@ -22,7 +25,7 @@ public class InteractableObject : LunarNetScript
         return !interactionInProgress && !beingCarried.Value;
     }
 
-    float currentInteractTime;
+    internal float currentInteractTime;
 
     public bool interactionInProgress;
     bool cancelled = true;
@@ -76,34 +79,31 @@ public class InteractableObject : LunarNetScript
     public void InteractEnd_RPC(bool finished)
     {
         interactionInProgress = false;
-
+        currentInteractTime = 0;
         currentInteractor.InteractionCompleted(holdToInteract, finished);
     }
 
     public override void LTimestep()
     {
         base.LTimestep();
-
-        if (IsOwner)
+        if (!interactionInProgress && !cancelled)
         {
-            if (!interactionInProgress && !cancelled)
-            {
-                InteractionCancelled();
-                return;
-            }
+            InteractionCancelled();
+            return;
+        }
 
-            if (interactionInProgress)
+        if (interactionInProgress)
+        {
+            if(currentInteractTime < interactTime)
             {
-                if(currentInteractTime < interactTime)
-                {
-                    currentInteractTime += Time.fixedDeltaTime;
-                }
-                else
-                {
-                    InteractionCompleted();
-                }
+                currentInteractTime += Time.fixedDeltaTime;
+            }
+            else
+            {
+                InteractionCompleted();
             }
         }
+        
     }
 
     public virtual void InteractionStarted()
@@ -114,7 +114,8 @@ public class InteractableObject : LunarNetScript
     public virtual void InteractionCompleted()
     {
         cancelled = true;
-        InteractEnd_RPC(true);
+        if(IsServer)
+            InteractEnd_RPC(true);
     }
 
     public virtual void InteractionCancelled()

@@ -1003,7 +1003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 786125874
+  GlobalObjectIdHash: 2550889260
   InScenePlacedSourceGlobalObjectIdHash: 786125874
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -1108,7 +1108,11 @@ MonoBehaviour:
   capsule: {fileID: 5515138310644021310}
   friendlyMaterial: {fileID: 2100000, guid: 1aed238a21834d74487bfc282c822e22, type: 2}
   enemyMaterial: {fileID: 2100000, guid: 544d0abfe0e7c39459f1dfe28b8bf542, type: 2}
-  materialOverrideRenderers: []
+  materialOverrideRenderers:
+  - {fileID: 7049822384966676870}
+  - {fileID: 8311832150167202399}
+  - {fileID: 1477714109062899926}
+  - {fileID: 5123989794118495884}
   interactConfig: {fileID: 11400000, guid: e5762a6c223da3445910c2add6d41741, type: 2}
   isFriendly: 0
 --- !u!114 &6327532313127820386

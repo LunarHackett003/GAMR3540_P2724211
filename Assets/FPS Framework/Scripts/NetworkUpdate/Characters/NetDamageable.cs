@@ -14,6 +14,7 @@ public class NetDamageable : LunarNetScript
     
     public virtual void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
     {
+        float startHealth = currentHealth.Value;
         if (IsServer)
         {
             HealthUpdated_RPC(delta, source, damageSourceType, isCrit);
@@ -35,7 +36,7 @@ public class NetDamageable : LunarNetScript
             default:
                 break;
         }
-        if(currentHealth.Value <= 0 || currentHealth.AuthoritativeValue <= 0)
+        if(startHealth > 0 && (currentHealth.Value <= 0 || currentHealth.AuthoritativeValue <= 0))
         {
             DamageableDied(source, isCrit);
         }

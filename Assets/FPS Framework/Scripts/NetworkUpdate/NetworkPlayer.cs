@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-
+[DefaultExecutionOrder(50)]
 public class NetworkPlayer : LunarNetScript
 {
 
@@ -16,7 +16,7 @@ public class NetworkPlayer : LunarNetScript
 
     public static Dictionary<ulong, NetworkPlayer> netPlayers = new Dictionary<ulong, NetworkPlayer>();
 
-    internal NetworkVariable<int> teamIndex = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> teamIndex = new(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public static Dictionary<ulong, int> playersOnTeams = new Dictionary<ulong, int>();
 
@@ -43,6 +43,7 @@ public class NetworkPlayer : LunarNetScript
     {
         GetPlayerTeam(myID, out int myteam);
         GetPlayerTeam(theirID, out int theirTeam);
+        Debug.Log($"{myteam} -> {theirTeam} = {theirTeam == myteam}");
 
         return myteam == theirTeam && myteam != -1 && theirTeam != -1;
     }
@@ -64,9 +65,9 @@ public class NetworkPlayer : LunarNetScript
         {
             LocalNetworkPlayer = this;
         }
-        if (!IsOwnedByServer && !IsHost)
+        if (IsClient)
         {
-            netPlayers.Add(OwnerClientId, this);
+            netPlayers.TryAdd(OwnerClientId, this);
         }
         teamIndex.OnValueChanged += TeamsUpdated;
 
@@ -96,9 +97,11 @@ public class NetworkPlayer : LunarNetScript
         int smallestTeamIndex = 0;
         if(playersOnTeams.Count > 0)
         {
-            List<int> teamPlayerCounts = new List<int>(serverTeamCount.Value);
+            List<int> teamPlayerCounts = new() { 0, 0 };
+            Debug.Log(teamPlayerCounts.Count);
             foreach (var item in playersOnTeams)
             {
+                Debug.Log($"{item.Key} is on team {item.Value}");
                 teamPlayerCounts[item.Value]++;
             }
             
@@ -113,7 +116,7 @@ public class NetworkPlayer : LunarNetScript
                 }
             }
         }
-
+        playersOnTeams.Add(OwnerClientId, smallestTeamIndex);
         teamIndex.Value = smallestTeamIndex;
     }
 

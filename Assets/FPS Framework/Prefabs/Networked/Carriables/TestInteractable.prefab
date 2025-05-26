@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f3c237dc049dd014b8ae3c32be522a06, type: 2}
+  - {fileID: 2100000, guid: 41c72e5564269ff4bb34d5dfdf77d2d8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 3302599824998341376}
   - component: {fileID: 6332024007368921029}
   m_Layer: 0
-  m_Name: TestCarriable
+  m_Name: TestInteractable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1878809494
+  GlobalObjectIdHash: 2765351900
   InScenePlacedSourceGlobalObjectIdHash: 3089386300
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -181,11 +181,11 @@ MonoBehaviour:
   canCarry: 1
   beingCarried:
     m_InternalValue: 0
-  displayInteractText: 0
-  interactText: Interact with me!
-  holdToInteract: 0
-  interactTime: 0
-  hasInteraction: 0
+  displayInteractText: 1
+  interactText: Testing, 1, 2, 3!
+  holdToInteract: 1
+  interactTime: 3
+  hasInteraction: 1
   colliders:
   - {fileID: 6873309201443104033}
   - {fileID: 530374655677124619}
@@ -327,7 +327,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f3c237dc049dd014b8ae3c32be522a06, type: 2}
+  - {fileID: 2100000, guid: 41c72e5564269ff4bb34d5dfdf77d2d8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -485,7 +485,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f3c237dc049dd014b8ae3c32be522a06, type: 2}
+  - {fileID: 2100000, guid: 41c72e5564269ff4bb34d5dfdf77d2d8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

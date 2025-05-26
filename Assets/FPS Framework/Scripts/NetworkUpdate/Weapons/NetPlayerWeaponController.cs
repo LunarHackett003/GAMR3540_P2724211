@@ -36,10 +36,6 @@ public class NetPlayerWeaponController : NetWeaponController
 
     public override void LUpdate()
     {
-        if(!IsOwner && !IsServer)
-        {
-            return;
-        }
 
         if (IsOwner)
         {
@@ -55,31 +51,34 @@ public class NetPlayerWeaponController : NetWeaponController
             {
                 SendInputToServer_RPC(primaryInput, secondaryInput, reloadInput);
             }
+
+            if (CurrentWeapon != null && !FireBlocked)
+            {
+                if (!switchingWeapons && weaponSwitchInput)
+                {
+                    CurrentWeapon.TriggerAnimation(BaseNetWeapon.CHANGEWEAPON, BaseNetWeapon.TRIGGERTIMETINY, true);
+                    if (IsOwner)
+                    {
+                        nextWeaponIndex.Anticipate((nextWeaponIndex.Value + 1) % weapons.Count);
+                    }
+                    return;
+                }
+                if (reloadInput)
+                {
+                    if (CurrentWeapon.useAmmunition && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) || (CurrentWeapon.useAmmoPhases && CurrentWeapon.currentAmmoPhase != 0))
+                    {
+                        CurrentWeapon.TriggerAnimation(CurrentWeapon.CurrentAmmo.Value > 0 ? BaseNetWeapon.PARTIALRELOAD : BaseNetWeapon.EMPTYRELOAD, 0.2f, true);
+                    }
+                    if (IsOwner)
+                    {
+                        InputManager.ReloadInput = false;
+                    }
+                    reloadInput = false;
+                }
+            }
         }
 
-        if(CurrentWeapon != null && !FireBlocked)
-        {
-            if(!switchingWeapons && weaponSwitchInput)
-            {
-                CurrentWeapon.TriggerAnimation(BaseNetWeapon.CHANGEWEAPON, BaseNetWeapon.TRIGGERTIMETINY, true);
-                if (IsOwner)
-                {
-                    nextWeaponIndex.Anticipate((nextWeaponIndex.Value + 1) % weapons.Count);
-                }
-                return;
-            }
-            if (reloadInput)
-            {
-                if(CurrentWeapon.useAmmunition && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) || (CurrentWeapon.useAmmoPhases && CurrentWeapon.currentAmmoPhase != 0)){
-                    CurrentWeapon.TriggerAnimation(CurrentWeapon.CurrentAmmo.Value > 0 ? BaseNetWeapon.PARTIALRELOAD : BaseNetWeapon.EMPTYRELOAD, 0.2f, true);
-                }
-                if (IsOwner)
-                {
-                    InputManager.ReloadInput = false;
-                }
-                reloadInput = false;
-            }
-        }
+
 
         player.motor.aiming = secondaryInput && !player.motor.sliding;
 
@@ -141,7 +140,7 @@ public class NetPlayerWeaponController : NetWeaponController
         player.motor.worldCamera.m_Lens.FieldOfView = currentFOV;
     }
 
-    [Rpc(SendTo.Server)]
+    [Rpc(SendTo.Everyone)]
     void SendInputToServer_RPC(bool primary, bool secondary, bool reload)
     {
         primaryInput = primary;
