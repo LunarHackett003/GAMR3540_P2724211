@@ -63,6 +63,7 @@ public class NetPlayerEntity : NetEntity
     [SerializeField] internal NetHitbox[] playerHitboxes;
 
     public bool isFriendly;
+    bool lastDead;
 
     public override void OnNetworkSpawn()
     {
@@ -83,16 +84,17 @@ public class NetPlayerEntity : NetEntity
             Camera.main.GetUniversalAdditionalCameraData().cameraStack.Add(viewmodelCamera);
         }
 
-        ;
-
         weaponController.Initialise();
     }
 
     void UpdateMaterials(int previous, int current)
     {
+
+        Debug.Log("Updating materials on player", gameObject);
+        isFriendly = NetworkPlayer.IsPlayerOnMyTeam(NetworkManager.LocalClientId, OwnerClientId);
+
         if (!IsOwner)
         {
-            isFriendly = NetworkPlayer.IsPlayerOnMyTeam(NetworkManager.LocalClientId, OwnerClientId);
 
             for (int i = 0; i < materialOverrideRenderers.Length; i++)
             {
@@ -104,6 +106,16 @@ public class NetPlayerEntity : NetEntity
     public override void LTimestep()
     {
         base.LTimestep();
+
+        if(lastDead != isDead.Value)
+        {
+            if (isDead.Value)
+            {
+                DamageableDied(null, false);
+            }
+            lastDead = isDead.Value;
+        }
+
 
         if (!IsOwner)
             return;
@@ -169,6 +181,7 @@ public class NetPlayerEntity : NetEntity
                     InputManager.SecondaryInput = false;
                     carryTargetRequested = currentInteractTarget;
                     carryTargetRequested.TryGrab_RPC(OwnerClientId);
+                    weaponController.animator.TriggerAnimation("Grab", 0.2f, true);
                 }
             }
 
@@ -199,6 +212,7 @@ public class NetPlayerEntity : NetEntity
                     {
                         carryTargetRequested.GrabReleased_RPC(weaponController.fireOrigin.forward * interactConfig.throwForce, carryTargetRequested.transform.position);
                         ReleaseGrabbedObject_RPC(carryTargetRequested, true);
+                        weaponController.animator.TriggerAnimation("Throw", 0.2f, true);
                         InputManager.PrimaryInput = false;
                         carryConfirmed = false;
                         carryTargetRequested = null;
@@ -208,6 +222,7 @@ public class NetPlayerEntity : NetEntity
                         carryTargetRequested.GrabReleased_RPC(Vector3.zero, carryTargetRequested.transform.position);
                         ReleaseGrabbedObject_RPC(carryTargetRequested, false);
                         InputManager.SecondaryInput = false;
+                        weaponController.animator.TriggerAnimation("Grab_Cancel", 0.2f, true);
                         carryConfirmed = false;
                         carryTargetRequested = null;
                     }
@@ -238,6 +253,18 @@ public class NetPlayerEntity : NetEntity
 
         deathParticle.Play();
 
+        capsule.enabled = false;
+        Debug.Log("disabled collider");
+
+        ToggleRenderers(false);
+        Debug.Log("disabled renderers");
+
+        ToggleHitboxes(false);
+        Debug.Log("disabled hitboxes");
+
+
+        Debug.Log($"Player died at time: {System.DateTime.Now}");
+
         for (int i = 0; i < weaponController.weapons.Count; i++)
         {
             weaponController.ShowWeapon(0, true);
@@ -252,11 +279,8 @@ public class NetPlayerEntity : NetEntity
             }
         }
 
-        capsule.enabled = false;
 
-        ToggleRenderers(false);
 
-        ToggleHitboxes(false);
     }
     [Rpc(SendTo.Everyone)]
     public void Revive_RPC(ulong helperClientID, bool quickRevive)
@@ -266,17 +290,23 @@ public class NetPlayerEntity : NetEntity
 
     public virtual void Revive(ulong helperClientID, bool quickRevive)
     {
-        if (quickRevive)
-        {
-            ModifyHealth(maxHealth * (quickRevive ? quickReviveHealthPortion : 1));
-        }
+        capsule.enabled = true;
+        Debug.Log($"enabled capsule - {capsule.enabled}");
+
+        ToggleRenderers(true);
+
+        ToggleHitboxes(true);
+
+
+        Debug.Log($"Player revived at time: {System.DateTime.Now}");
 
         weaponController.ShowWeapon(weaponController.weaponIndex.Value, false);
+
 
         if (IsOwner)
         {
             if(reviveItemInstance != null)
-                GetComponent<NetworkTransform>().Teleport(reviveItemInstance.transform.position, transform.rotation, Vector3.one);
+                GetComponent<NetworkTransform>().Teleport(reviveItemInstance.transform.position + Vector3.up, transform.rotation, Vector3.one);
         }
 
         if (IsServer)
@@ -284,24 +314,23 @@ public class NetPlayerEntity : NetEntity
             if(reviveItemInstance != null)
                 reviveItemInstance.Despawn();
 
-            isDead.AuthoritativeValue = false;
+            isDead.Value = false;
 
-            currentHealth.AuthoritativeValue = maxHealth * (quickRevive ? quickReviveHealthPortion : 1);
+            currentHealth.Value = maxHealth * (quickRevive ? quickReviveHealthPortion : 1);
         }
 
-        capsule.enabled = true;
 
-        ToggleRenderers(true);
-
-        ToggleHitboxes(true);
 
     }
 
     public void ToggleRenderers(bool enabled)
     {
+
+        Debug.Log($"toggling renderers - {enabled}");
         for (int i = 0; i < allRenderers.Length; i++)
         {
             allRenderers[i].enabled = enabled;
+            Debug.Log($"toggled hitboxes - {allRenderers[i].enabled}");
         }
     }
     public void ToggleHitboxes(bool enabled)
@@ -309,6 +338,7 @@ public class NetPlayerEntity : NetEntity
         for (int i = 0; i < playerHitboxes.Length; i++)
         {
             playerHitboxes[i].enabled = enabled;
+            Debug.Log($"toggled hitboxes - {playerHitboxes[i].enabled}");
         }
     }
 
@@ -336,7 +366,10 @@ public class NetPlayerEntity : NetEntity
                 }
             }
             io.GrabbedCarriable();
+            io.rb.velocity = Vector3.zero;
+            io.rb.angularVelocity = Vector3.zero;
             weaponController.ShowWeapon(0, true);
+            
         }
     }
 
@@ -349,6 +382,20 @@ public class NetPlayerEntity : NetEntity
         {
             carryTargetRequested = null;
         }
-        weaponController.ShowWeapon(weaponController.weaponIndex.Value);
+    }
+
+    public IEnumerator CancelGrabAfterTime()
+    {
+        float t = 0;
+        while (t < 2 && !carryConfirmed)
+        {
+            t += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        if (!carryConfirmed)
+        {
+            weaponController.animator.TriggerAnimation("Grab_Cancel", 0.1f, true);
+        }
     }
 }

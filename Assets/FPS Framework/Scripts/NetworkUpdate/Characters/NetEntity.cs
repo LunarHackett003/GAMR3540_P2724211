@@ -8,7 +8,7 @@ public class NetEntity : NetDamageable
 {
     
 
-    public AnticipatedNetworkVariable<bool> isDead = new(false, StaleDataHandling.Reanticipate);
+    public NetworkVariable<bool> isDead = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [SerializeField] protected bool canRegenerateHealth = false;
     [SerializeField] protected float regenerationDelay = 5;
@@ -26,7 +26,7 @@ public class NetEntity : NetDamageable
     /// <summary>
     /// Invokes an event on all subscribers, passing the new health and the source entity's ID.
     /// </summary>
-    public UnityEvent<float, long> HealthModified;
+    public UnityEvent<float, NetworkBehaviourReference> HealthModified;
 
     
 
@@ -36,7 +36,10 @@ public class NetEntity : NetDamageable
     {
         base.OnNetworkSpawn();
 
-        currentHealth.Anticipate(maxHealth);
+        if (IsServer)
+        {
+            currentHealth.Value = maxHealth;
+        }
     }
 
     public virtual void ClearDebuff(Debuff debuff)
@@ -49,11 +52,12 @@ public class NetEntity : NetDamageable
 
 
     [Rpc(SendTo.ClientsAndHost, DeferLocal = true)]
-    public void HealthChanged_RPC(float deltaHealth, float lastAuthHealthValue, long source = -1, RpcParams rpcParams = default)
+    public void HealthChanged_RPC(float deltaHealth, NetworkBehaviourReference source, DamageSourceType damageSourceType = DamageSourceType.world, bool isCrit = false)
     {
-        HealthModified?.Invoke(lastAuthHealthValue - deltaHealth, source);
+        HealthModified?.Invoke(deltaHealth, source);
         if(deltaHealth < 0)
             currentRegenTime = 0;
+        ModifyHealth(deltaHealth, source, damageSourceType, isCrit);
     }
 
     public override void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = DamageSourceType.world, bool isCrit = false)
@@ -71,7 +75,7 @@ public class NetEntity : NetDamageable
         base.LTimestep();
         healthThisFrame = currentHealth.Value;
 
-        if(transform.position.y < -50 && currentHealth.AuthoritativeValue > 0)
+        if(transform.position.y < -50 && currentHealth.Value > 0)
         {
             ModifyHealth(-999, null, DamageSourceType.world, false);
         }
@@ -84,11 +88,7 @@ public class NetEntity : NetDamageable
                 {
                     if (IsServer)
                     {
-                        currentHealth.AuthoritativeValue = Mathf.Clamp(currentHealth.AuthoritativeValue + Time.fixedDeltaTime * regenerationRate, 0, maxHealth);
-                    }
-                    else
-                    {
-                        currentHealth.Anticipate(Mathf.Clamp(currentHealth.Value + Time.fixedDeltaTime * regenerationRate, 0, maxHealth));
+                        currentHealth.Value = Mathf.Clamp(currentHealth.Value + Time.fixedDeltaTime * regenerationRate, 0, maxHealth);
                     }
                 }
                 else
@@ -98,11 +98,11 @@ public class NetEntity : NetDamageable
             }
         }
 
-        if (IsServer && healthThisFrame != currentHealth.AuthoritativeValue)
+        if (IsServer && healthThisFrame != currentHealth.Value)
         {
-            float delta = currentHealth.AuthoritativeValue - healthThisFrame;
+            float delta = currentHealth.Value - healthThisFrame;
             //We check if we've regenerated any health, and then we tell the clients that the owner of this object modified its health.
-            HealthChanged_RPC(delta, currentHealth.AuthoritativeValue, (long)OwnerClientId);
+            HealthChanged_RPC(delta, this);
         }
     }
 
@@ -112,12 +112,9 @@ public class NetEntity : NetDamageable
 
         if (IsServer)
         {
-            isDead.AuthoritativeValue = true;
+            isDead.Value = true;
         }
-        else
-        {
-            isDead.Anticipate(true);
-        }
+
     }
 
 }

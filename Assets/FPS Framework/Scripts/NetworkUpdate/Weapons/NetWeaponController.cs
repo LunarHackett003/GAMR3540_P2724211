@@ -123,6 +123,10 @@ public class NetWeaponController : LunarNetScript
     public virtual void ChangeCurrentWeapon(BaseNetWeapon newWeapon, out BaseNetWeapon oldWeapon, out bool success)
     {
         oldWeapon = CurrentWeapon;
+
+        oldWeapon.primaryInput = false;
+        oldWeapon.secondaryInput = false;
+
         currentWeapon = newWeapon;
         success = newWeapon != null && newWeapon != CurrentWeapon;
 
@@ -137,7 +141,10 @@ public class NetWeaponController : LunarNetScript
         ChangeCurrentWeapon(weapons[index], out _, out bool success);
         if (success)
         {
-            UpdateWeaponIndex_RPC(weaponIndex.AuthoritativeValue, index);
+            if (IsOwner)
+            {
+                UpdateWeaponIndex_RPC(weaponIndex.AuthoritativeValue, index);
+            }
         }
     }
 
@@ -152,7 +159,6 @@ public class NetWeaponController : LunarNetScript
         else
         {
             weaponIndex.Anticipate(newIndex);
-            nextWeaponIndex.Anticipate(newIndex);
         }
 
         animator.UpdateAnimations();

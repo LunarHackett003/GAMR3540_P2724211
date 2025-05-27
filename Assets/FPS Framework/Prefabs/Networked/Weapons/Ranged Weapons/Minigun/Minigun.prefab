@@ -246,6 +246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 8626052139001016270}
+  targetSpinLerpSpeed: 4
   spinSpeed: 1080
   axis: {x: 0, y: 0, z: 1}
 --- !u!4 &3988889807928685729 stripped
@@ -326,6 +327,15 @@ MonoBehaviour:
   currentAmmoPhase: 0
   partialReloadTime: 3
   emptyReloadTime: 3
+  hasReloadAnimation: 1
+  useEquipmentRecharge: 0
+  equipmentRechargeTime: 0
+  replenishAllEquipmentCharges: 0
+  equipmentChargeFillsAmmo: 0
+  equipmentCharges:
+    m_InternalValue: 0
+  equipmentChargeCapacity: 0
+  equipmentChargesRefilled: 0
   queuedReloadAnimation: 0
   fired: 0
   primaryUsesCharge: 1

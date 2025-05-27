@@ -16,7 +16,10 @@ public class NetPlayerMotor : LunarNetScript
 
     [SerializeField] internal Rigidbody rigidbody;
     [SerializeField] NetPlayerEntity playerEntity;
-    [SerializeField] internal CinemachineVirtualCamera worldCamera, viewCamera;
+    //[SerializeField] internal CinemachineVirtualCamera worldCamera, viewCamera;
+    [SerializeField] internal Camera mainCamera, viewCamera;
+    [SerializeField] internal Transform worldCameraTarget, viewCameraTarget, worldCameraPoint, viewCameraPoint;
+
 
     [SerializeField] internal Transform head;
     [SerializeField] internal Transform ikAimtransform;
@@ -36,6 +39,7 @@ public class NetPlayerMotor : LunarNetScript
 
     internal bool aiming;
 
+    internal Vector2 recoilVector;
 
 
     internal float lookPitch;
@@ -151,14 +155,11 @@ public class NetPlayerMotor : LunarNetScript
 
         if (IsOwner)
         {
-            worldCamera.enabled = true;
-            viewCamera.enabled = true;
+            mainCamera = Camera.main;
         }
-        else
-        {
-            worldCamera.gameObject.SetActive(false);
-            viewCamera.gameObject.SetActive(false);
-        }
+
+        viewCamera.enabled = IsOwner;
+
     }
     #region Update
     public override void LTimestep()
@@ -354,7 +355,7 @@ public class NetPlayerMotor : LunarNetScript
         {
             CheckMantle();
         }
-        rigidbody.isKinematic = playerEntity.isDead.AuthoritativeValue || mantling;
+        rigidbody.isKinematic = playerEntity.isDead.Value || mantling;
 
         if (mantleTargetRigidbody != null && mantling)
         {
@@ -411,7 +412,7 @@ public class NetPlayerMotor : LunarNetScript
         {
             CheckMantle();
         }
-        rigidbody.isKinematic = playerEntity.isDead.AuthoritativeValue || mantling;
+        rigidbody.isKinematic = playerEntity.isDead.Value || mantling;
 
         if (mantleTargetRigidbody != null && mantling)
         {
@@ -450,6 +451,19 @@ public class NetPlayerMotor : LunarNetScript
             }
         }
     }
+
+    public override void LPostUpdate()
+    {
+        base.LPostUpdate();
+
+
+        if (IsOwner)
+        {
+            mainCamera.transform.SetPositionAndRotation(worldCameraPoint.position, Quaternion.LookRotation(worldCameraTarget.position - worldCameraPoint.position, worldCameraTarget.up));
+            viewCamera.transform.SetPositionAndRotation(worldCameraPoint.position, Quaternion.LookRotation(viewCameraTarget.position - viewCameraPoint.position, viewCameraTarget.up));
+        }
+    }
+
     #endregion Update
 
     #region Movement

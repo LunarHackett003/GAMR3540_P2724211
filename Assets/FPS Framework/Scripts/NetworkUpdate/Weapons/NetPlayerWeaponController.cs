@@ -16,8 +16,7 @@ public class NetPlayerWeaponController : NetWeaponController
 
     internal override bool FireBlocked => base.FireBlocked || player.isDead.Value || player.heldInteraction || player.carryConfirmed;
 
-
-
+    public float temporaryAimPitch;
 
 
 
@@ -57,15 +56,23 @@ public class NetPlayerWeaponController : NetWeaponController
                 if (!switchingWeapons && weaponSwitchInput)
                 {
                     CurrentWeapon.TriggerAnimation(BaseNetWeapon.CHANGEWEAPON, BaseNetWeapon.TRIGGERTIMETINY, true);
+                    weaponSwitchInput = false;
                     if (IsOwner)
                     {
-                        nextWeaponIndex.Anticipate((nextWeaponIndex.Value + 1) % weapons.Count);
+                        InputManager.WeaponSwitchInput = false;
+                        if (IsServer)
+                        {
+                            nextWeaponIndex.AuthoritativeValue = (nextWeaponIndex.Value + 1) % weapons.Count;
+                        }
+                        else
+                        {
+                            nextWeaponIndex.Anticipate((nextWeaponIndex.Value + 1) % weapons.Count);
+                        }
                     }
-                    return;
                 }
                 if (reloadInput)
                 {
-                    if (CurrentWeapon.useAmmunition && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) || (CurrentWeapon.useAmmoPhases && CurrentWeapon.currentAmmoPhase != 0))
+                    if (CurrentWeapon.useAmmunition && CurrentWeapon.hasReloadAnimation && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) || (CurrentWeapon.useAmmoPhases && CurrentWeapon.currentAmmoPhase != 0))
                     {
                         CurrentWeapon.TriggerAnimation(CurrentWeapon.CurrentAmmo.Value > 0 ? BaseNetWeapon.PARTIALRELOAD : BaseNetWeapon.EMPTYRELOAD, 0.2f, true);
                     }
@@ -82,7 +89,11 @@ public class NetPlayerWeaponController : NetWeaponController
 
         player.motor.aiming = secondaryInput && !player.motor.sliding;
 
-        UpdateFOV();
+        if (IsOwner)
+        {
+            UpdateFOV();
+        }
+
         UpdateWeaponOrientation();
 
 
@@ -135,9 +146,9 @@ public class NetPlayerWeaponController : NetWeaponController
         fovLerp = Mathf.Lerp(fovLerp, fov + (CurrentWeapon != null ? CurrentWeapon.aimParams.aimFOV * aimLerp : 0), Time.deltaTime * player.motor.viewParams.fovMoveSpeed);
         currentFOV = player.motor.viewParams.baseFOV + fovLerp;
         //rbpm.viewCineCam.m_Lens.FieldOfView = Mathf.Lerp(rbpm.viewParams.viewmodelBaseFOV, rbpm.viewParams.viewmodelBaseFOV + currentWeapon.aimParams.viewmodelFOV, aimLerp);
-        player.motor.viewCamera.m_Lens.FieldOfView = player.motor.viewParams.viewmodelBaseFOV + 
+        player.motor.viewCamera.fieldOfView = player.motor.viewParams.viewmodelBaseFOV + 
             (CurrentWeapon != null ? (CurrentWeapon.aimParams.viewmodelFOV * aimLerp) : 0);
-        player.motor.worldCamera.m_Lens.FieldOfView = currentFOV;
+        player.motor.mainCamera.fieldOfView = currentFOV;
     }
 
     [Rpc(SendTo.Everyone)]

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class NetDamageable : LunarNetScript
 {
-    public AnticipatedNetworkVariable<float> currentHealth = new(100, StaleDataHandling.Reanticipate);
+    public NetworkVariable<float> currentHealth = new(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [SerializeField] internal int maxHealth;
     public int IntHealth => Mathf.RoundToInt(currentHealth.Value);
@@ -36,7 +36,7 @@ public class NetDamageable : LunarNetScript
             default:
                 break;
         }
-        if(startHealth > 0 && (currentHealth.Value <= 0 || currentHealth.AuthoritativeValue <= 0))
+        if ((currentHealth.Value <= 0))
         {
             DamageableDied(source, isCrit);
         }
@@ -50,11 +50,7 @@ public class NetDamageable : LunarNetScript
     {
         if (IsServer)
         {
-            currentHealth.AuthoritativeValue += deltaHealth;
-        }
-        else
-        {
-            currentHealth.Anticipate(currentHealth.Value + deltaHealth);
+            currentHealth.Value += deltaHealth;
         }
     }
     public virtual void WeaponDamage(float deltaHealth, bool isCrit, NetworkBehaviourReference reference)
@@ -67,11 +63,7 @@ public class NetDamageable : LunarNetScript
             }
             if (IsServer)
             {
-                currentHealth.AuthoritativeValue += deltaHealth;
-            }
-            else
-            {
-                currentHealth.Anticipate(currentHealth.Value + deltaHealth);
+                currentHealth.Value += deltaHealth;
             }
         }
     }
@@ -79,22 +71,14 @@ public class NetDamageable : LunarNetScript
     {
         if (IsServer)
         {
-            currentHealth.AuthoritativeValue += deltaHealth;
-        }
-        else
-        {
-            currentHealth.Anticipate(currentHealth.Value + deltaHealth);
+            currentHealth.Value += deltaHealth;
         }
     }
     public virtual void HazardDamage(float deltaHealth, NetworkBehaviourReference reference)
     {
         if (IsServer)
         {
-            currentHealth.AuthoritativeValue += deltaHealth;
-        }
-        else
-        {
-            currentHealth.Anticipate(currentHealth.Value + deltaHealth);
+            currentHealth.Value += deltaHealth;
         }
     }
 

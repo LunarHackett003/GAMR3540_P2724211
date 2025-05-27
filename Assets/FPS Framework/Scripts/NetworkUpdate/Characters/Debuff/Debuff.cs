@@ -29,7 +29,7 @@ public class DamageOverTime : Debuff
         if(currentInterval > damageInterval)
         {
             currentInterval = 0;
-            entity.currentHealth.AuthoritativeValue -= damagePerTick;
+            entity.currentHealth.Value -= damagePerTick;
             if (increaseDamageOverTime)
             {
                 damagePerTick += damageAddPerTick;

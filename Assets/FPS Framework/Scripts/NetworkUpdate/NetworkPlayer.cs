@@ -48,7 +48,6 @@ public class NetworkPlayer : LunarNetScript
         return myteam == theirTeam && myteam != -1 && theirTeam != -1;
     }
 
-
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
@@ -123,6 +122,12 @@ public class NetworkPlayer : LunarNetScript
     public override void OnNetworkDespawn()
     {
         netPlayers.Remove(OwnerClientId);
+
+        if (IsOwner)
+        {
+            playersOnTeams.Clear();
+            netPlayers.Clear();
+        }
 
         base.OnNetworkDespawn();
     }

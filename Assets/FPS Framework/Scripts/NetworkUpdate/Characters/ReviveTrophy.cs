@@ -11,7 +11,7 @@ public class ReviveTrophy : InteractableObject
 
     public ulong targetClientID;
 
-    protected bool friendly;
+    internal bool friendly;
 
     public override bool CanInteract(ulong attemptedInteractor)
     {
@@ -22,14 +22,11 @@ public class ReviveTrophy : InteractableObject
     {
         base.OnNetworkSpawn();
 
-        NetworkPlayer.GetPlayerTeam(NetworkManager.LocalClientId, out int reviveTeam);
-        NetworkPlayer.GetPlayerTeam(OwnerClientId, out int myTeam);
+        friendly = NetworkPlayer.IsPlayerOnMyTeam(NetworkManager.LocalClientId, OwnerClientId);
 
         targetClientID = OwnerClientId;
 
         NetPlayerEntity.playersByID[targetClientID].reviveItemInstance = NetworkObject;
-
-        friendly = reviveTeam == myTeam && reviveTeam != -1 && myTeam != -1;
 
         renderer.material = friendly ? friendlyMaterial : enemyMaterial;
     }

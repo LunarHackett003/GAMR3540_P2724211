@@ -35,11 +35,24 @@ public class BaseNetWeapon : LunarNetScript
     [SerializeField] internal bool useAmmunition, ammoConsumeOnPrimary, ammoConsumeOnSecondary;
     [SerializeField] internal int maxAmmo;
     [SerializeField] internal float ammoPerShot;
-    [SerializeField] internal AnticipatedNetworkVariable<float> CurrentAmmo = new(0, StaleDataHandling.Reanticipate);
+    [SerializeField] internal NetworkVariable<float> CurrentAmmo = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] internal bool useAmmoPhases;
     [SerializeField] internal int ammoPhases;
     [SerializeField] internal int currentAmmoPhase;
     [SerializeField] internal float partialReloadTime, emptyReloadTime;
+
+    [SerializeField] internal bool hasReloadAnimation;
+
+    [SerializeField] internal bool useEquipmentRecharge;
+    [SerializeField] internal float equipmentRechargeTime;
+    [SerializeField] internal bool replenishAllEquipmentCharges;
+    [SerializeField] internal bool equipmentChargeFillsAmmo;
+    internal float currentEquipmentRechargeTime; 
+
+    [SerializeField, Tooltip("Equipment charges present themselves almost like magazines. If you have no equipment charges, you cannot reload a weapon that is configured with recharges.\n" +
+        "If you have no charges, you cannot use equipment that might not use ammunition.")] internal NetworkVariable<int> equipmentCharges = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    [SerializeField] internal int equipmentChargeCapacity, equipmentChargesRefilled;
 
     [SerializeField] internal bool queuedReloadAnimation;
     [SerializeField] protected bool fired = false;
@@ -54,8 +67,9 @@ public class BaseNetWeapon : LunarNetScript
     [SerializeField, Tooltip("Will the weapon charge to full, even if the player releases the fire input?")] protected bool chargeUntilFire;
     [SerializeField, Tooltip("Will the forced charge end when we reach minimum charge, if we've released the fire input?")] protected bool chargeOnlyUntilMinimum;
     [SerializeField, Tooltip("Fires the weapon when we release the fire input")] protected bool fireOnRelease;
-    protected virtual bool PrimaryBlocked => fired || (useAmmunition && CurrentAmmo.Value <= 0);
+    protected virtual bool PrimaryBlocked => fired || (useAmmunition && CurrentAmmo.Value <= 0) || BlockedByRecharge;
     protected virtual bool ChargeInput => (primaryUsesCharge && primaryInput) || (secondaryUsesCharge && secondaryInput) || chargeHoldFrame;
+    protected virtual bool BlockedByRecharge => useEquipmentRecharge && (equipmentCharges.Value == 0 && CurrentAmmo.Value == 0);
     internal bool animatedFirePending;
     internal bool animatedFireLast;
 
@@ -63,6 +77,7 @@ public class BaseNetWeapon : LunarNetScript
 
     [SerializeField] internal bool charging;
     internal bool chargeHoldFrame;
+
 
     /// <summary>
     /// Calculates the damage that should be dealt at the supplied distance.
@@ -83,14 +98,14 @@ public class BaseNetWeapon : LunarNetScript
 
         if (useAmmunition)
         {
-            if (!IsServer)
+            if(IsServer)
             {
-                CurrentAmmo.Anticipate(maxAmmo);
+                CurrentAmmo.Value = maxAmmo;
             }
-            else
-            {
-                CurrentAmmo.AuthoritativeValue = maxAmmo;
-            }
+        }
+        if (IsServer && useEquipmentRecharge)
+        {
+            equipmentCharges.Value = equipmentChargeCapacity;
         }
     }
 
@@ -108,7 +123,6 @@ public class BaseNetWeapon : LunarNetScript
 
     public override void LTimestep()
     {
-        base.LTimestep();
         if(animatedFireLast != animatedFirePending)
         {
             animatedFireLast = animatedFirePending;
@@ -132,6 +146,19 @@ public class BaseNetWeapon : LunarNetScript
         if (useAttackSpread)
         {
             attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount - (Time.fixedDeltaTime * attackSpreadDecay));
+        }
+
+        if (useEquipmentRecharge && equipmentCharges.Value < equipmentChargeCapacity)
+        {
+            currentEquipmentRechargeTime += Time.fixedDeltaTime;
+            if (currentEquipmentRechargeTime >= equipmentRechargeTime)
+            {
+                currentEquipmentRechargeTime = 0;
+                if (IsServer)
+                {
+                    UpdateAmmoCharges();
+                }
+            }
         }
     }
 
@@ -157,7 +184,11 @@ public class BaseNetWeapon : LunarNetScript
                 if (IsServer)
                 {
                     Debug.Log("decremented ammo");
-                    CurrentAmmo.AuthoritativeValue -= ammoPerShot;
+                    CurrentAmmo.Value -= ammoPerShot;
+                    if (useEquipmentRecharge && !hasReloadAnimation)
+                    {
+                        equipmentCharges.Value--;
+                    }
                 }
                 if (CurrentAmmo.Value <= 0)
                 {
@@ -167,13 +198,33 @@ public class BaseNetWeapon : LunarNetScript
 
                         return;
                     }
-                    TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT, true);
+                    if(hasReloadAnimation && (!useEquipmentRecharge || equipmentCharges.Value > 0))
+                    {
+                        TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT, true);
+                    }
                 }
             }
         }
         if ((primaryUsesCharge || secondaryUsesCharge) && resetChargeOnFire)
         {
             chargeAmount = 0;
+        }
+    }
+
+    protected virtual void UpdateAmmoCharges()
+    {
+        if (replenishAllEquipmentCharges)
+        {
+            equipmentCharges.Value = equipmentChargeCapacity;
+        }
+        else
+        {
+            equipmentCharges.Value += equipmentChargesRefilled;
+        }
+
+        if (equipmentChargeFillsAmmo)
+        {
+            CurrentAmmo.Value = equipmentCharges.Value;
         }
     }
     public void IncrementAmmoPhase()
@@ -191,9 +242,24 @@ public class BaseNetWeapon : LunarNetScript
         {
             currentAmmoPhase = 0;
         }
+
+
+
         primaryPressed = false;
         animatedFirePending = false;
-        CurrentAmmo.Anticipate(maxAmmo);
+
+        if (IsServer)
+        {
+            //Determine how much of our equipment charge we're consuming to recharge this item
+            int reloadAmount = useEquipmentRecharge ? Mathf.Min(equipmentCharges.Value, maxAmmo) : maxAmmo;
+            if (useEquipmentRecharge)
+            {
+                //Then subtract it from the remaining equipment charges
+                equipmentCharges.Value -= reloadAmount;
+            }
+            //And then reload our weapon
+            CurrentAmmo.Value = reloadAmount;
+        }
     }
 
     protected virtual void UpdateCharge()
