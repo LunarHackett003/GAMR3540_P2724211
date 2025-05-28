@@ -151,6 +151,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8676971905106484528}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5b333e7677a2e21479b0510b8884e6f8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1071614908139635531}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b333e7677a2e21479b0510b8884e6f8,
         type: 3}
@@ -168,6 +172,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8042653535638676965}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b333e7677a2e21479b0510b8884e6f8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3003377477257815828}
     - targetCorrespondingSourceObject: {fileID: -7552236775999706168, guid: 5b333e7677a2e21479b0510b8884e6f8,
         type: 3}
       insertIndex: -1
@@ -273,7 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2791183356
+  GlobalObjectIdHash: 1829186527
   InScenePlacedSourceGlobalObjectIdHash: 2791183356
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -319,9 +327,7 @@ MonoBehaviour:
   maxAmmo: 150
   ammoPerShot: 1
   CurrentAmmo:
-    m_AuthoritativeValue:
-      m_InternalValue: 0
-    StaleDataHandling: 1
+    m_InternalValue: 0
   useAmmoPhases: 0
   ammoPhases: 0
   currentAmmoPhase: 0
@@ -349,6 +355,7 @@ MonoBehaviour:
   chargeOnlyUntilMinimum: 1
   fireOnRelease: 0
   charging: 0
+  recoilParams: {fileID: 11400000, guid: 93dbff100f0057542b84c891bd4ac746, type: 2}
   poolStartCapacity: 50
   poolMaxCapacity: 500
   damageConfig: {fileID: 11400000, guid: a8ff663f9397ef04abdba5d966887adb, type: 2}
@@ -422,6 +429,20 @@ MonoBehaviour:
     TransitionDuration: 0.19881755
     TriggerNameHash: -1047320328
     TransitionIndex: 3
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 613635489
+    DestinationState: -193380071
+    TransitionDuration: 0.05307722
+    TriggerNameHash: -1907200461
+    TransitionIndex: 1
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 1029937312
+    DestinationState: -193380071
+    TransitionDuration: 0.1351285
+    TriggerNameHash: -1907200461
+    TransitionIndex: 0
   m_Animator: {fileID: 7042309243424091867}
 --- !u!114 &8042653535638676965
 MonoBehaviour:
@@ -440,9 +461,108 @@ MonoBehaviour:
   controller: {fileID: 0}
   weapon: {fileID: 8626052139001016270}
   isWeapon: 1
+--- !u!114 &3003377477257815828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4328155547333537307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1335d87071fc82468ef871d97dc89af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 8626052139001016270}
+  applyRecoil: 1
+  playFireSound: 0
+  playFireEffects: 1
+  fireEffect: {fileID: 5882573301993191718}
+  fireParticle: {fileID: 0}
+  playReloadSound: 0
 --- !u!95 &7042309243424091867 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 5b333e7677a2e21479b0510b8884e6f8,
     type: 3}
   m_PrefabInstance: {fileID: 3517833955216626506}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8556040718584158963
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3988889807928685729}
+    m_Modifications:
+    - target: {fileID: 4032642367877110983, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_Name
+      value: MuzzleFlashDefault
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0006
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0346
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.691
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071066
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.70710695
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 89.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4051cfa368a3fd478b8b19c25fa7aa8, type: 3}
+--- !u!4 &1071614908139635531 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+    type: 3}
+  m_PrefabInstance: {fileID: 8556040718584158963}
+  m_PrefabAsset: {fileID: 0}
+--- !u!2083052967 &5882573301993191718 stripped
+VisualEffect:
+  m_CorrespondingSourceObject: {fileID: 2818744239641109461, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+    type: 3}
+  m_PrefabInstance: {fileID: 8556040718584158963}
   m_PrefabAsset: {fileID: 0}

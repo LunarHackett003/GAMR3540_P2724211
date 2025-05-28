@@ -34,6 +34,16 @@ public class NetWeaponController : LunarNetScript
 
     [SerializeField] internal bool hideWeapons;
     internal bool weaponsHiddenLast;
+
+    public Vector3 recoilTargetAngular;
+    public Vector3 currentRecoilAngular;
+    public Vector3 recoilTargetLinear;
+    public Vector3 currentRecoilLinear;
+
+    public RecoilParams defaultRecoilParams;
+    internal float recoilShotClearTime;
+    internal int recoilShotsFired;
+
     public virtual float Spread(float value) => value * (1 - aimAmount);
 
     public override void OnNetworkSpawn()
@@ -110,6 +120,12 @@ public class NetWeaponController : LunarNetScript
             RePollWeapons();
             lastWeaponCount = weapons.Count;
         }
+
+        if(defaultRecoilParams != null)
+        {
+            
+            UpdateRecoil(CurrentWeapon.recoilParams != null ? CurrentWeapon.recoilParams : defaultRecoilParams);
+        }
     }
 
     public void ShowWeapon(int indexToShow, bool hideAll = false)
@@ -168,8 +184,53 @@ public class NetWeaponController : LunarNetScript
     {
         
     }
-    public virtual void ReceivePostAttack(BaseNetWeapon weapon)
+    public virtual void ReceivePostAttack()
     {
 
+    }
+
+    public virtual void UpdateRecoil(RecoilParams rp)
+    {
+        if(recoilShotClearTime < rp.recoilShotClearTime)
+        {
+            recoilShotClearTime += Time.fixedDeltaTime;
+        }
+        else
+        {
+            recoilShotsFired = 0;
+        }
+
+
+        float recoilDecay = rp.recoilDecay * Time.fixedDeltaTime;
+        recoilTargetLinear = Vector3.MoveTowards(recoilTargetLinear, Vector3.zero, recoilDecay);
+        recoilTargetAngular = Vector3.MoveTowards(recoilTargetAngular, Vector3.zero, recoilDecay);
+
+        currentRecoilLinear = Vector3.Lerp(currentRecoilLinear, recoilTargetLinear, defaultRecoilParams.recoilSnappiness * Time.fixedDeltaTime);
+        currentRecoilAngular = Vector3.Slerp(currentRecoilAngular, recoilTargetAngular, defaultRecoilParams.recoilSnappiness * Time.fixedDeltaTime);
+    }
+
+    public virtual void ReceiveRecoil(float charge, out float recoilCurveEval)
+    {
+        float shotsFiredLerp = Mathf.InverseLerp(0, CurrentWeapon.recoilParams.maxRecoilShots, recoilShotsFired);
+        Debug.Log($"{recoilShotsFired}/{CurrentWeapon.recoilParams.maxRecoilShots} => {shotsFiredLerp}");
+        recoilCurveEval = CurrentWeapon.recoilParams.recoilMultiplierCurve.Evaluate(shotsFiredLerp);
+
+        Vector3 linearRecoil = Vector3.Scale(HelperMethods.RandomPerAxis(CurrentWeapon.recoilParams.minLinearRecoil, CurrentWeapon.recoilParams.maxLinearRecoil),
+            Vector3.Lerp(Vector3.one, CurrentWeapon.recoilParams.aimedLinearRecoilScale, aimAmount)) * recoilCurveEval;
+        Vector3 angularRecoil = Vector3.Scale(HelperMethods.RandomPerAxis(CurrentWeapon.recoilParams.minAngularRecoil, CurrentWeapon.recoilParams.maxAngularRecoil),
+            Vector3.Lerp(Vector3.one, CurrentWeapon.recoilParams.aimedAngularRecoilScale, aimAmount)) * recoilCurveEval;
+
+        recoilShotClearTime = 0;
+        recoilShotsFired++;
+
+        if (CurrentWeapon.recoilParams.chargeAffectsRecoil)
+        {
+            float chargeMult = CurrentWeapon.recoilParams.recoilChargeInfluence.Evaluate(charge);
+            linearRecoil *= chargeMult;
+            angularRecoil *= chargeMult;
+        }
+
+        recoilTargetLinear += linearRecoil;
+        recoilTargetAngular += angularRecoil;
     }
 }

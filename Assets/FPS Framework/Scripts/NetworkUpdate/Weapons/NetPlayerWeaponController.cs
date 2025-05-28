@@ -16,9 +16,7 @@ public class NetPlayerWeaponController : NetWeaponController
 
     internal override bool FireBlocked => base.FireBlocked || player.isDead.Value || player.heldInteraction || player.carryConfirmed;
 
-    public float temporaryAimPitch;
-
-
+    public float tempAimPitchCurr, tempAimPitchTarg;
 
     public override float Spread(float value)
     {
@@ -122,13 +120,13 @@ public class NetPlayerWeaponController : NetWeaponController
         weaponPositionOffset.localPosition = CurrentWeapon.aimParams.crouchPositionOffset * (crouchLerp * (1 - (aimLerp * CurrentWeapon.aimParams.aimRotationReduction)))
             + (CurrentWeapon.aimParams.baseAimPositionOffset +
             weaponTargetTransform.localPosition.Multiply(CurrentWeapon.aimParams.aimedWeaponPositionScale) +
-            (CurrentWeapon.aimParams.aimPositionOffsetAngled * (1 - CurrentWeapon.aimParams.aimRotationReduction))) * aimLerp;
+            (CurrentWeapon.aimParams.aimPositionOffsetAngled * (1 - CurrentWeapon.aimParams.aimRotationReduction)) ) * aimLerp + currentRecoilLinear;
 
 
         weaponRotationInvert.localRotation = Quaternion.Lerp(
             Quaternion.Lerp(Quaternion.identity, CurrentWeapon.aimParams.crouchRotationOffset, crouchLerp),
             Quaternion.Inverse(weaponTargetTransform.localRotation) * CurrentWeapon.aimParams.aimRotationOffset,
-            aimLerp * CurrentWeapon.aimParams.aimRotationReduction);
+            aimLerp * CurrentWeapon.aimParams.aimRotationReduction) * Quaternion.Euler(currentRecoilAngular);
     }
 
     public void UpdateFOV()
@@ -157,5 +155,19 @@ public class NetPlayerWeaponController : NetWeaponController
         primaryInput = primary;
         secondaryInput = secondary;
         reloadInput = reload;
+    }
+
+    public override void ReceiveRecoil(float charge, out float recoilCurveEval)
+    {
+        base.ReceiveRecoil(charge, out recoilCurveEval);
+
+        tempAimPitchTarg += CurrentWeapon.recoilParams.tempAimPitchPerShot * recoilCurveEval;
+        player.motor.lookPitch += CurrentWeapon.recoilParams.permanentAimPitchPerShot * recoilCurveEval;
+    }
+    public virtual void UpdateAimPitch()
+    {
+        RecoilParams rp = CurrentWeapon.recoilParams != null ? CurrentWeapon.recoilParams : defaultRecoilParams;
+        tempAimPitchTarg = Mathf.MoveTowardsAngle(tempAimPitchTarg, 0, rp.tempAimPitchDecay * Time.fixedDeltaTime);
+        tempAimPitchCurr = Mathf.Lerp(tempAimPitchCurr, tempAimPitchTarg, rp.tempAimPitchSnappiness * Time.fixedDeltaTime);
     }
 }

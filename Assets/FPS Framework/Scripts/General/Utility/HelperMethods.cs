@@ -13,4 +13,15 @@ public static class HelperMethods
     {
         value = !value;
     }
+
+    
+    public static Vector3 RandomPerAxis(Vector3 min, Vector3 max)
+    {
+        return new Vector3
+        {
+            x = Random.Range(min.x, max.x),
+            y = Random.Range(min.y, max.y),
+            z = Random.Range(min.z, max.z)
+        };
+    }
 }

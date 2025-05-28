@@ -67,14 +67,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &136278382625713704
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,14 +141,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &163869199528006160
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,14 +440,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &1294140310883069999
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,14 +545,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &1953050311996932991
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,14 +878,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &3229907142889673036
 GameObject:
   m_ObjectHideFlags: 0
@@ -1001,7 +996,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2550889260
+  GlobalObjectIdHash: 786125874
   InScenePlacedSourceGlobalObjectIdHash: 786125874
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -1068,15 +1063,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 250
   receiveDamageFromTeamOrOwner: 0
   isDead:
-    m_AuthoritativeValue:
-      m_InternalValue: 0
-    StaleDataHandling: 1
+    m_InternalValue: 0
   canRegenerateHealth: 1
   regenerationDelay: 5
   currentRegenTime: 0
@@ -1230,6 +1221,12 @@ MonoBehaviour:
   fireBlockedByAnimation: 0
   animator: {fileID: 860630945268122133}
   hideWeapons: 0
+  recoilTargetAngular: {x: 0, y: 0, z: 0}
+  currentRecoilAngular: {x: 0, y: 0, z: 0}
+  recoilTargetLinear: {x: 0, y: 0, z: 0}
+  currentRecoilLinear: {x: 0, y: 0, z: 0}
+  defaultRecoilParams: {fileID: 11400000, guid: f1a76fcb6beb003449352ffb1fedaebd,
+    type: 2}
   reloadInput: 0
   meleeInput: 0
   weaponSwitchInput: 0
@@ -1238,6 +1235,8 @@ MonoBehaviour:
   weaponPositionOffset: {fileID: 4752557809316964030}
   weaponRotationInvert: {fileID: 337724956419922602}
   weaponTargetTransform: {fileID: 897516428711876209}
+  tempAimPitchCurr: 0
+  tempAimPitchTarg: 0
 --- !u!114 &860630945268122133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1322,14 +1321,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &3792357219554433636
 GameObject:
   m_ObjectHideFlags: 0
@@ -1428,14 +1426,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &4373106199714990361
 GameObject:
   m_ObjectHideFlags: 0
@@ -1503,14 +1500,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &4480350068861535199
 GameObject:
   m_ObjectHideFlags: 0
@@ -1578,14 +1574,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &4492254764957864276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1709,14 +1704,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &4548445200321434928
 GameObject:
   m_ObjectHideFlags: 0
@@ -1784,14 +1778,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &4565828968128082458
 GameObject:
   m_ObjectHideFlags: 0
@@ -1859,14 +1852,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &4733781009399456244
 GameObject:
   m_ObjectHideFlags: 0
@@ -2017,14 +2009,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &4922999304821941107
 GameObject:
   m_ObjectHideFlags: 0
@@ -2250,14 +2241,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &5252558032275788056
 GameObject:
   m_ObjectHideFlags: 0
@@ -2697,14 +2687,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &6496295992996978895
 GameObject:
   m_ObjectHideFlags: 0
@@ -2772,14 +2761,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &6565798847809696717
 GameObject:
   m_ObjectHideFlags: 0
@@ -2847,14 +2835,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &6674519505963403008
 GameObject:
   m_ObjectHideFlags: 0
@@ -2922,14 +2909,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 1
+  col: {fileID: 0}
 --- !u!1 &7367044508265802677
 GameObject:
   m_ObjectHideFlags: 0
@@ -2997,14 +2983,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &7428981523097956006
 GameObject:
   m_ObjectHideFlags: 0
@@ -3182,14 +3167,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &7804772282839904838
 GameObject:
   m_ObjectHideFlags: 0
@@ -3367,14 +3351,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth:
-    m_AuthoritativeValue:
-      m_InternalValue: 100
-    StaleDataHandling: 1
+    m_InternalValue: 100
   maxHealth: 0
   receiveDamageFromTeamOrOwner: 0
   rootDamageable: {fileID: 3954094251548034127}
   damageMultiplier: 1
   isCritBox: 0
+  col: {fileID: 0}
 --- !u!1 &8479873775018284227
 GameObject:
   m_ObjectHideFlags: 0

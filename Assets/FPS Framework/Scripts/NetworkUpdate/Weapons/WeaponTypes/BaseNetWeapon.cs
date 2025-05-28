@@ -79,6 +79,15 @@ public class BaseNetWeapon : LunarNetScript
     internal bool chargeHoldFrame;
 
 
+    [SerializeField] internal RecoilParams recoilParams;
+
+    public delegate void WeaponFired(float charge);
+    public WeaponFired onWeaponFired;
+
+    public delegate void ReloadEvent(bool emptyReload, bool canceled);
+    public ReloadEvent onReloadEvent;
+
+
     /// <summary>
     /// Calculates the damage that should be dealt at the supplied distance.
     /// </summary>
@@ -209,6 +218,8 @@ public class BaseNetWeapon : LunarNetScript
         {
             chargeAmount = 0;
         }
+
+        onWeaponFired?.Invoke(chargeAmount);
     }
 
     protected virtual void UpdateAmmoCharges()

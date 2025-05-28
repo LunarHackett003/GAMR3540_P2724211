@@ -1,8 +1,10 @@
 using Cinemachine;
+using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
@@ -780,14 +782,25 @@ public class NetPlayerMotor : LunarNetScript
     }
     void RotatePlayer()
     {
-        if(InputManager.LookInput != Vector2.zero)
+        Vector2 lookSpeed = viewParams.lookSpeed * (aiming ? viewParams.aimLookModifier : 1);
+        float aimPitchInput = Time.deltaTime * lookSpeed.y * lookInput.y;
+        
+        playerEntity.weaponController.UpdateAimPitch();
+
+        if(aimPitchInput > 0 && playerEntity.weaponController.tempAimPitchCurr < 0 || aimPitchInput < 0 && playerEntity.weaponController.tempAimPitchCurr > 0)
         {
-            Vector2 lookSpeed = viewParams.lookSpeed * (aiming ? viewParams.aimLookModifier : 1);
-            lookPitch = Mathf.Clamp(lookPitch - Time.deltaTime * lookSpeed.y * lookInput.y, -viewParams.lookPitchClamp, viewParams.lookPitchClamp);
-            head.localRotation = Quaternion.Euler(lookPitch, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, lookInput.x * lookSpeed.x * Time.deltaTime, 0);
-            oldLook = new(transform.eulerAngles.x, lookPitch);
+            playerEntity.weaponController.tempAimPitchCurr += aimPitchInput;
         }
+
+
+        lookPitch = Mathf.Clamp(lookPitch - playerEntity.weaponController.tempAimPitchCurr - aimPitchInput, -viewParams.lookPitchClamp, viewParams.lookPitchClamp);
+        head.localRotation = Quaternion.Euler(lookPitch, 0, 0);
+        lookPitch += playerEntity.weaponController.tempAimPitchCurr;
+        if (lookInput.x != 0)
+        {
+            transform.rotation *= Quaternion.Euler(0, lookInput.x * lookSpeed.x * Time.deltaTime, 0);
+        }
+        oldLook = new(transform.eulerAngles.x, lookPitch);
         if(lookDelta != oldLook)
         {
             lookDelta = new Vector2(transform.eulerAngles.y % 360, lookPitch) - oldLook;
