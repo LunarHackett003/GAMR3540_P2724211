@@ -84,7 +84,7 @@ MonoBehaviour:
   waitingToFire: 1
   radius: 0.02
   direction: {x: 0, y: 0, z: 0}
-  velocity: 20
+  velocity: 50
   gravityMultiplier: 0.2
   renderersToHideOnHit:
   - {fileID: 6179358463563970571}

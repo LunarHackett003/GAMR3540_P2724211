@@ -42,7 +42,7 @@ VisualEffect:
   m_GameObject: {fileID: 4192588283623708245}
   m_Enabled: 1
   m_Asset: {fileID: 8926484042661614526, guid: f1b80884d96e11c40b66bcb866dd2abb, type: 3}
-  m_InitialEventName: Unga
+  m_InitialEventName: 
   m_InitialEventNameOverriden: 1
   m_StartSeed: 0
   m_ResetSeedOnPlay: 1

@@ -40,6 +40,9 @@ public class Explosion : ProjectileHitEffect
 
     Vector3 RandomBlastDirection => Quaternion.Euler(Random.Range(-blastAngle, blastAngle), Random.Range(-blastAngle, blastAngle), 0) * blastBaseDirection;
 
+    public bool despawnAfterExplosion;
+    public float explodeDespawnTime;
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
@@ -104,10 +107,7 @@ public class Explosion : ProjectileHitEffect
                 float force = Mathf.Lerp(forcePointBlank, forceAtEdge, rangeLerp);
                 if (hitData.ContainsKey(hit.collider))
                 {
-                    var tempHitData = hitData[hit.collider];
-                    tempHitData.forceAccumulated += force;
-                    tempHitData.damageAccumulated += damage;
-                    hitData[hit.collider] = tempHitData;
+
                 }
                 else
                 {
@@ -136,10 +136,7 @@ public class Explosion : ProjectileHitEffect
                             nd.ModifyHealth(item.Value.damageAccumulated, source, damageSourceType, false);
                             if (!nd.IsOwnedByServer)
                             {
-                                SendForce_RPC(item.Value.forceAccumulated, new RpcParams()
-                                {
-                                    Send = new RpcSendParams() { Target = RpcTarget.Single(nd.OwnerClientId, RpcTargetUse.Temp)}
-                                });;
+
                             }
 
                         }
@@ -151,11 +148,18 @@ public class Explosion : ProjectileHitEffect
 
         hits.Dispose();
         commands.Dispose();
-    }
-    [Rpc(SendTo.SpecifiedInParams)]
-    void SendForce_RPC(float force, RpcParams rpcParams = default)
-    {
 
+
+        if (despawnAfterExplosion)
+        {
+            StartCoroutine(DespawnAfterExplosion());
+        }
+    }
+
+    IEnumerator DespawnAfterExplosion()
+    {
+        yield return new WaitForSeconds(explodeDespawnTime);
+        NetworkObject.Despawn();
     }
     private void OnDrawGizmosSelected()
     {
@@ -172,9 +176,6 @@ public class Explosion : ProjectileHitEffect
         {
             Gizmos.DrawWireSphere(Vector3.zero, blastRadius);
         }
-
-
-
 
 
         Gizmos.matrix = Matrix4x4.identity;
