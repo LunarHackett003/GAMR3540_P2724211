@@ -76,7 +76,7 @@ public class NetEntity : NetDamageable
         base.LTimestep();
         lastHealth = currentHealth.Value;
 
-        if(transform.position.y < -50 && currentHealth.Value > 0)
+        if(!isDead.Value && transform.position.y < -50 && currentHealth.Value > 0)
         {
             ModifyHealth(-999, null, DamageSourceType.world, false);
         }
