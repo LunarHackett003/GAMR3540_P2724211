@@ -31,7 +31,7 @@ public class NetEntity : NetDamageable
     public bool despawnAfterDeath;
     public float despawnAfterDeathTime;
 
-    float healthThisFrame;
+    float lastHealth;
 
     public override void OnNetworkSpawn()
     {
@@ -74,7 +74,7 @@ public class NetEntity : NetDamageable
     public override void LTimestep()
     {
         base.LTimestep();
-        healthThisFrame = currentHealth.Value;
+        lastHealth = currentHealth.Value;
 
         if(transform.position.y < -50 && currentHealth.Value > 0)
         {
@@ -104,9 +104,10 @@ public class NetEntity : NetDamageable
             currentHealth.Value = Mathf.Clamp(currentHealth.Value + Time.fixedDeltaTime * regenerationRate, 0, maxHealth);
         }
 
-        if (IsServer && healthThisFrame != currentHealth.Value)
+        if (IsServer && lastHealth != currentHealth.Value)
         {
-            float delta = currentHealth.Value - healthThisFrame;
+            float delta = currentHealth.Value - lastHealth;
+            lastHealth = currentHealth.Value;
             //We check if we've regenerated any health, and then we tell the clients that the owner of this object modified its health.
             HealthChanged_RPC(delta, this);
         }

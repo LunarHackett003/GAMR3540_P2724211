@@ -937,7 +937,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   damagePointBlank: -10
   damageAtEdge: 0
-  forcePointBlank: 1
+  forcePointBlank: 50
   forceAtEdge: 0
   blastMask:
     serializedVersion: 2
@@ -947,9 +947,11 @@ MonoBehaviour:
   rayCount: 10
   useLimitedAngle: 1
   blastBaseDirection: {x: 0, y: 1, z: 0}
-  blastAngle: 40.5
+  blastAngle: 23.7
   canDamageFriendlies: 0
-  damageSourceType: 0
+  damageSourceType: 1
+  despawnAfterExplosion: 0
+  explodeDespawnTime: 0
 --- !u!1001 &8152373000210379555
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1168,7 +1170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3482293842
+  GlobalObjectIdHash: 1998122467
   InScenePlacedSourceGlobalObjectIdHash: 3482293842
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -1208,11 +1210,11 @@ MonoBehaviour:
   attackSpreadDecay: 1
   baseAttackSpread: 0.1
   attackSpreadAmount: 0
-  useAmmunition: 0
-  ammoConsumeOnPrimary: 0
+  useAmmunition: 1
+  ammoConsumeOnPrimary: 1
   ammoConsumeOnSecondary: 0
-  maxAmmo: 10
-  ammoPerShot: 0
+  maxAmmo: 1
+  ammoPerShot: 1
   CurrentAmmo:
     m_InternalValue: 0
   useAmmoPhases: 0
@@ -1220,9 +1222,9 @@ MonoBehaviour:
   currentAmmoPhase: 0
   partialReloadTime: 2
   emptyReloadTime: 2
-  hasReloadAnimation: 0
-  useEquipmentRecharge: 0
-  equipmentRechargeTime: 5
+  hasReloadAnimation: 1
+  useEquipmentRecharge: 1
+  equipmentRechargeTime: 2
   replenishAllEquipmentCharges: 0
   equipmentChargeFillsAmmo: 0
   equipmentCharges:
