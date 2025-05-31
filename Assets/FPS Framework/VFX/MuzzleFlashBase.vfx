@@ -23,8 +23,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 231
     y: -190
-    width: 2518
-    height: 2963
+    width: 2506
+    height: 3280
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2036,7 +2036,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614620}
   m_ExposedName: RadialFlashMaxDirection
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 4
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -2218,7 +2218,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614625}
   m_ExposedName: RadialFlashMinDirection
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 2
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -2400,7 +2400,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614630}
   m_ExposedName: RadialFlashLifetime
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 6
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -2552,7 +2552,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614634}
   m_ExposedName: RadialFlashSizeOverLife
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 8
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -2702,7 +2702,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Mesh, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"obj":{"fileID":10202,"guid":"0000000000000000e000000000000000","type":0}}'
+      m_SerializableObject: '{"obj":{"fileID":3613567641014311022,"guid":"9be56b6acc618a74d9d4535923201ec0","type":3}}'
     m_Space: 2147483647
   m_Property:
     name: mesh
@@ -2973,7 +2973,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614660}
   m_ExposedName: RadialFlashMinScale
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 10
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -3254,7 +3254,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614668}
   m_ExposedName: RadialFlashColourA
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 14
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -3694,7 +3694,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614685}
   m_ExposedName: RadialFlashMaxScale
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 12
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -3876,7 +3876,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614690}
   m_ExposedName: RadialFlashColourB
   m_Exposed: 1
-  m_Order: 8
+  m_Order: 16
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -4761,7 +4761,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614746}
   m_ExposedName: RadialFlashOffsetByVelocityMultiplier
   m_Exposed: 1
-  m_Order: 9
+  m_Order: 18
   m_Category: Radial Flash
   m_Min:
     m_Type:
@@ -7710,7 +7710,7 @@ MonoBehaviour:
   m_Children:
   - {fileID: 8926484042661614853}
   - {fileID: 8926484042661614855}
-  m_UIPosition: {x: 2325.2388, y: 2157.9973}
+  m_UIPosition: {x: 2300, y: 2627}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
@@ -7991,7 +7991,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Mesh, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"obj":{"fileID":10202,"guid":"0000000000000000e000000000000000","type":0}}'
+      m_SerializableObject: '{"obj":{"fileID":3613567641014311022,"guid":"9be56b6acc618a74d9d4535923201ec0","type":3}}'
     m_Space: 2147483647
   m_Property:
     name: mesh
@@ -8206,7 +8206,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 2312, y: 2621}
+  m_UIPosition: {x: 2300, y: 2296}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
@@ -8249,7 +8249,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614861}
   m_ExposedName: ForwardFlashCount
   m_Exposed: 1
-  m_Order: 0
+  m_Order: 1
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -8401,7 +8401,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614865}
   m_ExposedName: ForwardFlashMinDirection
   m_Exposed: 1
-  m_Order: 1
+  m_Order: 3
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -8583,7 +8583,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614870}
   m_ExposedName: ForwardFlashMaxDirection
   m_Exposed: 1
-  m_Order: 2
+  m_Order: 5
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -8765,7 +8765,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614875}
   m_ExposedName: ForwardFlashLifetime
   m_Exposed: 1
-  m_Order: 3
+  m_Order: 7
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -8917,7 +8917,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614879}
   m_ExposedName: ForwardFlashSizeOverLife
   m_Exposed: 1
-  m_Order: 4
+  m_Order: 9
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -8936,7 +8936,7 @@ MonoBehaviour:
     linkedSlots:
     - outputSlot: {fileID: 8926484042661614879}
       inputSlot: {fileID: 8926484042661614856}
-    position: {x: 2042.1951, y: 2474.235}
+    position: {x: 1972, y: 3035}
     expandedSlots: []
     expanded: 0
 --- !u!114 &8926484042661614879
@@ -8997,7 +8997,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614881}
   m_ExposedName: ForwardFlashMinScale
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 11
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -9179,7 +9179,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614886}
   m_ExposedName: ForwardFlashMaxScale
   m_Exposed: 1
-  m_Order: 6
+  m_Order: 13
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -9361,7 +9361,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614891}
   m_ExposedName: ForwardFlashColourA
   m_Exposed: 1
-  m_Order: 7
+  m_Order: 15
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -9577,7 +9577,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614897}
   m_ExposedName: ForwardFlashColourB
   m_Exposed: 1
-  m_Order: 8
+  m_Order: 17
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -9793,7 +9793,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614903}
   m_ExposedName: ForwardFlashOffsetByVelocityMultiplier
   m_Exposed: 1
-  m_Order: 9
+  m_Order: 19
   m_Category: ForwardFlash
   m_Min:
     m_Type:
@@ -9865,7 +9865,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 2006, y: 2197}
+  m_UIPosition: {x: 1992, y: 2723}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots: []
@@ -10701,7 +10701,7 @@ MonoBehaviour:
   - {fileID: 8926484042661614935}
   m_ExposedName: ForwardFlashRadialOffset
   m_Exposed: 1
-  m_Order: 10
+  m_Order: 20
   m_Category: ForwardFlash
   m_Min:
     m_Type:

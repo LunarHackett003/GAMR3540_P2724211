@@ -61,6 +61,11 @@ public class NetWeaponAnimator : LunarNetScript
             clipOverrides[acp.targetClip.name] = isWeapon ? acp.weaponClip : acp.characterClip;
         }
         aoc.ApplyOverrides(clipOverrides);
+
+        if (!isWeapon)
+        {
+            animator.Update(Time.fixedDeltaTime);
+        }
     }
     public void ChangeEquipAnimation()
     {

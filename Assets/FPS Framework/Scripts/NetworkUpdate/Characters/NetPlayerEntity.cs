@@ -11,11 +11,6 @@ using UnityEngine.Rendering.Universal;
 /// </summary>
 public class NetPlayerEntity : NetEntity
 {
-
-
-
-
-
     /// <summary>
     /// A dictionary of all players by their Client ID. Used for quick player lookups.
     /// </summary>
@@ -38,20 +33,20 @@ public class NetPlayerEntity : NetEntity
 
     [SerializeField] internal NetworkObject playerReviveItemPrefab;
 
-    [SerializeField] internal NetworkObject reviveItemInstance;
+    internal NetworkObject reviveItemInstance;
 
     internal NetWeaponAnimator Animator => weaponController.animator;
 
     public ParticleSystem deathParticle;
 
-    [SerializeField] internal InteractableObject currentInteractTarget;
-    [SerializeField] internal InteractableObject carryTargetRequested;
+    internal InteractableObject currentInteractTarget;
+    internal InteractableObject carryTargetRequested;
 
-    [SerializeField] internal Rigidbody interactTargetRigidbody;
+    internal Rigidbody interactTargetRigidbody;
 
-    [SerializeField] internal bool carryConfirmed;
+    internal bool carryConfirmed;
 
-    [SerializeField] internal bool heldInteraction;
+    internal bool heldInteraction;
 
     [SerializeField] internal CapsuleCollider capsule;
 
@@ -60,7 +55,7 @@ public class NetPlayerEntity : NetEntity
     [SerializeField] internal Renderer[] materialOverrideRenderers;
     [SerializeField] internal InteractionConfig interactConfig;
 
-    [SerializeField] internal NetHitbox[] playerHitboxes;
+    internal NetHitbox[] playerHitboxes;
 
     public bool isFriendly;
     bool lastDead;
@@ -82,6 +77,9 @@ public class NetPlayerEntity : NetEntity
             if(GameplayCanvas.Instance != null)
                 GameplayCanvas.player = this;
             Camera.main.GetUniversalAdditionalCameraData().cameraStack.Add(viewmodelCamera);
+
+            
+
         }
 
         weaponController.Initialise();

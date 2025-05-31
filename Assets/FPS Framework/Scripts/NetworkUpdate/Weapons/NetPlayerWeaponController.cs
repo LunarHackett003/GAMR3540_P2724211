@@ -70,7 +70,9 @@ public class NetPlayerWeaponController : NetWeaponController
                 }
                 if (reloadInput)
                 {
-                    if (CurrentWeapon.useAmmunition && CurrentWeapon.hasReloadAnimation && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) || (CurrentWeapon.useAmmoPhases && CurrentWeapon.currentAmmoPhase != 0))
+                    if ((!CurrentWeapon.useEquipmentRecharge || CurrentWeapon.equipmentCharges.Value > 0) && 
+                        (CurrentWeapon.useAmmunition && CurrentWeapon.hasReloadAnimation && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) 
+                        || (CurrentWeapon.useAmmoPhases && CurrentWeapon.currentAmmoPhase != 0)))
                     {
                         CurrentWeapon.TriggerAnimation(CurrentWeapon.CurrentAmmo.Value > 0 ? BaseNetWeapon.PARTIALRELOAD : BaseNetWeapon.EMPTYRELOAD, 0.2f, true);
                     }

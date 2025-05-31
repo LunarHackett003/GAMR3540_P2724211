@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class NetDamageable : LunarNetScript
 {
@@ -11,6 +12,8 @@ public class NetDamageable : LunarNetScript
     public int IntHealth => Mathf.RoundToInt(currentHealth.Value);
 
     public bool receiveDamageFromTeamOrOwner = false;
+
+    public UnityEvent damageableDiedEvent;
     
     public virtual void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
     {
@@ -84,7 +87,7 @@ public class NetDamageable : LunarNetScript
 
     public virtual void DamageableDied(NetworkBehaviourReference sourceObj, bool isCrit)
     {
-
+        damageableDiedEvent?.Invoke();
     }
 }
 

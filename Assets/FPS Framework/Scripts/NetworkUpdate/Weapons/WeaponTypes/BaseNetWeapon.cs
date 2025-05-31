@@ -87,6 +87,9 @@ public class BaseNetWeapon : LunarNetScript
     public delegate void ReloadEvent(bool emptyReload, bool canceled);
     public ReloadEvent onReloadEvent;
 
+    public delegate void WeaponReloaded();
+    public WeaponReloaded onWeaponReloaded;
+
 
     /// <summary>
     /// Calculates the damage that should be dealt at the supplied distance.
@@ -194,7 +197,7 @@ public class BaseNetWeapon : LunarNetScript
                 {
                     Debug.Log("decremented ammo");
                     CurrentAmmo.Value -= ammoPerShot;
-                    if (useEquipmentRecharge && !hasReloadAnimation)
+                    if (useEquipmentRecharge)
                     {
                         equipmentCharges.Value--;
                     }
@@ -263,11 +266,6 @@ public class BaseNetWeapon : LunarNetScript
         {
             //Determine how much of our equipment charge we're consuming to recharge this item
             int reloadAmount = useEquipmentRecharge ? Mathf.Min(equipmentCharges.Value, maxAmmo) : maxAmmo;
-            if (useEquipmentRecharge)
-            {
-                //Then subtract it from the remaining equipment charges
-                equipmentCharges.Value -= reloadAmount;
-            }
             //And then reload our weapon
             CurrentAmmo.Value = reloadAmount;
         }

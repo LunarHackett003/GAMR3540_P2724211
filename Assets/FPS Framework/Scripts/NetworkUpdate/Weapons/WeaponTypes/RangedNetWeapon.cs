@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 using UnityEngine.Pool;
-using static UnityEngine.UI.Image;
 
 /// <summary>
 /// The latest iteration in the weapon system, combining hitscan AND projectile weapons.<br></br>
@@ -34,7 +32,12 @@ public class RangedNetWeapon : BaseNetWeapon
     void ReturnToPool(NetProjectile trace)
     {
         trace.gameObject.hideFlags = HideFlags.HideAndDontSave;
-        trace.projectileEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        if(trace.projectileEffect != null)
+        {
+            trace.projectileEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+        if (trace.projectileVFX != null)
+            trace.projectileVFX.PlayVFX(false);
         trace.gameObject.SetActive(false);
     }
     void TakeFromPool(NetProjectile trace)
@@ -45,15 +48,12 @@ public class RangedNetWeapon : BaseNetWeapon
     }
     void DestroyPoolObject(NetProjectile trace)
     {
-        if (trace != null)
+        if (trace.NetworkObject != null && trace.NetworkObject.IsSpawned)
         {
-            if (trace.NetworkObject != null && trace.NetworkObject.IsSpawned)
-            {
-                trace.NetworkObject.Despawn(true);
-                return;
-            }
-            Destroy(trace.gameObject);
+            trace.NetworkObject.Despawn(true);
         }
+        Destroy(trace.gameObject);
+    
     }
 
 
@@ -71,9 +71,9 @@ public class RangedNetWeapon : BaseNetWeapon
     }
     [SerializeField] internal RangedWeaponDamageConfig damageConfig;
 
-    [Tooltip("the radius of the base spread per unit distance covered by the shot.")]
+    [Tooltip("the blastRadius of the base spread per unit distance covered by the shot.")]
     public float baseSpreadPerUnit = 0.1f;
-    [Tooltip("the radius of the max spread influenced by movement.")]
+    [Tooltip("the blastRadius of the max spread influenced by movement.")]
     public float maxInfluencedSpreadPerUnit = 0.1f;
     [Tooltip("the current influence of the owner's movement.")]
     public float currentMovementInfluence = 0;

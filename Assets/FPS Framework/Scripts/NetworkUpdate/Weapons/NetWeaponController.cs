@@ -212,7 +212,7 @@ public class NetWeaponController : LunarNetScript
     public virtual void ReceiveRecoil(float charge, out float recoilCurveEval)
     {
         float shotsFiredLerp = Mathf.InverseLerp(0, CurrentWeapon.recoilParams.maxRecoilShots, recoilShotsFired);
-        Debug.Log($"{recoilShotsFired}/{CurrentWeapon.recoilParams.maxRecoilShots} => {shotsFiredLerp}");
+        //Debug.Log($"{recoilShotsFired}/{CurrentWeapon.recoilParams.maxRecoilShots} => {shotsFiredLerp}");
         recoilCurveEval = CurrentWeapon.recoilParams.recoilMultiplierCurve.Evaluate(shotsFiredLerp);
 
         Vector3 linearRecoil = Vector3.Scale(HelperMethods.RandomPerAxis(CurrentWeapon.recoilParams.minLinearRecoil, CurrentWeapon.recoilParams.maxLinearRecoil),

@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4032642367877110983}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.70710695, y: -0, z: -0, w: 0.7071066}
+  m_LocalRotation: {x: 0.7069834, y: 0, z: 0, w: 0.7072302}
   m_LocalPosition: {x: -0.0006, y: 0.0346, z: 0.691}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -51,21 +51,39 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: 0.02
+      - m_Value: 0
         m_Name: ForwardFlashRadialOffset
-        m_Overridden: 0
+        m_Overridden: 1
     m_Vector2f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: 0.05, y: 0.13}
+        m_Name: ForwardFlashLifetime
+        m_Overridden: 1
+      - m_Value: {x: 0.05, y: 0.12}
+        m_Name: RadialFlashLifetime
+        m_Overridden: 1
     m_Vector3f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: -0.1, y: 1, z: -0.1}
+        m_Name: ForwardFlashMinDirection
+        m_Overridden: 1
+      - m_Value: {x: 0.1, y: 2, z: 0.1}
+        m_Name: ForwardFlashMaxDirection
+        m_Overridden: 1
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 1, y: 0.0982824, z: 0, w: 1}
+      - m_Value: {x: 4, y: 0.84769, z: 0, w: 1}
         m_Name: RadialFlashColourA
-        m_Overridden: 0
-      - m_Value: {x: 0.8301887, y: 0.36581287, z: 0, w: 1}
+        m_Overridden: 1
+      - m_Value: {x: 4, y: 0.30861554, z: 0, w: 1}
         m_Name: RadialFlashColourB
-        m_Overridden: 0
+        m_Overridden: 1
+      - m_Value: {x: 2.9811323, y: 0.09940919, z: 0, w: 1}
+        m_Name: ForwardFlashColourA
+        m_Overridden: 1
+      - m_Value: {x: 3.9999995, y: 0.8887541, z: 0, w: 1}
+        m_Name: ForwardFlashColourB
+        m_Overridden: 1
     m_Uint:
       m_Array: []
     m_Int:

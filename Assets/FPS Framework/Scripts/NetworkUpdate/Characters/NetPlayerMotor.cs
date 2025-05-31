@@ -787,9 +787,22 @@ public class NetPlayerMotor : LunarNetScript
         
         playerEntity.weaponController.UpdateAimPitch();
 
-        if(aimPitchInput > 0 && playerEntity.weaponController.tempAimPitchCurr < 0 || aimPitchInput < 0 && playerEntity.weaponController.tempAimPitchCurr > 0)
+        bool recoilBelowZero = playerEntity.weaponController.tempAimPitchCurr < 0;
+
+        if((aimPitchInput > 0 && recoilBelowZero) || (aimPitchInput < 0 && !recoilBelowZero))
         {
             playerEntity.weaponController.tempAimPitchCurr += aimPitchInput;
+            playerEntity.weaponController.tempAimPitchTarg += aimPitchInput;
+
+            //If the recoil has now flipped past 0, we want to nullify that recoil
+            if ((recoilBelowZero && playerEntity.weaponController.tempAimPitchCurr > 0) || (!recoilBelowZero && playerEntity.weaponController.tempAimPitchCurr < 0))
+            {
+                playerEntity.weaponController.tempAimPitchCurr = 0;
+            }
+            if ((recoilBelowZero && playerEntity.weaponController.tempAimPitchTarg > 0) || (!recoilBelowZero && playerEntity.weaponController.tempAimPitchTarg < 0))
+            {
+                playerEntity.weaponController.tempAimPitchTarg = 0;
+            }
         }
 
 

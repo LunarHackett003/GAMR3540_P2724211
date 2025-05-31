@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 4166477979637710792}
   - component: {fileID: 3302599824998341376}
   - component: {fileID: 6332024007368921029}
+  - component: {fileID: 5240022250685944193}
   m_Layer: 0
   m_Name: TestCarriable
   m_TagString: Untagged
@@ -143,6 +144,7 @@ Transform:
   - {fileID: 3270625059749259529}
   - {fileID: 8725523941535866858}
   - {fileID: 1574369812054350208}
+  - {fileID: 8450392556877868897}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7505797153837643927
@@ -265,6 +267,113 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5240022250685944193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3833371771317254461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c79c45ec5109a04699ba1fd955da570, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentHealth:
+    m_InternalValue: 100
+  maxHealth: 100
+  receiveDamageFromTeamOrOwner: 1
+  damageableDiedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8149433608134412869}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 4657138873029552942}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3294130130695873918}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3302599824998341376}
+        m_TargetAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
+        m_MethodName: set_isKinematic
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 7847919903046443976}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2988358347175373894}
+        m_TargetAssemblyTypeName: Explosion, Assembly-CSharp
+        m_MethodName: Explode_RPC
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  isDead:
+    m_InternalValue: 0
+  canRegenerateHealth: 0
+  regenerationDelay: 5
+  currentRegenTime: 0
+  regenerationRate: 5
+  immuneToDamage: 0
+  receivesDebuffs: 0
+  movementModifier: 0
+  rotationModifier: 0
+  damageMultiplier: 1
+  HealthModified:
+    m_PersistentCalls:
+      m_Calls: []
+  despawnAfterDeath: 1
+  despawnAfterDeathTime: 7
 --- !u!1 &4657138873029552942
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,3 +637,100 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &3264488995568308542
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1546065161977232601}
+    m_Modifications:
+    - target: {fileID: 194455338439950659, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1878809494
+      objectReference: {fileID: 0}
+    - target: {fileID: 303152292896669048, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: damagePointBlank
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: 478927581484296525, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_Name
+      value: RedBarrelExplosion
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 194455338439950659, guid: 9de903722f6ed494a85cb8f0efb25073, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9de903722f6ed494a85cb8f0efb25073, type: 3}
+--- !u!114 &2988358347175373894 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 303152292896669048, guid: 9de903722f6ed494a85cb8f0efb25073,
+    type: 3}
+  m_PrefabInstance: {fileID: 3264488995568308542}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b15147c05142724a855dc700d9783d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &8450392556877868897 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+    type: 3}
+  m_PrefabInstance: {fileID: 3264488995568308542}
+  m_PrefabAsset: {fileID: 0}

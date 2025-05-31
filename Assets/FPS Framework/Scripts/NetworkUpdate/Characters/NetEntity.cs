@@ -28,7 +28,8 @@ public class NetEntity : NetDamageable
     /// </summary>
     public UnityEvent<float, NetworkBehaviourReference> HealthModified;
 
-    
+    public bool despawnAfterDeath;
+    public float despawnAfterDeathTime;
 
     float healthThisFrame;
 
@@ -98,6 +99,11 @@ public class NetEntity : NetDamageable
             }
         }
 
+        if(currentHealth.Value > maxHealth || currentHealth.Value < 0)
+        {
+            currentHealth.Value = Mathf.Clamp(currentHealth.Value + Time.fixedDeltaTime * regenerationRate, 0, maxHealth);
+        }
+
         if (IsServer && healthThisFrame != currentHealth.Value)
         {
             float delta = currentHealth.Value - healthThisFrame;
@@ -114,9 +120,16 @@ public class NetEntity : NetDamageable
         {
             isDead.Value = true;
         }
-
+        if (despawnAfterDeath)
+        {
+            StartCoroutine(DespawnAfterDeath());
+        }
     }
-
+    IEnumerator DespawnAfterDeath()
+    {
+        yield return new WaitForSeconds(despawnAfterDeathTime);
+        NetworkObject.Despawn();
+    }
 }
 
 

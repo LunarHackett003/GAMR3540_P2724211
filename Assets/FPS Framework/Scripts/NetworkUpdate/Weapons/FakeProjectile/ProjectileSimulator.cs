@@ -8,7 +8,6 @@ using UnityEngine;
 public class ProjectileSimulator : LunarNetScript
 {
 
-    public static HashSet<NetProjectile> projectilesToTerminate = new();
     public static List<NetProjectile> allProjectiles;
     public struct HitData
     {
@@ -46,20 +45,21 @@ public class ProjectileSimulator : LunarNetScript
         if (!IsServer)
             return;
 
-        //Old simulation code
-
-        //if (allProjectiles.Count == 0)
-        //    return;
-        //SimulateProjectiles();
-
-        //for (int i = allProjectiles.Count - 1; i >= 0; i--)
-        //{
-        //    NetProjectile projectile = allProjectiles[i];
-        //    if (projectile.terminated) continue;
-
-        //    projectile.TickProjectile();
-        //}
-        //CheckAndTerminateProjectiles();
+        /*  Old simulation code
+        *
+        *   if (allProjectiles.Count == 0)
+        *       return;
+        *   SimulateProjectiles();
+        *   
+        *   for (int i = allProjectiles.Count - 1; i >= 0; i--)
+        *   {
+        *       NetProjectile projectile = allProjectiles[i];
+        *       if (projectile.terminated) continue;
+        *   
+        *       projectile.TickProjectile();
+        *   }
+            CheckAndTerminateProjectiles();
+        */
 
         //New simulation code
         New_ProjectileSimulate();
@@ -143,7 +143,7 @@ public class ProjectileSimulator : LunarNetScript
 
                 //Ricochet + Penetration
                 proj.transform.position = hit.point;
-                projectilesToTerminate.Add(proj);
+                proj.TerminateProjectile(true);
 
                 Debug.DrawRay(proj.transform.position, hits[i].point, Color.green, raycastDebugTime);
 
@@ -194,11 +194,7 @@ public class ProjectileSimulator : LunarNetScript
             if (allProjectiles.Count == 0)
                 return;
         */
-        foreach (var item in projectilesToTerminate)
-        {
-            item.TerminateProjectile(false);
-        }
-        projectilesToTerminate.Clear();
+
         NetProjectile[] activeProjectileArray = allProjectiles.FindAll(x => x.projectileAlive).ToArray();
         if (activeProjectileArray.Length == 0)
             return;
@@ -258,7 +254,7 @@ public class ProjectileSimulator : LunarNetScript
             //If our projectile has gone too far/been alive too long, terminate it on the next frame
             if(np.timeAlive > np.maxAliveTime || np.distanceTravelled > np.maxDistance)
             {
-                projectilesToTerminate.Add(np);
+                np.TerminateProjectile(false);
             }
         }
 
@@ -277,7 +273,7 @@ public class ProjectileSimulator : LunarNetScript
         np.transform.position = hit.point;
         //Terminate it. Think of the rabbits, Projectile...
         np.timeAlive = np.maxAliveTime;
-        projectilesToTerminate.Add(np);
+        np.TerminateProjectile(true);
     }
     void QueryColliderAndAddStats(NetProjectile proj, RaycastHit hit, Collider c)
     {

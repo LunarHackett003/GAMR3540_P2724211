@@ -320,7 +320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3700695573
+  GlobalObjectIdHash: 801080738
   InScenePlacedSourceGlobalObjectIdHash: 801080738
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -366,9 +366,7 @@ MonoBehaviour:
   maxAmmo: 1
   ammoPerShot: 1
   CurrentAmmo:
-    m_AuthoritativeValue:
-      m_InternalValue: 0
-    StaleDataHandling: 1
+    m_InternalValue: 0
   useAmmoPhases: 0
   ammoPhases: 0
   currentAmmoPhase: 0
@@ -392,10 +390,11 @@ MonoBehaviour:
   minimumChargeToFire: 1
   resetChargeOnFire: 0
   chargeAmount: 0
-  chargeUntilFire: 1
+  chargeUntilFire: 0
   chargeOnlyUntilMinimum: 0
   fireOnRelease: 0
   charging: 0
+  recoilParams: {fileID: 0}
   defibRange: 5
   defibThickness: 0.03
   defibDamageOnEnemyHit: 50

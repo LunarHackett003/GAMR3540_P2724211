@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class NetProjectile : LunarNetScript
 {
     public float damageMultiplier = 1;
     public float velocityMultiplier = 1;
     public ParticleSystem projectileEffect;
+    public VisualEffect[] projectileVFX;
     public float maxAliveTime = 10;
     public float maxDistance = 100;
 
@@ -29,6 +31,11 @@ public class NetProjectile : LunarNetScript
     [SerializeField] internal float gravityMultiplier = 1;
     public HashSet<Collider> ignoredColliders;
 
+    public Renderer[] renderersToHideOnHit;
+
+    public NetworkObject terminatePrefab;
+
+    public bool spawnEffectOnExpire, spawnEffectOnHit;
 
     bool firstSpawn;
 
@@ -36,7 +43,10 @@ public class NetProjectile : LunarNetScript
     {
         base.OnNetworkSpawn();
 
-        projectileEffect.Play();
+        if(projectileEffect)
+            projectileEffect.Play();
+        if (projectileVFX.Length > 0)
+            projectileVFX.PlayVFX(true);
 
         if (IsServer)
         {
@@ -48,6 +58,8 @@ public class NetProjectile : LunarNetScript
             }
         }
     }
+
+
 
     public void InitialiseProjectile(RangedNetWeapon weapon, Vector3 direction, float charge)
     {
@@ -72,6 +84,8 @@ public class NetProjectile : LunarNetScript
             Debug.Log("Initialised Projectile");
 
             GetComponent<NetworkObject>().SpawnWithOwnership(weapon.OwnerClientId);
+
+            SetAliveState_RPC(true);
         }
     }
     public void TerminateProjectile(bool reasonIsHit)
@@ -80,8 +94,21 @@ public class NetProjectile : LunarNetScript
         terminated = true;
         projectileAlive = false;
         timeAlive = maxAliveTime;
-    }
 
+        if((reasonIsHit && spawnEffectOnHit) || (!reasonIsHit && spawnEffectOnExpire))
+        {
+            SpawnHitEffect();
+        }
+
+        SetAliveState_RPC(false);
+    }
+    void SpawnHitEffect()
+    {
+        if (NetworkManager.SpawnManager.InstantiateAndSpawn(terminatePrefab, OwnerClientId, position: transform.position, rotation: transform.rotation).TryGetComponent(out ProjectileHitEffect phe))
+        {
+            phe.source = weapon;
+        }
+    }
     public override void LTimestep()
     {
         if (IsServer)
@@ -118,6 +145,26 @@ public class NetProjectile : LunarNetScript
             weapon.ProjectilePool.Release(this);
             NetworkObject.Despawn(false);
             waitingToFire = true;
+        }
+    }
+    [Rpc(SendTo.Everyone)]
+    public void SetAliveState_RPC(bool state)
+    {
+        SetTerminateStateOnClients(state);
+    }
+    public virtual void SetTerminateStateOnClients(bool state)
+    {
+        for (int i = 0; i < renderersToHideOnHit.Length; i++)
+        {
+            renderersToHideOnHit[i].enabled = state;
+        }
+        projectileVFX.PlayVFX(state);
+        if (projectileEffect)
+        {
+            if (state)
+                projectileEffect.Play();
+            else
+                projectileEffect.Stop();
         }
     }
 }

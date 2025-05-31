@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class WeaponReloadBehaviour : WeaponAnimationBehaviourBase
 {
-    public float reloadAtTime;
+    public float reloadAtTime = 1;
     public bool emptyReload;
 
     protected bool reloaded;
-    protected float normalisedTimeForReload;
+    protected float normalisedTimeForReload = 0.5f;
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
@@ -34,6 +34,7 @@ public class WeaponReloadBehaviour : WeaponAnimationBehaviourBase
             Debug.Log("attempted to reload weapon", weapon);
             reloaded = true;
             weapon.ReloadWeapon(true);
+            weapon.onWeaponReloaded?.Invoke();
         }
     }
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

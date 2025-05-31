@@ -203,3 +203,4 @@ MonoBehaviour:
     - {fileID: 1865889128422119678}
     - {fileID: 2913341005549642542}
     - {fileID: 5628763553486208159}
+  spawnObjectsOnSpawn: 1

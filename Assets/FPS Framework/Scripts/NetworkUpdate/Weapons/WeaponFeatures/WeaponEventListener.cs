@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.VFX;
 
 public class WeaponEventListener : MonoBehaviour
@@ -13,18 +14,26 @@ public class WeaponEventListener : MonoBehaviour
     public VisualEffect fireEffect;
     public ParticleSystem fireParticle;
 
+    public UnityEvent reloadedEvents;
+    public UnityEvent firedEvents;
+
     public bool playReloadSound;
+    
     private void OnEnable()
     {
         if(playFireEffects || playFireSound || applyRecoil)
             weapon.onWeaponFired += WeaponFired;
         if (playReloadSound)
-            weapon.onReloadEvent += ReloadEvent;
+            weapon.onReloadEvent += ReloadStarted;
+        weapon.onWeaponReloaded += OnReloaded;
     }
     private void OnDisable()
     {
         if (playFireEffects || playFireSound || applyRecoil)
             weapon.onWeaponFired -= WeaponFired;
+        if (playReloadSound)
+            weapon.onReloadEvent -= ReloadStarted;
+        weapon.onWeaponReloaded -= OnReloaded;
     }
 
     public void WeaponFired(float charge)
@@ -45,9 +54,15 @@ public class WeaponEventListener : MonoBehaviour
             if(fireParticle != null)
                 fireParticle.Play();
         }
+        Debug.Log("Invoked Fire Events!");
+        firedEvents?.Invoke();
     }
-    public void ReloadEvent(bool emptyReload, bool canceled)
+    public void ReloadStarted(bool emptyReload, bool canceled)
     {
 
+    }
+    public void OnReloaded()
+    {
+        reloadedEvents?.Invoke();
     }
 }

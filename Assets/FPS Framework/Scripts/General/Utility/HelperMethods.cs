@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public static class HelperMethods
 {
@@ -23,5 +24,16 @@ public static class HelperMethods
             y = Random.Range(min.y, max.y),
             z = Random.Range(min.z, max.z)
         };
+    }
+
+    public static void PlayVFX(this VisualEffect[] vfx, bool state)
+    {
+        for (int i = 0; i < vfx.Length; i++)
+        {
+            if (state)
+                vfx[i].Play();
+            else
+                vfx[i].Stop();
+        }
     }
 }
