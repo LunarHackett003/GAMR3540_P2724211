@@ -72,7 +72,9 @@ public class Explosion : ProjectileHitEffect
         QueryParameters qp = new QueryParameters()
         {
             hitTriggers = QueryTriggerInteraction.Ignore,
-            layerMask = blastMask
+            layerMask = blastMask,
+            hitBackfaces = false,
+            hitMultipleFaces = false
         };
         NativeArray<RaycastCommand> commands = new(rayCount, Allocator.TempJob);
         for (int i = 0; i < rayCount; i++)
