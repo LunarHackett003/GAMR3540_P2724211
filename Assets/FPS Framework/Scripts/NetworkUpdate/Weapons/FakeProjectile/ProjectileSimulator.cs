@@ -262,6 +262,8 @@ public class ProjectileSimulator : LunarNetScript
         castCommands.Dispose();
         hits.Dispose();
         colliderHitData.Clear();
+
+        activeProjectileArray = null;
     }
     void ProcessHit(ref NetProjectile np, RaycastHit hit)
     {

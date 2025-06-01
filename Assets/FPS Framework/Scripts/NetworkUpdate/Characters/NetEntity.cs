@@ -101,7 +101,7 @@ public class NetEntity : NetDamageable
 
         if(currentHealth.Value > maxHealth || currentHealth.Value < 0)
         {
-            currentHealth.Value = Mathf.Clamp(currentHealth.Value + Time.fixedDeltaTime * regenerationRate, 0, maxHealth);
+            currentHealth.Value = Mathf.Clamp(currentHealth.Value, 0, maxHealth);
         }
 
         if (IsServer && lastHealth != currentHealth.Value)
