@@ -47,7 +47,7 @@ public class Explosion : ProjectileHitEffect
     {
         base.OnNetworkSpawn();
 
-        if (IsServer)
+        if (IsServer && explodeOnSpawn)
         {
             Explode_RPC();
         }

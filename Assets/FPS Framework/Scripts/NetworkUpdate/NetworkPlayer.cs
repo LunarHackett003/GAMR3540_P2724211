@@ -147,7 +147,8 @@ public class NetworkPlayer : LunarNetScript
             thisplayer.NetworkObject.Despawn();
         }
 
-        NetworkObject player = NetworkManager.SpawnManager.InstantiateAndSpawn(playerPrefab, clientID);
+        Transform spawnpoint = SpawnpointManager.Instance.GetSpawnpoint(teamIndex.Value);
+        NetworkObject player = NetworkManager.SpawnManager.InstantiateAndSpawn(playerPrefab, clientID, position: spawnpoint.position, rotation: spawnpoint.rotation);
 
         for (int i = 0; i < slots.Length; i++)
         {

@@ -36,21 +36,21 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxRecoilShots: 10
+  maxRecoilShots: 1
   recoilShotClearTime: 1
-  recoilDecay: 5
+  recoilDecay: 2
   minLinearRecoil: {x: -0.1, y: -0.1, z: -0.1}
   maxLinearRecoil: {x: 0.1, y: 0.1, z: 0.1}
-  minAngularRecoil: {x: 0, y: 0, z: 0}
-  maxAngularRecoil: {x: 0, y: 0, z: 0}
-  aimedLinearRecoilScale: {x: 0, y: 0, z: 0}
-  aimedAngularRecoilScale: {x: 0, y: 0, z: 0}
+  minAngularRecoil: {x: -1, y: -1, z: -1}
+  maxAngularRecoil: {x: 1, y: 1, z: 1}
+  aimedLinearRecoilScale: {x: 1, y: 1, z: 1}
+  aimedAngularRecoilScale: {x: 1, y: 1, z: 1}
   recoilSnappiness: 5
   recoilSpeed: 5
-  tempAimPitchPerShot: 5
-  permanentAimPitchPerShot: 0
-  tempAimPitchDecay: 15
-  tempAimPitchSnappiness: 15
+  tempAimPitchPerShot: 15
+  permanentAimPitchPerShot: -1
+  tempAimPitchDecay: 5
+  tempAimPitchSnappiness: 2
   chargeAffectsRecoil: 0
   recoilChargeInfluence:
     serializedVersion: 2

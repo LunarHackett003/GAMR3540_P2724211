@@ -108,6 +108,7 @@ public class NetEntity : NetDamageable
         {
             float delta = currentHealth.Value - lastHealth;
             lastHealth = currentHealth.Value;
+            Debug.Log($"Updating health - {delta} hp changed");
             //We check if we've regenerated any health, and then we tell the clients that the owner of this object modified its health.
             HealthChanged_RPC(delta, this);
         }

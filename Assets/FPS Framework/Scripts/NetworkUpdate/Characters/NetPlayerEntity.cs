@@ -277,6 +277,10 @@ public class NetPlayerEntity : NetEntity
             }
         }
 
+        if(!isDead.Value && IsServer)
+        {
+            isDead.Value = true;
+        }
 
 
     }

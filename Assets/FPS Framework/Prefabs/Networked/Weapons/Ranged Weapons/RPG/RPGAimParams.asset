@@ -18,7 +18,7 @@ MonoBehaviour:
   baseAimPositionOffset: {x: 0.04, y: -0.01, z: 0}
   aimedWeaponPositionScale: {x: -1, y: 0, z: 0}
   aimPositionOffsetAngled: {x: 0, y: 0, z: 0}
-  aimRotationReduction: 1
+  aimRotationReduction: 0
   aimRotationOffset: {x: 0, y: 0, z: 0, w: 1}
   crouchPositionOffset: {x: 0, y: 0, z: 0}
   crouchLerpCurve:

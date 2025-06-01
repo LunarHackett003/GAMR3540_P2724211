@@ -35,4 +35,6 @@ public class MoveParams : ScriptableObject
      public float airMoveForce = 2f;
      [Header("Movement In Air - Extras")] public bool canMultiJump = false;
     public int multiJumps = 1;
+
+    public float spectateMoveSpeed = 5, spectateFastMoveMultiplier = 2;
 }

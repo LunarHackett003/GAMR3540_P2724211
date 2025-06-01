@@ -344,27 +344,28 @@ public class NetPlayerMotor : LunarNetScript
     }
     StatePayload ServerMovementProcess(InputPayload input)
     {
+        if (!playerEntity.isDead.Value)
+        {
 
-        CheckGround();
-        CheckMoveState();
-        Jump();
-        MovePlayer();
-        if (isGrounded && moveInput.y > 0 && !mantling)
+            CheckGround();
+            CheckMoveState();
+            Jump();
+            MovePlayer();
+            if (isGrounded && moveInput.y > 0 && !mantling)
         {
             ClimbSteps();
         }
-        if (!isGrounded && !mantling)
+            if (!isGrounded && !mantling)
         {
             CheckMantle();
         }
-        rigidbody.isKinematic = playerEntity.isDead.Value || mantling;
 
-        if (mantleTargetRigidbody != null && mantling)
+            if (mantleTargetRigidbody != null && mantling)
         {
             connectedBody = mantleTargetRigidbody;
         }
-        UpdateConnectedMotion();
-        if (connectedBody != null)
+            UpdateConnectedMotion();
+            if (connectedBody != null)
         {
             if (moveParams.followPlatformPosition)
             {
@@ -375,8 +376,10 @@ public class NetPlayerMotor : LunarNetScript
                 rigidbody.rotation *= Quaternion.Euler(0, connectionDeltaYaw, 0);
             }
         }
-        lastConnectedBody = connectedBody;
+            lastConnectedBody = connectedBody;
 
+        }
+        rigidbody.isKinematic = playerEntity.isDead.Value || mantling;
 
         return new StatePayload()
         {
@@ -401,39 +404,49 @@ public class NetPlayerMotor : LunarNetScript
             }
         }
 
-        CheckGround();
-        CheckMoveState();
-        Jump();
-        CrouchPlayer();
-        MovePlayer();
-        if (isGrounded && moveInput.y > 0 && !mantling)
+        if (!playerEntity.isDead.Value)
         {
-            ClimbSteps();
+            CheckGround();
+            CheckMoveState();
+            Jump();
+            CrouchPlayer();
+            MovePlayer();
+            if (isGrounded && moveInput.y > 0 && !mantling)
+            {
+                ClimbSteps();
+            }
+            if (!isGrounded && !mantling)
+            {
+                CheckMantle();
+            }
+
+            if (mantleTargetRigidbody != null && mantling)
+            {
+                connectedBody = mantleTargetRigidbody;
+            }
+            UpdateConnectedMotion();
+            if (connectedBody != null)
+            {
+                if (moveParams.followPlatformPosition)
+                {
+                    rigidbody.position += connectionVelocity * Time.fixedDeltaTime;
+                }
+                if (moveParams.followPlatformRotation)
+                {
+                    rigidbody.rotation *= Quaternion.Euler(0, connectionDeltaYaw, 0);
+                }
+            }
+            lastConnectedBody = connectedBody;
         }
-        if (!isGrounded && !mantling)
+        else
         {
-            CheckMantle();
+            transform.position += head.TransformDirection((sprintInput ? moveParams.spectateFastMoveMultiplier : 1) 
+                * moveParams.spectateMoveSpeed * 
+                new Vector3(moveInput.x, jumpInput ? 1 : crouchInput ? -1 : 0, moveInput.y));
         }
         rigidbody.isKinematic = playerEntity.isDead.Value || mantling;
 
-        if (mantleTargetRigidbody != null && mantling)
-        {
-            connectedBody = mantleTargetRigidbody;
-        }
-        UpdateConnectedMotion();
-        if (connectedBody != null)
-        {
-            if (moveParams.followPlatformPosition)
-            {
-                rigidbody.position += connectionVelocity * Time.fixedDeltaTime;
-            }
-            if (moveParams.followPlatformRotation)
-            {
-                rigidbody.rotation *= Quaternion.Euler(0, connectionDeltaYaw, 0);
-            }
-        }
-        lastConnectedBody = connectedBody;
-
+        
     }
 
     public override void LUpdate()

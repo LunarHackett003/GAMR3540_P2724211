@@ -22,9 +22,7 @@ public class HealthModule : UIModule
     public float healthInverseLerp = 0;
     public float healthLastValue = -1;
 
-    public Image dashIcon, dashIconFill;
 
-    bool updatingDash;
 
     private void Start()
     {
