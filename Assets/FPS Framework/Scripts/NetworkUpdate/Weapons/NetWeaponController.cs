@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -149,18 +150,23 @@ public class NetWeaponController : LunarNetScript
         if (animator != null)
             animator.UpdateAnimations();
 
+        oldWeapon.isCurrentWeapon = false;
+        newWeapon.isCurrentWeapon = true;
+
         switchingWeapons = false;
     }
     public virtual void SwitchToWeaponIndex(int index)
     {
         switchingWeapons = false;
-        ChangeCurrentWeapon(weapons[index], out _, out bool success);
+        ChangeCurrentWeapon(weapons[index], out BaseNetWeapon oldWeapon, out bool success);
         if (success)
         {
             if (IsOwner)
             {
                 UpdateWeaponIndex_RPC(weaponIndex.AuthoritativeValue, index);
             }
+
+
         }
     }
 

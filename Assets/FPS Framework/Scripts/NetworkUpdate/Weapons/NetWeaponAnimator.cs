@@ -18,7 +18,7 @@ public class NetWeaponAnimator : LunarNetScript
 
     internal void Initialise()
     {
-        if (!TryGetComponent(out controller))
+        if (controller == null && !TryGetComponent(out controller))
         {
             controller = GetComponentInParent<NetWeaponController>();
         }

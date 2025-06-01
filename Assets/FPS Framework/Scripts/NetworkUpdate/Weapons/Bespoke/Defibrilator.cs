@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Defibrilator : BaseNetWeapon
 {
@@ -11,7 +12,9 @@ public class Defibrilator : BaseNetWeapon
 
     [SerializeField] internal LayerMask defibLayerMask;
 
-    protected override bool ChargeInput => base.ChargeInput && (CurrentAmmo.Value > 0 || CurrentAmmo.Value > 0);
+    protected override bool ChargeInput => base.ChargeInput && (CurrentAmmo.Value > 0 || CurrentAmmo.Value > 0) && !fired;
+
+    public override bool Charging => base.Charging && !fired;
 
     public override void OnNetworkSpawn()
     {
@@ -24,13 +27,16 @@ public class Defibrilator : BaseNetWeapon
         if (current > 0)
             fired = false;
     }
-
-
-    protected override void UpdateCharge()
+    public override void LTimestep()
     {
-        base.UpdateCharge();
+        TryDefib();
+        TickAmmoCharges();
+        UpdateCharge();
+    }
 
-        if (IsOwner && chargeHoldFrame && CurrentAmmo.Value > 0 && !fired)
+    public void TryDefib()
+    {
+        if(IsOwner && chargeAmount >= 1 && primaryInput && CurrentAmmo.Value > 0 && !fired)
         {
             fired = true;
             if (!IsServer)
@@ -38,8 +44,6 @@ public class Defibrilator : BaseNetWeapon
                 PostAttackBehaviour();
             }
             TryDefib_RPC(controller.fireOrigin.position, controller.fireOrigin.forward);
-            chargeAmount = 0;
-            chargeHoldFrame = false;
             TriggerAnimation(PRIMARYATTACK, TRIGGERTIMESHORT, true);
         }
     }
@@ -51,7 +55,7 @@ public class Defibrilator : BaseNetWeapon
         {
             if(hit.rigidbody != null)
             {
-                if (hit.rigidbody.TryGetComponent(out ReviveTrophy trophy) && trophy.friendly)
+                if (hit.rigidbody.TryGetComponent(out ReviveTrophy trophy) && NetworkPlayer.IsPlayerOnMyTeam(OwnerClientId, trophy.targetClientID))
                 {
                     if (trophy.HitByQuickRevive(OwnerClientId))
                     {
@@ -66,7 +70,6 @@ public class Defibrilator : BaseNetWeapon
                     }
                 }
                 Debug.Log("Defibrillated!");
-                equipmentCharges.Value--;
             }
         }
         PostAttackBehaviour();

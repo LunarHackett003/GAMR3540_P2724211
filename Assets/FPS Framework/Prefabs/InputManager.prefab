@@ -597,19 +597,7 @@ MonoBehaviour:
     m_ActionId: fd4d0453-d8cd-4b83-bd71-f8100216a7c5
     m_ActionName: Player/Reload[/Keyboard/r]
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1744469953895619309}
-        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
-        m_MethodName: GetWeaponSwitchInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: 527eea31-7c10-42fb-8531-eda198fefd72
     m_ActionName: Player/ChangeWeapon[/Keyboard/v]
   - m_PersistentCalls:
@@ -628,6 +616,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: c76db223-22af-4fde-9f84-4cfb4f610dfb
     m_ActionName: Player/Grab[/Keyboard/f]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1744469953895619309}
+        m_TargetAssemblyTypeName: InputManager, Assembly-CSharp
+        m_MethodName: GetWeaponSwitchInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5d2a2988-2758-4929-8b86-5bdacd5be120
+    m_ActionName: Player/SetWeapon[/Keyboard/1,/Keyboard/3,/Keyboard/4,/Keyboard/2]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

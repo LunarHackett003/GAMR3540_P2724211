@@ -53,7 +53,6 @@ public class NetProjectile : LunarNetScript
             if (!firstSpawn)
             {
                 ProjectileSimulator.allProjectiles.Add(this);
-                Debug.Log("Spawning projectile for the first time", gameObject);
                 firstSpawn = true;
             }
         }
@@ -81,7 +80,6 @@ public class NetProjectile : LunarNetScript
 
             projectileAlive = true;
 
-            Debug.Log("Initialised Projectile");
 
             GetComponent<NetworkObject>().SpawnWithOwnership(weapon.OwnerClientId);
 
@@ -90,7 +88,6 @@ public class NetProjectile : LunarNetScript
     }
     public void TerminateProjectile(bool reasonIsHit)
     {
-        Debug.Log($"Terminating projectile - reason: {(reasonIsHit ? "Hit Object" : "Ran Out Of Time")}");
         terminated = true;
         projectileAlive = false;
         timeAlive = maxAliveTime;

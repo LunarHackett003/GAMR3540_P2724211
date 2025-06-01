@@ -380,21 +380,22 @@ MonoBehaviour:
   equipmentCharges:
     m_InternalValue: 0
   equipmentChargeCapacity: 1
-  equipmentChargesRefilled: 0
+  equipmentChargesRefilled: 1
   queuedReloadAnimation: 0
   fired: 0
-  primaryUsesCharge: 1
-  secondaryUsesCharge: 0
+  primaryUsesCharge: 0
+  secondaryUsesCharge: 1
   chargeRate: 0.5
   chargeDecayRate: 15
   minimumChargeToFire: 1
-  resetChargeOnFire: 0
+  resetChargeOnFire: 1
   chargeAmount: 0
   chargeUntilFire: 0
   chargeOnlyUntilMinimum: 0
   fireOnRelease: 0
-  charging: 0
+  chargeCoroutineRunning: 0
   recoilParams: {fileID: 0}
+  isCurrentWeapon: 0
   defibRange: 5
   defibThickness: 0.03
   defibDamageOnEnemyHit: 50

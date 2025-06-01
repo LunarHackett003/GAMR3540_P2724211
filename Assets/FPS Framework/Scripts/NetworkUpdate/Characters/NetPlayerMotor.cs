@@ -440,9 +440,7 @@ public class NetPlayerMotor : LunarNetScript
         }
         else
         {
-            transform.position += head.TransformDirection((sprintInput ? moveParams.spectateFastMoveMultiplier : 1) 
-                * moveParams.spectateMoveSpeed * 
-                new Vector3(moveInput.x, jumpInput ? 1 : crouchInput ? -1 : 0, moveInput.y));
+            transform.position += head.TransformDirection((sprintInput ? moveParams.spectateFastMoveMultiplier : 1) * moveParams.spectateMoveSpeed * new Vector3(moveInput.x, jumpInput ? 1 : crouchInput ? -1 : 0, moveInput.y)) * Time.fixedDeltaTime;
         }
         rigidbody.isKinematic = playerEntity.isDead.Value || mantling;
 

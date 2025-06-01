@@ -313,16 +313,9 @@ public class ProjectileSimulator : LunarNetScript
                 }
                 if (item.Key.TryGetComponent(out NetDamageable d))
                 {
-                    //Check if the player is...
-                    //On our team
-                    bool teamIgnored = NetworkPlayer.IsPlayerOnMyTeam(item.Value.weapon.OwnerClientId, d.OwnerClientId)
-                        && !d.receiveDamageFromTeamOrOwner; //And if they can take damage from an owner (in the case of gadgets/deployables) or a friendly
-
-
-                    if (!teamIgnored)
-                    {
-                        d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
-                    }
+                    bool canDamage = d.receiveDamageFromTeamOrOwner || !NetworkPlayer.IsPlayerOnMyTeam(OwnerClientId, d.OwnerClientId);
+                    Debug.Log($"can damage: {canDamage}");   
+                    d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
                 }
             }
         }

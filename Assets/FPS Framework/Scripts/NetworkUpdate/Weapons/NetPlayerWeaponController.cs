@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class NetPlayerWeaponController : NetWeaponController
 {
-    [SerializeField] internal bool reloadInput, meleeInput, weaponSwitchInput;
+    [SerializeField] internal bool reloadInput, meleeInput;
+    internal Vector2 weaponSwitchInput;
     [SerializeField] internal NetPlayerEntity player;
 
 
@@ -51,22 +52,9 @@ public class NetPlayerWeaponController : NetWeaponController
 
             if (CurrentWeapon != null && !FireBlocked)
             {
-                if (!switchingWeapons && weaponSwitchInput)
+                if (!switchingWeapons && weaponSwitchInput != Vector2.zero)
                 {
-                    CurrentWeapon.TriggerAnimation(BaseNetWeapon.CHANGEWEAPON, BaseNetWeapon.TRIGGERTIMETINY, true);
-                    weaponSwitchInput = false;
-                    if (IsOwner)
-                    {
-                        InputManager.WeaponSwitchInput = false;
-                        if (IsServer)
-                        {
-                            nextWeaponIndex.AuthoritativeValue = (nextWeaponIndex.Value + 1) % weapons.Count;
-                        }
-                        else
-                        {
-                            nextWeaponIndex.Anticipate((nextWeaponIndex.Value + 1) % weapons.Count);
-                        }
-                    }
+                    TrySwitchWeapon();
                 }
                 if (reloadInput)
                 {
@@ -98,6 +86,45 @@ public class NetPlayerWeaponController : NetWeaponController
 
 
         base.LUpdate();
+    }
+
+    public void TrySwitchWeapon()
+    {
+
+        int weaponSwitchIndex = Mathf.RoundToInt(Mathf.Atan2(weaponSwitchInput.x, weaponSwitchInput.y) * Mathf.Rad2Deg);
+        if (weaponSwitchIndex < 0)
+        {
+            weaponSwitchIndex += 360;
+        }
+        weaponSwitchIndex /= 90;
+        if (!CanSwitchToWeapon(weaponSwitchIndex))
+        {
+            return;
+        }
+        Debug.Log(weaponSwitchIndex);
+        CurrentWeapon.TriggerAnimation(BaseNetWeapon.CHANGEWEAPON, BaseNetWeapon.TRIGGERTIMETINY, true);
+        weaponSwitchInput = Vector2.zero;
+        if (IsOwner)
+        {
+            InputManager.WeaponSwitchInput = Vector2.zero;
+            if (IsServer)
+            {
+                nextWeaponIndex.AuthoritativeValue = weaponSwitchIndex;
+            }
+            else
+            {
+                nextWeaponIndex.Anticipate(weaponSwitchIndex);
+            }
+        }
+    }
+
+    public bool CanSwitchToWeapon(int index)
+    {
+        bool canSwitch = weaponIndex.Value != index && index < weapons.Count && index > -1 ;
+        BaseNetWeapon weapon = weapons[index];
+        canSwitch &= (!weapon.useEquipmentRecharge || weapon.canSwitchIfNoCharges) || weapon.equipmentCharges.Value > 0;
+
+        return canSwitch;
     }
 
     public void UpdateWeaponOrientation()

@@ -18,7 +18,7 @@ public class InputManager : SingletonBehaviour<InputManager>
     private bool slowWalkInput;
     private bool dashInput;
     private bool reloadInput;
-    private bool weaponSwitchInput;
+    private Vector2 weaponSwitchInput;
     private bool interactInput;
     private bool grabInput;
 
@@ -34,7 +34,7 @@ public class InputManager : SingletonBehaviour<InputManager>
     public static bool DashInput { get => Instance.dashInput && !PauseMenu.GamePaused; set => Instance.dashInput = value; }
     public static bool ReloadInput { get => Instance.reloadInput && !PauseMenu.GamePaused; set => Instance.reloadInput = value; }
     public static bool FireSwitchInput { get => Instance.fireSwitchInput && !PauseMenu.GamePaused; set => Instance.fireSwitchInput = value; }
-    public static bool WeaponSwitchInput { get => Instance.weaponSwitchInput && !PauseMenu.GamePaused; set => Instance.weaponSwitchInput = value; }
+    public static Vector2 WeaponSwitchInput { get => PauseMenu.GamePaused ? Vector2.zero : Instance.weaponSwitchInput; set => Instance.weaponSwitchInput = value; }
     public static bool InteractInput { get => Instance.interactInput && !PauseMenu.GamePaused; set => Instance.interactInput = value; }
     public static bool GrabInput { get => Instance.grabInput && !PauseMenu.GamePaused; set => Instance.grabInput = value; }
 
@@ -118,7 +118,7 @@ public class InputManager : SingletonBehaviour<InputManager>
     }
     public void GetWeaponSwitchInput(InputAction.CallbackContext context)
     {
-        weaponSwitchInput = context.ReadValueAsButton();
+        weaponSwitchInput = context.ReadValue<Vector2>();
     }
     public void GetIneractInput(InputAction.CallbackContext context)
     {

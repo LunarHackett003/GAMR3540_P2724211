@@ -10,6 +10,12 @@ public class WeaponHideForAnimationBehaviour : WeaponAnimationBehaviourBase
 
         controller.hideWeapons = true;
     }
+    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        base.OnStateUpdate(animator, stateInfo, layerIndex);
+
+        controller.hideWeapons = true;
+    }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {

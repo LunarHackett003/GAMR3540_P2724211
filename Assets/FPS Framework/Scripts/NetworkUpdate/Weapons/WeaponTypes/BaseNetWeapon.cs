@@ -44,6 +44,7 @@ public class BaseNetWeapon : LunarNetScript
     [SerializeField] internal bool hasReloadAnimation;
 
     [SerializeField] internal bool useEquipmentRecharge;
+    [SerializeField] internal bool canSwitchIfNoCharges;
     [SerializeField] internal float equipmentRechargeTime;
     [SerializeField] internal bool replenishAllEquipmentCharges;
     [SerializeField] internal bool equipmentChargeFillsAmmo;
@@ -75,7 +76,7 @@ public class BaseNetWeapon : LunarNetScript
 
     public HashSet<Collider> ignoredColliders;
 
-    [SerializeField] internal bool charging;
+    [SerializeField] internal bool chargeCoroutineRunning;
     internal bool chargeHoldFrame;
 
 
@@ -90,6 +91,9 @@ public class BaseNetWeapon : LunarNetScript
     public delegate void WeaponReloaded();
     public WeaponReloaded onWeaponReloaded;
 
+    public virtual bool Charging => chargeCoroutineRunning || ChargeInput || chargeHoldFrame;
+
+    public bool isCurrentWeapon;
 
     /// <summary>
     /// Calculates the damage that should be dealt at the supplied distance.
@@ -108,6 +112,8 @@ public class BaseNetWeapon : LunarNetScript
         controller = NetPlayerEntity.playersByID[OwnerClientId].weaponController;
         controller.WeaponAdded(this);
 
+        equipmentCharges.OnValueChanged += WeaponChargesUpdated;
+
         if (useAmmunition)
         {
             if(IsServer)
@@ -119,6 +125,11 @@ public class BaseNetWeapon : LunarNetScript
         {
             equipmentCharges.Value = equipmentChargeCapacity;
         }
+    }
+
+    public virtual void WeaponChargesUpdated(int previous, int current)
+    {
+        currentEquipmentRechargeTime = 0;
     }
 
     public virtual void InitialiseWeapon(NetWeaponController controller)
@@ -160,6 +171,11 @@ public class BaseNetWeapon : LunarNetScript
             attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount - (Time.fixedDeltaTime * attackSpreadDecay));
         }
 
+        TickAmmoCharges();
+
+    }
+    protected virtual void TickAmmoCharges()
+    {
         if (useEquipmentRecharge && equipmentCharges.Value < equipmentChargeCapacity)
         {
             currentEquipmentRechargeTime += Time.fixedDeltaTime;
@@ -187,6 +203,7 @@ public class BaseNetWeapon : LunarNetScript
     {
         if (IsOwner || IsServer)
         {
+            Debug.Log("post attack behaviour", gameObject);
             if (useAttackSpread)
             {
                 attackSpreadAmount = Mathf.Clamp01(attackSpreadAmount + attackSpreadIncrement);
@@ -207,8 +224,6 @@ public class BaseNetWeapon : LunarNetScript
                     if (useAmmoPhases && currentAmmoPhase < ammoPhases)
                     {
                         TriggerAnimation(AMMOPHASE, TRIGGERTIMELONG, true);
-
-                        return;
                     }
                     if(hasReloadAnimation && (!useEquipmentRecharge || equipmentCharges.Value > 0))
                     {
@@ -273,39 +288,29 @@ public class BaseNetWeapon : LunarNetScript
 
     protected virtual void UpdateCharge()
     {
-        bool charge = charging || ChargeInput || chargeHoldFrame;
-        //animator.SetAnimationBool(CHARGING, primaryUsesCharge ? primaryInput : (secondaryUsesCharge && secondaryInput));
-        SetBool(CHARGING, charge);
-
-        //if ((primaryUsesCharge && primaryInput) || (secondaryUsesCharge && secondaryInput))
-        //{
-        //    chargeAmount += Time.fixedDeltaTime * 
-        //}
-        //else
-        //{
-
-        //}
-
-
         //If we are not charging this weapon via a coroutine...
-        if (!charging)
+        if (!chargeCoroutineRunning)
         {
             //Start charging 
-            if (chargeUntilFire && chargeAmount < (chargeOnlyUntilMinimum ? minimumChargeToFire : 1) && !charging && ChargeInput)
+            if (chargeUntilFire && chargeAmount < (chargeOnlyUntilMinimum ? minimumChargeToFire : 1) && !chargeCoroutineRunning && ChargeInput)
             {
                 StartCoroutine(ChargeWeaponCoroutine());
             }
             if (!chargeHoldFrame)
-                chargeAmount += Time.fixedDeltaTime * (charge ? chargeRate : -chargeDecayRate);
+                chargeAmount += Time.fixedDeltaTime * (Charging ? chargeRate : -chargeDecayRate);
         }
 
         chargeAmount = Mathf.Clamp01(chargeAmount);
         SetFloat(CHARGEAMOUNT, chargeAmount);
+        SetBool(CHARGING, Charging);
     }
 
 
     internal virtual void TriggerAnimation(string parameter, float time, bool reset = false)
     {
+        if (!isCurrentWeapon)
+            return;
+
         if (controller != null && controller.animator != null)
             controller.animator.TriggerAnimation(parameter, time, reset);
         if (animator != null)
@@ -314,6 +319,9 @@ public class BaseNetWeapon : LunarNetScript
 
     internal virtual void SetBool(string parameter, bool value)
     {
+        if (!isCurrentWeapon)
+            return;
+
         if (controller != null && controller.animator != null)
             controller.animator.SetAnimationBool(parameter, value);
         if (animator != null)
@@ -322,6 +330,9 @@ public class BaseNetWeapon : LunarNetScript
 
     internal virtual void SetFloat(string parameter, float value)
     {
+        if (!isCurrentWeapon)
+            return;
+
         if (controller != null && controller.animator != null)
             controller.animator.SetAnimationFloat(parameter, value);
         if (animator != null)
@@ -330,7 +341,7 @@ public class BaseNetWeapon : LunarNetScript
 
     public virtual IEnumerator ChargeWeaponCoroutine()
     {
-        charging = true;
+        chargeCoroutineRunning = true;
         float threshold = chargeOnlyUntilMinimum ? minimumChargeToFire : 1;
         while (chargeAmount < threshold)
         {
@@ -340,7 +351,7 @@ public class BaseNetWeapon : LunarNetScript
             yield return new WaitForFixedUpdate();
         }
         chargeHoldFrame = true;
-        charging = false;
+        chargeCoroutineRunning = false;
         yield return new WaitForFixedUpdate();
         yield return new WaitForFixedUpdate();
         chargeHoldFrame = false;

@@ -28,9 +28,104 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.25599957, z: 0.08570024}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3649158265687420156}
   m_Father: {fileID: 379232263661487596}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &5388108064134739268
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4533715594391698745}
+    m_Modifications:
+    - target: {fileID: 4032642367877110983, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_Name
+      value: MuzzleFlashDefault
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7072302
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7069834
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 89.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e4051cfa368a3fd478b8b19c25fa7aa8, type: 3}
+--- !u!4 &3649158265687420156 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8674510845013760440, guid: e4051cfa368a3fd478b8b19c25fa7aa8,
+    type: 3}
+  m_PrefabInstance: {fileID: 5388108064134739268}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9113352238402613913
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -503,6 +598,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 936669832742649924}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 48a27a765440ef741914e65980388543,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2481169417850940646}
     - targetCorrespondingSourceObject: {fileID: -3867463019558205977, guid: 48a27a765440ef741914e65980388543,
         type: 3}
       insertIndex: -1
@@ -674,7 +773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1748579822
+  GlobalObjectIdHash: 839047396
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -710,8 +809,8 @@ MonoBehaviour:
   useAttackSpread: 1
   spreadOnPrimary: 0
   spreadOnSecondary: 0
-  attackSpreadIncrement: 0.5
-  attackSpreadDecay: 4
+  attackSpreadIncrement: 0.25
+  attackSpreadDecay: 2
   baseAttackSpread: 0
   attackSpreadAmount: 0
   useAmmunition: 1
@@ -720,9 +819,7 @@ MonoBehaviour:
   maxAmmo: 21
   ammoPerShot: 1
   CurrentAmmo:
-    m_AuthoritativeValue:
-      m_InternalValue: 0
-    StaleDataHandling: 1
+    m_InternalValue: 0
   useAmmoPhases: 0
   ammoPhases: 0
   currentAmmoPhase: 0
@@ -730,6 +827,7 @@ MonoBehaviour:
   emptyReloadTime: 2.2
   hasReloadAnimation: 1
   useEquipmentRecharge: 0
+  canSwitchIfNoCharges: 0
   equipmentRechargeTime: 0
   replenishAllEquipmentCharges: 0
   equipmentChargeFillsAmmo: 0
@@ -749,7 +847,9 @@ MonoBehaviour:
   chargeUntilFire: 0
   chargeOnlyUntilMinimum: 0
   fireOnRelease: 0
-  charging: 0
+  chargeCoroutineRunning: 0
+  recoilParams: {fileID: 11400000, guid: c59dc0b56826f5f4abceb69f36d074e3, type: 2}
+  isCurrentWeapon: 0
   poolStartCapacity: 50
   poolMaxCapacity: 500
   damageConfig: {fileID: 11400000, guid: 1c7a1bf2750a632439d0f06b5535d666, type: 2}
@@ -763,7 +863,7 @@ MonoBehaviour:
   roundsInBurst: 3
   timeBetweenRounds: 0.06
   debugdisplay_truetime: 0
-  burstCooldown: 0.2
+  burstCooldown: 0.1
   autoBurst: 0
   chargeAffectsFireRate: 0
   minChargeFireRateMultiplier: 0.4
@@ -806,3 +906,28 @@ MonoBehaviour:
   controller: {fileID: 0}
   weapon: {fileID: 4767148707631472417}
   isWeapon: 1
+--- !u!114 &2481169417850940646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8266436566070759368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1335d87071fc82468ef871d97dc89af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 4767148707631472417}
+  applyRecoil: 1
+  playFireSound: 1
+  playFireEffects: 1
+  fireEffect: {fileID: 0}
+  fireParticle: {fileID: 0}
+  reloadedEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  firedEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  playReloadSound: 0

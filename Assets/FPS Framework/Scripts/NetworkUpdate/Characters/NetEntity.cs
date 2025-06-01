@@ -99,9 +99,12 @@ public class NetEntity : NetDamageable
             }
         }
 
-        if(currentHealth.Value > maxHealth || currentHealth.Value < 0)
+        if (IsServer)
         {
-            currentHealth.Value = Mathf.Clamp(currentHealth.Value, 0, maxHealth);
+            if(currentHealth.Value > maxHealth || currentHealth.Value < 0)
+            {
+                currentHealth.Value = Mathf.Clamp(currentHealth.Value, 0, maxHealth);
+            }
         }
 
         if (IsServer && lastHealth != currentHealth.Value)
