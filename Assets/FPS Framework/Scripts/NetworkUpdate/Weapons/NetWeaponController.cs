@@ -14,9 +14,9 @@ public class NetWeaponController : LunarNetScript
     [SerializeField] internal List<BaseNetWeapon> weapons;
     [SerializeField] internal int lastWeaponCount;
     [SerializeField]
-    internal AnticipatedNetworkVariable<int> weaponIndex = new(0, StaleDataHandling.Reanticipate);
+    internal NetworkVariable<int> weaponIndex = new(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     [SerializeField]
-    internal AnticipatedNetworkVariable<int> nextWeaponIndex = new(0, StaleDataHandling.Reanticipate);
+    internal int nextWeaponIndex;
     public BaseNetWeapon CurrentWeapon => weaponIndex.Value < weapons.Count ? weapons[weaponIndex.Value] : null;
 
     [SerializeField] BaseNetWeapon currentWeapon;
@@ -52,6 +52,15 @@ public class NetWeaponController : LunarNetScript
         base.OnNetworkSpawn();
 
         colliderSet = new(colliders);
+
+        weaponIndex.OnValueChanged += WeaponIndexChanged;
+    }
+    void WeaponIndexChanged(int previous, int current)
+    {
+        if (!IsOwner)
+        {
+            animator.UpdateAnimations();
+        }
     }
 
     public void WeaponAdded(BaseNetWeapon weapon)
@@ -163,7 +172,7 @@ public class NetWeaponController : LunarNetScript
         {
             if (IsOwner)
             {
-                UpdateWeaponIndex_RPC(weaponIndex.AuthoritativeValue, index);
+                UpdateWeaponIndex_RPC(weaponIndex.Value, index);
             }
 
 
@@ -173,15 +182,11 @@ public class NetWeaponController : LunarNetScript
     [Rpc(SendTo.Everyone)]
     public void UpdateWeaponIndex_RPC(int oldIndex, int newIndex)
     {
-        if (IsServer)
+        if (IsOwner)
         {
-            weaponIndex.AuthoritativeValue = newIndex;
-            nextWeaponIndex.AuthoritativeValue = newIndex;
+            weaponIndex.Value = newIndex;
         }
-        else
-        {
-            weaponIndex.Anticipate(newIndex);
-        }
+        nextWeaponIndex = newIndex;
 
         animator.UpdateAnimations();
         ShowWeapon(newIndex, false);
@@ -217,6 +222,9 @@ public class NetWeaponController : LunarNetScript
 
     public virtual void ReceiveRecoil(float charge, out float recoilCurveEval)
     {
+        
+        Debug.Log("received recoil impulse");
+
         float shotsFiredLerp = Mathf.InverseLerp(0, CurrentWeapon.recoilParams.maxRecoilShots, recoilShotsFired);
         //Debug.Log($"{recoilShotsFired}/{CurrentWeapon.recoilParams.maxRecoilShots} => {shotsFiredLerp}");
         recoilCurveEval = CurrentWeapon.recoilParams.recoilMultiplierCurve.Evaluate(shotsFiredLerp);

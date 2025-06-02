@@ -48,10 +48,10 @@ MonoBehaviour:
   recoilSnappiness: 15
   recoilSpeed: 15
   tempAimPitchPerShot: 1
-  permanentAimPitchPerShot: 0
+  permanentAimPitchPerShot: -0.5
   tempAimPitchDecay: 4
   tempAimPitchSnappiness: 6
-  chargeAffectsRecoil: 1
+  chargeAffectsRecoil: 0
   recoilChargeInfluence:
     serializedVersion: 2
     m_Curve:

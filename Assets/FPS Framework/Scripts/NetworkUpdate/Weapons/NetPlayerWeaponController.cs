@@ -107,16 +107,10 @@ public class NetPlayerWeaponController : NetWeaponController
         if (IsOwner)
         {
             InputManager.WeaponSwitchInput = Vector2.zero;
-            if (IsServer)
-            {
-                nextWeaponIndex.AuthoritativeValue = weaponSwitchIndex;
-            }
-            else
-            {
-                nextWeaponIndex.Anticipate(weaponSwitchIndex);
-            }
+            nextWeaponIndex = weaponSwitchIndex;
         }
     }
+    
 
     public bool CanSwitchToWeapon(int index)
     {
