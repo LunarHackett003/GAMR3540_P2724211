@@ -20,6 +20,12 @@ public class NetHitbox : NetDamageable
         {
             col = GetComponent<Collider>();
         }
+
+        if(rb == null && rootDamageable.rb != null)
+        {
+            rb = rootDamageable.rb;
+        }
+
         col.enabled = true;
     }
     protected override void OnDisable()
@@ -34,8 +40,15 @@ public class NetHitbox : NetDamageable
 
     public override void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
     {
-        Debug.Log("Passed damage from hitbox to root damageable");
-        rootDamageable.ModifyHealth(delta, source, damageSourceType, isCritBox || isCrit);
+        if(rootDamageable != null)
+        {
+            rootDamageable.ModifyHealth(delta, source, damageSourceType, isCritBox || isCrit);
+            Debug.Log("Passed damage from hitbox to root damageable");
+        }
+        else
+        {
+            Debug.Log("Hitbox blocked all damage.");
+        }
     }
 
 }

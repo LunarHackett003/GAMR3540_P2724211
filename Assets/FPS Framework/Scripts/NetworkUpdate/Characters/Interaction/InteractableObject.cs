@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class InteractableObject : LunarNetScript
 {
@@ -17,6 +18,8 @@ public class InteractableObject : LunarNetScript
     public float interactTime;
 
     public bool hasInteraction;
+
+    public UnityEvent onInteract;
 
     public Collider[] colliders;
 
@@ -36,7 +39,9 @@ public class InteractableObject : LunarNetScript
     internal NetPlayerEntity currentInteractor;
 
     [SerializeField] internal Rigidbody rb;
+    public Quaternion grabRotationOffset = Quaternion.identity;
 
+    public UnityEvent onThrow;
 
     public override void OnNetworkSpawn()
     {
@@ -54,7 +59,10 @@ public class InteractableObject : LunarNetScript
         }
         if (IsOwner)
         {
-            rb.useGravity = !current;
+            if(rb != null)
+            {
+                rb.useGravity = !current;
+            }
         }
     }
 
@@ -81,6 +89,11 @@ public class InteractableObject : LunarNetScript
         interactionInProgress = false;
         currentInteractTime = 0;
         currentInteractor.InteractionCompleted(holdToInteract, finished);
+
+        if (IsServer && finished)
+        {
+            onInteract?.Invoke();
+        }
     }
 
     public override void LTimestep()
@@ -137,7 +150,7 @@ public class InteractableObject : LunarNetScript
     }
 
     [Rpc(SendTo.Server)]
-    public void GrabReleased_RPC(Vector3 throwDirection, Vector3 throwOrigin)
+    public void GrabReleased_RPC(Vector3 throwDirection, Vector3 throwOrigin, bool thrown)
     {
         if ((IsHost && OwnerClientId != 0) || !IsOwnedByServer)
         {
@@ -149,12 +162,16 @@ public class InteractableObject : LunarNetScript
         if (!rb.isKinematic)
         {
             rb.position = throwOrigin;
-            if(throwDirection != Vector3.zero)
+            if(thrown)
             {
                 rb.velocity = throwDirection;
             }
         }
 
+        if(thrown)
+        {
+            onThrow?.Invoke();
+        }
     }
 
     public virtual void GrabbedCarriable()

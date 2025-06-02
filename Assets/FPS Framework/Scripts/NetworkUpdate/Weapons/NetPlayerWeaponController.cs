@@ -121,6 +121,8 @@ public class NetPlayerWeaponController : NetWeaponController
     public bool CanSwitchToWeapon(int index)
     {
         bool canSwitch = weaponIndex.Value != index && index < weapons.Count && index > -1 ;
+        if (!canSwitch)
+            return false;
         BaseNetWeapon weapon = weapons[index];
         canSwitch &= (!weapon.useEquipmentRecharge || weapon.canSwitchIfNoCharges) || weapon.equipmentCharges.Value > 0;
 

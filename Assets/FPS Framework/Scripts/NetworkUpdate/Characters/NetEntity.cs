@@ -41,6 +41,10 @@ public class NetEntity : NetDamageable
         {
             currentHealth.Value = maxHealth;
         }
+        if(rb == null)
+        {
+            TryGetComponent(out rb);
+        }
     }
 
     public virtual void ClearDebuff(Debuff debuff)

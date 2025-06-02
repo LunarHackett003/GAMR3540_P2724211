@@ -9,7 +9,6 @@ public class WeaponEventListener : MonoBehaviour
     public BaseNetWeapon weapon;
 
     public bool applyRecoil;
-    public bool playFireSound;
     public bool playFireEffects;
     public VisualEffect fireEffect;
     public ParticleSystem fireParticle;
@@ -21,18 +20,14 @@ public class WeaponEventListener : MonoBehaviour
     
     private void OnEnable()
     {
-        if(playFireEffects || playFireSound || applyRecoil)
+        if(playFireEffects || applyRecoil)
             weapon.onWeaponFired += WeaponFired;
-        if (playReloadSound)
-            weapon.onReloadEvent += ReloadStarted;
         weapon.onWeaponReloaded += OnReloaded;
     }
     private void OnDisable()
     {
-        if (playFireEffects || playFireSound || applyRecoil)
+        if (playFireEffects || applyRecoil)
             weapon.onWeaponFired -= WeaponFired;
-        if (playReloadSound)
-            weapon.onReloadEvent -= ReloadStarted;
         weapon.onWeaponReloaded -= OnReloaded;
     }
 
@@ -42,10 +37,6 @@ public class WeaponEventListener : MonoBehaviour
         if (applyRecoil)
         {
             weapon.controller.ReceiveRecoil(charge, out _);
-        }
-        if (playFireSound)
-        {
-
         }
         if (playFireEffects)
         {

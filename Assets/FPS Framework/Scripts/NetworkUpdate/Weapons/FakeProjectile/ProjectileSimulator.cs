@@ -316,6 +316,12 @@ public class ProjectileSimulator : LunarNetScript
                     bool canDamage = d.receiveDamageFromTeamOrOwner || !NetworkPlayer.IsPlayerOnMyTeam(OwnerClientId, d.OwnerClientId);
                     Debug.Log($"can damage: {canDamage}");   
                     d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
+
+                    if(item.Key.attachedRigidbody == null && d.rb != null)
+                    {
+                        //If we haven't already applied force to a rigidbody AND this damageable has one, then we'll use this.
+                        d.ApplyForceToOwner_RPC(item.Value.forceAccumulated, item.Value.hitPointAccumulated / item.Value.hits);
+                    }
                 }
             }
         }

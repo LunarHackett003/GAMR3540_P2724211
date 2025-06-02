@@ -4,6 +4,7 @@ using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 using UnityEngine.Rendering.Universal;
 
 /// <summary>
@@ -16,12 +17,7 @@ public class NetPlayerEntity : NetEntity
     /// </summary>
     internal static Dictionary<ulong, NetPlayerEntity> playersByID = new();
 
-
-    [SerializeField] internal NetworkTimer netTimer;
-
     [SerializeField] internal NetPlayerMotor motor;
-
-    [SerializeField] internal NetBufferManager bufferManager;
 
     [SerializeField] internal NetPlayerWeaponController weaponController;
 
@@ -69,8 +65,8 @@ public class NetPlayerEntity : NetEntity
         playerHitboxes = GetComponentsInChildren<NetHitbox>();
 
 
+        NetworkPlayer.netPlayers[NetworkManager.LocalClientId].teamIndex.OnValueChanged += UpdateMaterials;
 
-        NetworkPlayer.netPlayers[OwnerClientId].teamIndex.OnValueChanged += UpdateMaterials;
         UpdateMaterials(0, NetworkPlayer.netPlayers[OwnerClientId].teamIndex.Value);
         if (IsOwner)
         {
@@ -117,13 +113,18 @@ public class NetPlayerEntity : NetEntity
 
         if (!IsOwner)
             return;
+        TryInteract();
+        UpdateCarry();
 
+    }
 
+    void TryInteract()
+    {
         if (isDead.Value)
         {
             if (carryTargetRequested != null && carryConfirmed)
             {
-                carryTargetRequested.GrabReleased_RPC(Vector3.zero, carryTargetRequested.transform.position);
+                carryTargetRequested.GrabReleased_RPC(Vector3.zero, carryTargetRequested.transform.position, false);
                 ReleaseGrabbedObject_RPC(carryTargetRequested, false);
             }
             if (heldInteraction && currentInteractTarget != null)
@@ -133,10 +134,7 @@ public class NetPlayerEntity : NetEntity
         }
         else
         {
-
             Debug.DrawRay(weaponController.fireOrigin.position, weaponController.fireOrigin.forward * interactConfig.maxInteractDistance);
-
-
             if (!heldInteraction && !carryConfirmed)
             {
                 if (Physics.SphereCast(weaponController.fireOrigin.position, interactConfig.interactThickness, weaponController.fireOrigin.forward, out RaycastHit hit, interactConfig.maxInteractDistance, interactConfig.interactLayerMask))
@@ -172,7 +170,7 @@ public class NetPlayerEntity : NetEntity
                     currentInteractTarget.InteractStart_RPC(OwnerClientId);
                 }
 
-                if(InputManager.GrabInput && currentInteractTarget.canCarry && canUse)
+                if (InputManager.GrabInput && currentInteractTarget.canCarry && canUse)
                 {
                     InputManager.GrabInput = false;
                     InputManager.PrimaryInput = false;
@@ -187,50 +185,47 @@ public class NetPlayerEntity : NetEntity
             {
                 currentInteractTarget.InteractEnd_RPC(false);
             }
-            
-            if(!InputManager.InteractInput && interactTargetRigidbody == null)
+
+            if (!InputManager.InteractInput && interactTargetRigidbody == null)
             {
                 currentInteractTarget = null;
             }
-
-
-
-            if (carryTargetRequested != null && carryConfirmed)
-            {
-                if(OwnerClientId == carryTargetRequested.OwnerClientId)
-                {
-                    carryTargetRequested.rb.Move(Vector3.Lerp(carryTargetRequested.rb.position, weaponController.fireOrigin.TransformPoint(interactConfig.grabbedObjectOffsetFromWeaponPoint), interactConfig
-                        .interactedObjectMoveSpeed * Time.fixedDeltaTime),
-                        interactConfig.interactRotateUseSlerp ? Quaternion.Slerp(carryTargetRequested.rb.rotation, weaponController.fireOrigin.rotation, 
-                        Time.fixedDeltaTime * interactConfig.interactedObjectRotateSpeed) 
-                        : Quaternion.Lerp(carryTargetRequested.rb.rotation, weaponController.fireOrigin.rotation, Time.fixedDeltaTime * interactConfig.interactedObjectRotateSpeed));
-
-                    
-                    if (InputManager.PrimaryInput && carryConfirmed && carryTargetRequested != null)
-                    {
-                        carryTargetRequested.GrabReleased_RPC(weaponController.fireOrigin.forward * interactConfig.throwForce, carryTargetRequested.transform.position);
-                        ReleaseGrabbedObject_RPC(carryTargetRequested, true);
-                        weaponController.animator.TriggerAnimation("Throw", 0.2f, true);
-                        InputManager.PrimaryInput = false;
-                        carryConfirmed = false;
-                        carryTargetRequested = null;
-                    }
-                    if (InputManager.SecondaryInput && carryConfirmed && carryTargetRequested != null)
-                    {
-                        carryTargetRequested.GrabReleased_RPC(Vector3.zero, carryTargetRequested.transform.position);
-                        ReleaseGrabbedObject_RPC(carryTargetRequested, false);
-                        InputManager.SecondaryInput = false;
-                        weaponController.animator.TriggerAnimation("Grab_Cancel", 0.2f, true);
-                        carryConfirmed = false;
-                        carryTargetRequested = null;
-                    }
-                }
-            }
-
-
         }
     }
 
+    public void UpdateCarry()
+    {
+        if (carryTargetRequested != null && carryConfirmed)
+        {
+            if (OwnerClientId == carryTargetRequested.OwnerClientId)
+            {
+                carryTargetRequested.rb.Move(Vector3.Lerp(carryTargetRequested.rb.position, weaponController.fireOrigin.TransformPoint(interactConfig.grabbedObjectOffsetFromWeaponPoint), interactConfig
+                    .interactedObjectMoveSpeed * Time.fixedDeltaTime),
+                    interactConfig.interactRotateUseSlerp ? Quaternion.Slerp(carryTargetRequested.rb.rotation, weaponController.fireOrigin.rotation,
+                    Time.fixedDeltaTime * interactConfig.interactedObjectRotateSpeed)
+                    : Quaternion.Lerp(carryTargetRequested.rb.rotation, weaponController.fireOrigin.rotation * carryTargetRequested.grabRotationOffset, Time.fixedDeltaTime * interactConfig.interactedObjectRotateSpeed));
+
+                if (InputManager.PrimaryInput && carryConfirmed && carryTargetRequested != null)
+                {
+                    carryTargetRequested.GrabReleased_RPC(weaponController.fireOrigin.forward * interactConfig.throwForce, carryTargetRequested.transform.position, true);
+                    ReleaseGrabbedObject_RPC(carryTargetRequested, true);
+                    weaponController.animator.TriggerAnimation("Throw", 0.2f, true);
+                    InputManager.PrimaryInput = false;
+                    carryConfirmed = false;
+                    carryTargetRequested = null;
+                }
+                if (InputManager.SecondaryInput && carryConfirmed && carryTargetRequested != null)
+                {
+                    carryTargetRequested.GrabReleased_RPC(Vector3.zero, carryTargetRequested.transform.position, false);
+                    ReleaseGrabbedObject_RPC(carryTargetRequested, false);
+                    InputManager.SecondaryInput = false;
+                    weaponController.animator.TriggerAnimation("Grab_Cancel", 0.2f, true);
+                    carryConfirmed = false;
+                    carryTargetRequested = null;
+                }
+            }
+        }
+    }
     public override void OnNetworkDespawn()
     {
         playersByID.Remove(OwnerClientId);

@@ -14,10 +14,16 @@ public class NetDamageable : LunarNetScript
     public bool receiveDamageFromTeamOrOwner = false;
 
     public UnityEvent damageableDiedEvent;
+
+    public Rigidbody rb;
     
     public virtual void ModifyHealth(float delta, NetworkBehaviourReference source = default, DamageSourceType damageSourceType = 0, bool isCrit = false)
     {
         float startHealth = currentHealth.Value;
+
+        if (delta > 0)
+            return;
+
         if (IsServer)
         {
             HealthUpdated_RPC(delta, source, damageSourceType, isCrit);
@@ -88,6 +94,14 @@ public class NetDamageable : LunarNetScript
     public virtual void DamageableDied(NetworkBehaviourReference sourceObj, bool isCrit)
     {
         damageableDiedEvent?.Invoke();
+    }
+    [Rpc(SendTo.Owner)]
+    public void ApplyForceToOwner_RPC(Vector3 force, Vector3 point = default)
+    {
+        if(rb != null)
+        {
+            rb.AddForceAtPosition(force, point, ForceMode.Impulse);
+        }
     }
 }
 

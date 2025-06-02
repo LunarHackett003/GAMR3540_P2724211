@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 3294130130695873918}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.70710677, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.744, z: 0}
-  m_LocalScale: {x: 0.043740664, y: 0.4956082, z: 0.043740664}
+  m_LocalPosition: {x: 0, y: 0.57521, z: 0}
+  m_LocalScale: {x: 0.032915287, y: 0.37295014, z: 0.032915287}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1546065161977232601}
@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 3302599824998341376}
   - component: {fileID: 6332024007368921029}
   - component: {fileID: 5240022250685944193}
+  - component: {fileID: 7762651661140004125}
   m_Layer: 0
   m_Name: TestCarriable
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1878809494
+  GlobalObjectIdHash: 3089386300
   InScenePlacedSourceGlobalObjectIdHash: 3089386300
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -167,12 +168,19 @@ MonoBehaviour:
   holdToInteract: 0
   interactTime: 0
   hasInteraction: 0
+  onInteract:
+    m_PersistentCalls:
+      m_Calls: []
   colliders:
   - {fileID: 6873309201443104033}
   - {fileID: 1665016814561653168}
   interactionInProgress: 0
   currentInteractingPlayer: 0
   rb: {fileID: 3302599824998341376}
+  grabRotationOffset: {x: -0.70710677, y: 0, z: 0, w: 0.70710677}
+  onThrow:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &4166477979637710792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,6 +343,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 6121796966378752500}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  rb: {fileID: 0}
   isDead:
     m_InternalValue: 0
   canRegenerateHealth: 0
@@ -351,6 +372,30 @@ MonoBehaviour:
       m_Calls: []
   despawnAfterDeath: 1
   despawnAfterDeathTime: 7
+--- !u!114 &7762651661140004125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3833371771317254461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e82dc7f266e4c2349aae5720d7f9cd60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  self: {fileID: 5240022250685944193}
+  damageSelf: 1
+  damageOther: 1
+  selfDamageImpulseThreshold: 5
+  otherDamageImpulseThreshold: 5
+  selfDealFixedDamage: 0
+  otherDealFixedDamage: 1
+  selfDamage: 0
+  otherDamage: 30
+  selfDamageImpulseMultiplier: 5
+  otherDamageImpulseMultiplier: 0
+  damageSourceType: 2
 --- !u!1 &4657138873029552942
 GameObject:
   m_ObjectHideFlags: 0
@@ -379,8 +424,8 @@ Transform:
   m_GameObject: {fileID: 4657138873029552942}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3918003, y: 1.3365452, z: 0.3918003}
+  m_LocalPosition: {x: 0, y: 0.015345, z: 0}
+  m_LocalScale: {x: 0.29483366, y: 1.0057636, z: 0.29483366}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1546065161977232601}
@@ -483,8 +528,8 @@ Transform:
   m_GameObject: {fileID: 6121796966378752500}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.015345, z: 0}
+  m_LocalScale: {x: 0.75251, y: 0.75251, z: 0.75251}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1546065161977232601}
@@ -529,6 +574,7 @@ MonoBehaviour:
   damageableDiedEvent:
     m_PersistentCalls:
       m_Calls: []
+  rb: {fileID: 0}
   rootDamageable: {fileID: 5240022250685944193}
   damageMultiplier: 1
   isCritBox: 0
@@ -560,7 +606,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.062, z: 0}
-  m_LocalScale: {x: 1.597334, y: 1.597334, z: 1.597334}
+  m_LocalScale: {x: 1.2020098, y: 1.2020098, z: 1.2020098}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1546065161977232601}
@@ -613,8 +659,8 @@ Transform:
   m_GameObject: {fileID: 8149433608134412869}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.419, z: 0}
-  m_LocalScale: {x: 0.24574786, y: 0.8383177, z: 0.24574786}
+  m_LocalPosition: {x: 0, y: 0.33065, z: 0}
+  m_LocalScale: {x: 0.18492773, y: 0.63084245, z: 0.18492773}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1546065161977232601}

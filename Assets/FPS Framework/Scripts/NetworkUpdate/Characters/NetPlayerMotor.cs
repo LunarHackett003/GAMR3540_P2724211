@@ -10,8 +10,6 @@ using UnityEngine.UIElements.Experimental;
 
 public class NetPlayerMotor : LunarNetScript
 {
-    NetBufferManager MyBufferManager => playerEntity.bufferManager;
-
 
     internal bool jumpInput, slowWalkInput, slideInput, crouchInput, sprintInput;
     internal Vector2 lookInput, moveInput;
@@ -168,13 +166,13 @@ public class NetPlayerMotor : LunarNetScript
     {
         if (IsOwner)
         {
-            if (MyBufferManager.ShouldTick)
-            {
-                ClientTick();
-                if(!IsHost)
-                    ServerTick();   
-            }
+            moveInput = InputManager.MoveInput;
+            slowWalkInput = InputManager.SlowWalkInput;
+            crouchInput = InputManager.CrouchInput;
+            jumpInput = InputManager.JumpInput;
+            sprintInput = InputManager.SprintInput;
 
+            MovementUpdate();
             UpdateAnimationParameters();
         }
     }
@@ -194,202 +192,6 @@ public class NetPlayerMotor : LunarNetScript
         playerEntity.Animator.SetAnimationBool("Sliding", sliding);
 
         playerEntity.Animator.SetAnimationFloat("Crouch", currentCrouchLerp);
-    }
-
-    void ClientTick()
-    {
-        if (!IsClient)
-            return;
-
-        var currentTick = MyBufferManager.Tick;
-        int bufferIndex = currentTick % MyBufferManager.bufferSize;
-
-        if (IsOwner)
-        {
-            crouchInput = InputManager.CrouchInput;
-            moveInput = InputManager.MoveInput;
-            sprintInput = InputManager.SprintInput;
-            jumpInput = InputManager.JumpInput;
-            slowWalkInput = InputManager.SlowWalkInput;
-        }
-
-        InputPayload inputpayload = new()
-        {
-            crouchInput = crouchInput,
-            moveInput = moveInput,
-            jumpInput = jumpInput,
-            sprintInput = sprintInput,
-            tick = currentTick,
-        };
-
-        MyBufferManager.SendInputPayload_RPC(inputpayload);
-
-        StatePayload statePayload = ClientMovementProcess(inputpayload);
-        if(debugReconciliation && clientCube != null)
-        {
-            clientCube.transform.position = statePayload.position + Vector3.up * 4;
-        }
-        MyBufferManager.clientStateBuffer.Add(statePayload, bufferIndex);
-
-        ServerReconciliation();
-    }
-    void ServerTick()
-    {
-        var bufferIndex = -1;
-        while(MyBufferManager.serverInputQueue.Count > 0)
-        {
-            InputPayload input = MyBufferManager.serverInputQueue.Dequeue();
-            bufferIndex = input.tick % MyBufferManager.bufferSize;
-            StatePayload state = ClientMovementProcess(input);
-            MyBufferManager.serverStateBuffer.Add(state, bufferIndex);
-
-            if (debugReconciliation && serverCube != null)
-            {
-                serverCube.transform.position = state.position + Vector3.up * 6;
-            }
-        }
-
-        if (bufferIndex == -1) return;
-            
-        MyBufferManager.SendStateToClient_RPC(MyBufferManager.serverStateBuffer.Get(bufferIndex));
-    }
-    bool ShouldReconcile()
-    {
-        bool isNewServerState = !MyBufferManager.lastServerState.Equals(default);
-        bool isLastStateUndefinedOrDifferent = MyBufferManager.lastProcessedState.Equals(default) ||
-            !MyBufferManager.lastProcessedState.Equals(MyBufferManager.lastServerState);
-
-        return isNewServerState && isLastStateUndefinedOrDifferent;
-    }
-    void ServerReconciliation()
-    {
-        bool shouldReconcile = ShouldReconcile();
-        if (!shouldReconcile)
-            return;
-
-        float positionError = 0;
-        int bufferIndex = -1;
-        StatePayload rewindState;
-
-        bufferIndex = MyBufferManager.lastServerState.tick % MyBufferManager.bufferSize;
-        if(bufferIndex - 1 < 0)
-        {
-            //Cannot reconcile, not enough information to do so
-            return;
-        }
-        rewindState = IsHost ? 
-            (MyBufferManager.serverStateBuffer.Get(bufferIndex - 1)) 
-            : (MyBufferManager.lastServerState);
-
-        positionError = Vector3.Distance(rewindState.position, MyBufferManager.clientStateBuffer.Get(bufferIndex).position);
-        if(positionError > MyBufferManager.reconciliationPositionThreshold)
-        {
-            ReconcileState(rewindState);
-        }
-
-        MyBufferManager.lastProcessedState = MyBufferManager.lastServerState;
-
-
-    }
-    void ReconcileState(StatePayload rewindState)
-    {
-        rigidbody.position = rewindState.position;
-        rigidbody.velocity = rewindState.velocity;
-        sliding = rewindState.sliding;
-        crouching = rewindState.crouching;
-        sprinting = rewindState.sprinting;
-
-        if (!rewindState.Equals(MyBufferManager.lastServerState)) return;
-
-        Debug.Log($"Reconciling from {MyBufferManager.Tick} to {rewindState.tick}!");
-
-        MyBufferManager.clientStateBuffer.Add(rewindState, rewindState.tick);
-
-        int tickToReplay = MyBufferManager.lastServerState.tick;
-        while (tickToReplay < MyBufferManager.Tick)
-        {
-            int bufferIndex = tickToReplay % MyBufferManager.bufferSize;
-            StatePayload payload = ResimulateMovement(MyBufferManager.clientInputBuffer.Get(bufferIndex));
-
-            MyBufferManager.clientStateBuffer.Add(payload, bufferIndex);
-            tickToReplay++;
-        }
-
-    }
-
-    StatePayload ResimulateMovement(InputPayload inputPayload)
-    {
-        Physics.simulationMode = SimulationMode.Script;
-
-        StatePayload payload = ServerMovementProcess(inputPayload);
-
-        Physics.Simulate(Time.fixedDeltaTime);
-        Physics.simulationMode = SimulationMode.FixedUpdate;
-
-        return payload;
-    }
-
-    StatePayload ClientMovementProcess(InputPayload input)
-    {
-        MovementUpdate();
-        return new StatePayload()
-        {
-            tick = input.tick,
-            crouching = crouching,
-            sprinting = sprinting,
-            sliding = sliding,
-            position = rigidbody.position,
-            velocity = rigidbody.velocity,
-        };
-    }
-    StatePayload ServerMovementProcess(InputPayload input)
-    {
-        if (!playerEntity.isDead.Value)
-        {
-
-            CheckGround();
-            CheckMoveState();
-            Jump();
-            MovePlayer();
-            if (isGrounded && moveInput.y > 0 && !mantling)
-        {
-            ClimbSteps();
-        }
-            if (!isGrounded && !mantling)
-        {
-            CheckMantle();
-        }
-
-            if (mantleTargetRigidbody != null && mantling)
-        {
-            connectedBody = mantleTargetRigidbody;
-        }
-            UpdateConnectedMotion();
-            if (connectedBody != null)
-        {
-            if (moveParams.followPlatformPosition)
-            {
-                rigidbody.position += connectionVelocity * Time.fixedDeltaTime;
-            }
-            if (moveParams.followPlatformRotation)
-            {
-                rigidbody.rotation *= Quaternion.Euler(0, connectionDeltaYaw, 0);
-            }
-        }
-            lastConnectedBody = connectedBody;
-
-        }
-        rigidbody.isKinematic = playerEntity.isDead.Value || mantling;
-
-        return new StatePayload()
-        {
-            tick = input.tick,
-            crouching = crouching,
-            sprinting = sprinting,
-            sliding = sliding,
-            position = rigidbody.position,
-            velocity = rigidbody.velocity,
-        };
     }
 
     void MovementUpdate()
