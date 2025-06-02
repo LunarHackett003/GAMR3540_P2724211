@@ -320,7 +320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 801080738
+  GlobalObjectIdHash: 3700695573
   InScenePlacedSourceGlobalObjectIdHash: 801080738
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -374,6 +374,7 @@ MonoBehaviour:
   emptyReloadTime: 0
   hasReloadAnimation: 0
   useEquipmentRecharge: 1
+  canSwitchIfNoCharges: 0
   equipmentRechargeTime: 15
   replenishAllEquipmentCharges: 1
   equipmentChargeFillsAmmo: 1
@@ -478,7 +479,7 @@ MonoBehaviour:
     Layer: 0
     OriginatingState: 1029937312
     DestinationState: -193380071
-    TransitionDuration: 0.1351285
+    TransitionDuration: 0.09104681
     TriggerNameHash: -1907200461
     TransitionIndex: 0
   m_Animator: {fileID: 7320808555886793255}

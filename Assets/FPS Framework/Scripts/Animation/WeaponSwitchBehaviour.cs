@@ -24,7 +24,7 @@ public class WeaponSwitchBehaviour : WeaponAnimationBehaviourBase
 
         if (canExecute && stateInfo.normalizedTime >= 0.99f)
         {
-            controller.SwitchToWeaponIndex(controller.nextWeaponIndex.Value);
+            controller.SwitchToWeaponIndex(controller.nextWeaponIndex);
             Debug.Log("Switched weapon");
         }
         controller.switchingWeapons = false;

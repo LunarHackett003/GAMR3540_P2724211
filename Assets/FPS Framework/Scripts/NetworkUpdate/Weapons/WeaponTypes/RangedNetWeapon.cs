@@ -168,8 +168,8 @@ public class RangedNetWeapon : BaseNetWeapon
             if (IsOwner)
             {
                 TriggerAnimation(primary ? PRIMARYATTACK : SECONDARYATTACK, TRIGGERTIMETINY);
+                FireWeapon_RPC(primary);
             }
-            FireWeapon_RPC(primary);
         }
     }
     protected override void PrimaryBehaviour()
