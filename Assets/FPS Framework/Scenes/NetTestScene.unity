@@ -2574,11 +2574,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: InputManager
       objectReference: {fileID: 0}
-    - target: {fileID: 9045881385305114450, guid: 1476f204cf057e541877f365bd4826c7,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2810,6 +2805,84 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53119624294b1b5468ff36095af4c11f, type: 3}
+--- !u!1001 &1796871743
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 194455338439950659, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2780751418
+      objectReference: {fileID: 0}
+    - target: {fileID: 194455338439950659, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 2560883223
+      objectReference: {fileID: 0}
+    - target: {fileID: 478927581484296525, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_Name
+      value: RedBarrelExplosion
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.6713705
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6343346670382235231, guid: 9de903722f6ed494a85cb8f0efb25073,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9de903722f6ed494a85cb8f0efb25073, type: 3}
 --- !u!1 &1810592023
 GameObject:
   m_ObjectHideFlags: 0
@@ -3667,3 +3740,4 @@ SceneRoots:
   - {fileID: 1514149154}
   - {fileID: 438351932}
   - {fileID: 110866677}
+  - {fileID: 1796871743}
