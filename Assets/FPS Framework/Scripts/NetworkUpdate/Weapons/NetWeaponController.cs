@@ -31,7 +31,7 @@ public class NetWeaponController : LunarNetScript
     internal float aimAmount;
     internal bool switchingWeapons;
 
-    [SerializeField] internal NetWeaponAnimator animator;
+    [SerializeField] internal BaseAnimatable animator;
 
     [SerializeField] internal bool hideWeapons;
     internal bool weaponsHiddenLast;
@@ -44,6 +44,8 @@ public class NetWeaponController : LunarNetScript
     public RecoilParams defaultRecoilParams;
     internal float recoilShotClearTime;
     internal int recoilShotsFired;
+
+    public bool reloading;
 
     public virtual float Spread(float value) => value * (1 - aimAmount);
 
@@ -189,6 +191,8 @@ public class NetWeaponController : LunarNetScript
         nextWeaponIndex = newIndex;
 
         animator.UpdateAnimations();
+        if (CurrentWeapon != null)
+            CurrentWeapon.animator.UpdateAnimations();
         ShowWeapon(newIndex, false);
     }
     public virtual void WeaponIndexUpdated()

@@ -942,9 +942,8 @@ MonoBehaviour:
   blastMask:
     serializedVersion: 2
     m_Bits: 65
-  doExplosion: 1
-  maxHits: 10
-  rayCount: 10
+  doExplosion: 0
+  debuffsToApply: []
   useLimitedAngle: 1
   blastBaseDirection: {x: 0, y: 1, z: 0}
   blastAngle: 23.7
@@ -1224,6 +1223,7 @@ MonoBehaviour:
   emptyReloadTime: 2
   hasReloadAnimation: 1
   useEquipmentRecharge: 1
+  canSwitchIfNoCharges: 0
   equipmentRechargeTime: 2
   replenishAllEquipmentCharges: 0
   equipmentChargeFillsAmmo: 0
@@ -1243,12 +1243,13 @@ MonoBehaviour:
   chargeUntilFire: 0
   chargeOnlyUntilMinimum: 0
   fireOnRelease: 0
-  charging: 0
+  chargeCoroutineRunning: 0
   recoilParams: {fileID: 11400000, guid: bdd5dec6794a68d4ea8c989aebcfc910, type: 2}
+  isCurrentWeapon: 0
   poolStartCapacity: 50
   poolMaxCapacity: 500
   damageConfig: {fileID: 11400000, guid: 8fafd6135f529384bb5667b61a0b1c17, type: 2}
-  baseSpreadPerUnit: 0.1
+  baseSpreadPerUnit: 0
   maxInfluencedSpreadPerUnit: 0.1
   currentMovementInfluence: 0
   allowedFireModes: 02000000
@@ -1263,13 +1264,9 @@ MonoBehaviour:
   chargeAffectsFireRate: 0
   minChargeFireRateMultiplier: 0.4
   maxChargeFireRateMultiplier: 1
-  minChargeDamageMultiplier: 0.2
-  maxChargeDamageMultiplier: 0.2
+  ammoType: {fileID: 11400000, guid: 8c12718e3d929a24395d66cb808fdbe0, type: 2}
   currentFireCooldown: 0
   fireOrigin: {fileID: 4490385423063287825}
-  fireIterations: 1
-  ProjectilePrefab: {fileID: 998377066548516954, guid: df2116d0acf67ef42a18791000d18a7d,
-    type: 3}
 --- !u!114 &3892073070634034066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1346,7 +1343,7 @@ MonoBehaviour:
     Layer: 0
     OriginatingState: 1029937312
     DestinationState: -193380071
-    TransitionDuration: 0.1351285
+    TransitionDuration: 0.09104681
     TriggerNameHash: -1907200461
     TransitionIndex: 0
   m_Animator: {fileID: 2326559616626249394}
@@ -1364,7 +1361,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapon: {fileID: 5914302703086182660}
   applyRecoil: 1
-  playFireSound: 1
   playFireEffects: 1
   fireEffect: {fileID: 0}
   fireParticle: {fileID: 0}

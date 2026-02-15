@@ -12,6 +12,9 @@ public class Defibrilator : BaseNetWeapon
 
     [SerializeField] internal LayerMask defibLayerMask;
 
+    public float fireCooldown = 1f;
+    public float currentFireCooldown = 0;
+
     protected override bool ChargeInput => base.ChargeInput && (CurrentAmmo.Value > 0 || CurrentAmmo.Value > 0) && !fired;
 
     public override bool Charging => base.Charging && !fired;
@@ -24,14 +27,22 @@ public class Defibrilator : BaseNetWeapon
     }
     void AmmoChanged(float previous, float current)
     {
-        if (current > 0)
-            fired = false;
+
     }
     public override void LTimestep()
     {
         TryDefib();
         TickAmmoCharges();
         UpdateCharge();
+
+        if(currentFireCooldown < fireCooldown)
+        {
+            currentFireCooldown += Time.fixedDeltaTime;
+            if(currentFireCooldown >= fireCooldown)
+            {
+                fired = false;
+            }
+        }
     }
 
     public void TryDefib()
@@ -39,13 +50,18 @@ public class Defibrilator : BaseNetWeapon
         if(IsOwner && chargeAmount >= 1 && primaryInput && CurrentAmmo.Value > 0 && !fired)
         {
             fired = true;
-            if (!IsServer)
-            {
-                PostAttackBehaviour();
-            }
+            currentFireCooldown = 0;
             TryDefib_RPC(controller.fireOrigin.position, controller.fireOrigin.forward);
             TriggerAnimation(PRIMARYATTACK, TRIGGERTIMESHORT, true);
         }
+    }
+
+    protected override void PostAttackBehaviour()
+    {
+        onWeaponFired?.Invoke(chargeAmount);
+        PostAttackCharge();
+        UpdateAmmo();
+        CheckEquipmentCharge();
     }
 
     [Rpc(SendTo.Server)]
@@ -60,6 +76,7 @@ public class Defibrilator : BaseNetWeapon
                     if (trophy.HitByQuickRevive(OwnerClientId))
                     {
                         Debug.Log("Defibrillated!");
+                        PostAttackBehaviour();
                     }
                 }
                 else if(hit.rigidbody.TryGetComponent(out NetPlayerEntity player))
@@ -67,11 +84,10 @@ public class Defibrilator : BaseNetWeapon
                     if (!NetworkPlayer.IsPlayerOnMyTeam(OwnerClientId, player.OwnerClientId))
                     {
                         player.ModifyHealth(-defibDamageOnEnemyHit, this, DamageSourceType.weapon, false);
+                        PostAttackBehaviour();
                     }
                 }
-                Debug.Log("Defibrillated!");
             }
         }
-        PostAttackBehaviour();
     }
 }

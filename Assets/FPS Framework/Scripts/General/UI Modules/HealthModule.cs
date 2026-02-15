@@ -15,7 +15,7 @@ public class HealthModule : UIModule
     public bool materialUsesInverse;
     public Material fullscreenMaterial;
     Material originalMaterial;
-    public FullScreenPassRendererFeature fullscreenPass;
+    public UnityEngine.Rendering.Universal.FullScreenPassRendererFeature fullscreenPass;
     public string fullscreenMaterialKey;
     int fullscreenMaterialID;
 

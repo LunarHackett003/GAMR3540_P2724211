@@ -16,6 +16,8 @@ public class ProjectileSimulator : LunarNetScript
         public int hits;
         public Vector3 forceAccumulated;
         public Vector3 hitPointAccumulated;
+
+        public ulong sourceClientID;
     }
     public Dictionary<Collider, HitData> colliderHitData;
     public float raycastDebugTime = 0.1f;
@@ -136,6 +138,7 @@ public class ProjectileSimulator : LunarNetScript
                         forceAccumulated = -hit.normal * damageDealt,
                         hitPointAccumulated = hit.point,
                         hits = 1,
+                        sourceClientID = proj.OwnerClientId
                     });
                 }
                 //Implement Ricochet and Penetration later on
@@ -268,7 +271,6 @@ public class ProjectileSimulator : LunarNetScript
     void ProcessHit(ref NetProjectile np, RaycastHit hit)
     {
 
-        Debug.Log($"Hit {hit.collider.gameObject.name} with {np.weapon.displayName}", hit.collider.gameObject);
         //If we've hit something valid, then we want to do the maths on that bit
         QueryColliderAndAddStats(np, hit, hit.collider);
         //move the projectile to the hit point
@@ -297,6 +299,7 @@ public class ProjectileSimulator : LunarNetScript
                 forceAccumulated = -hit.normal * damageDealt,
                 hitPointAccumulated = hit.point,
                 hits = 1,
+                sourceClientID = proj.OwnerClientId,
             });
         }
     }
@@ -313,14 +316,15 @@ public class ProjectileSimulator : LunarNetScript
                 }
                 if (item.Key.TryGetComponent(out NetDamageable d))
                 {
-                    bool canDamage = d.receiveDamageFromTeamOrOwner || !NetworkPlayer.IsPlayerOnMyTeam(OwnerClientId, d.OwnerClientId);
-                    Debug.Log($"can damage: {canDamage}");   
-                    d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
-
-                    if(item.Key.attachedRigidbody == null && d.rb != null)
-                    {
-                        //If we haven't already applied force to a rigidbody AND this damageable has one, then we'll use this.
-                        d.ApplyForceToOwner_RPC(item.Value.forceAccumulated, item.Value.hitPointAccumulated / item.Value.hits);
+                    bool canDamage = d.receiveDamageFromTeamOrOwner || !NetworkPlayer.IsPlayerOnMyTeam(item.Value.sourceClientID, d.OwnerClientId);
+                    if (canDamage)
+                    {    
+                        d.ModifyHealth(item.Value.damageAccumulated, item.Value.weapon, DamageSourceType.weapon, false);
+                        if(item.Key.attachedRigidbody == null && d.rb != null)
+                        {
+                            //If we haven't already applied force to a rigidbody AND this damageable has one, then we'll use this.
+                            d.ApplyForceToOwner_RPC(item.Value.forceAccumulated, item.Value.hitPointAccumulated / item.Value.hits);
+                        }
                     }
                 }
             }

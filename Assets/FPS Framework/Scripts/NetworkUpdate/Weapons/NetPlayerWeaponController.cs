@@ -37,18 +37,12 @@ public class NetPlayerWeaponController : NetWeaponController
 
         if (IsOwner)
         {
-            primaryInput = InputManager.PrimaryInput && !FireBlocked;
-            secondaryInput = InputManager.SecondaryInput && !FireBlocked;
+            primaryInput = InputManager.PrimaryInput && !FireBlocked ;
+            secondaryInput = InputManager.SecondaryInput;
 
 
             weaponSwitchInput = InputManager.WeaponSwitchInput;
             reloadInput = InputManager.ReloadInput;
-
-
-            if (primaryInput != lastPrimary || secondaryInput != lastSecondary || reloadInput != lastReload)
-            {
-                SendInputToServer_RPC(primaryInput, secondaryInput, reloadInput);
-            }
 
             if (CurrentWeapon != null && !FireBlocked)
             {
@@ -58,11 +52,11 @@ public class NetPlayerWeaponController : NetWeaponController
                 }
                 if (reloadInput)
                 {
-                    if ((!CurrentWeapon.useEquipmentRecharge || CurrentWeapon.equipmentCharges.Value > 0) && 
-                        (CurrentWeapon.useAmmunition && CurrentWeapon.hasReloadAnimation && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) 
+                    if (!reloading && (!CurrentWeapon.useEquipmentRecharge || CurrentWeapon.equipmentCharges.Value > 0) && 
+                        (CurrentWeapon.useAmmunition && CurrentWeapon.reloadConfig && (CurrentWeapon.CurrentAmmo.Value < CurrentWeapon.maxAmmo) 
                         || (CurrentWeapon.useAmmoPhases && CurrentWeapon.currentAmmoPhase != 0)))
                     {
-                        CurrentWeapon.TriggerAnimation(CurrentWeapon.CurrentAmmo.Value > 0 ? BaseNetWeapon.PARTIALRELOAD : BaseNetWeapon.EMPTYRELOAD, 0.2f, true);
+                        CurrentWeapon.PlayReloadAnimation();
                     }
                     if (IsOwner)
                     {
@@ -70,12 +64,17 @@ public class NetPlayerWeaponController : NetWeaponController
                     }
                     reloadInput = false;
                 }
+                secondaryInput &= (!reloading || CurrentWeapon.aimParams.canAimWhileReloading);
+            }
+            if (primaryInput != lastPrimary || secondaryInput != lastSecondary || reloadInput != lastReload)
+            {
+                SendInputToServer_RPC(primaryInput, secondaryInput, reloadInput);
             }
         }
 
 
 
-        player.motor.aiming = secondaryInput && !player.motor.sliding;
+        player.motor.aiming = secondaryInput && !player.motor.sliding && (!reloading || CurrentWeapon.aimParams.canAimWhileReloading);
 
         if (IsOwner)
         {

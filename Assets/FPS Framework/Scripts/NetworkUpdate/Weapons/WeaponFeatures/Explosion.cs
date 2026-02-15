@@ -10,6 +10,8 @@ using UnityEngine.VFX;
 public struct ExplosionHitData
 {
     public float damageAccumulated, forceAccumulated;
+    public Vector3 originPoint;
+    public ulong sourceID;
 }
 
 
@@ -24,8 +26,11 @@ public class Explosion : ProjectileHitEffect
 
     public LayerMask blastMask;
     public bool doExplosion = true;
-    public int maxHits = 50;
-    public int rayCount = 100;
+
+    public bool explodeOnlyOnce;
+    public bool exploded;
+
+    public DebuffStats[] debuffsToApply;
 
     public bool useLimitedAngle;
     public Vector3 blastBaseDirection = Vector3.up;
@@ -56,102 +61,62 @@ public class Explosion : ProjectileHitEffect
     [Rpc(SendTo.Everyone)]
     public virtual void Explode_RPC()
     {
+        if (exploded)
+            return;
+
         visualEffects.PlayVFX(true);
 
+        if(explodeOnlyOnce)
+            exploded = true;
 
-
-        //Only the server should run explosion logic.
-        if (!IsServer)
+        if (!IsServer || !doExplosion)
             return;
 
 
-        if (maxHits <= 0 || rayCount <= 0 || !doExplosion)
-            return;
-
-
-        QueryParameters qp = new QueryParameters()
+        Collider[] array = new Collider[30];
+        int hits = Physics.OverlapSphereNonAlloc(transform.position, blastRadius, array, blastMask, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < array.Length; i++)
         {
-            hitTriggers = QueryTriggerInteraction.Ignore,
-            layerMask = blastMask,
-            hitBackfaces = false,
-            hitMultipleFaces = false
-        };
-        NativeArray<RaycastCommand> commands = new(rayCount, Allocator.TempJob);
-        for (int i = 0; i < rayCount; i++)
-        {
-            if (useLimitedAngle && blastAngle != 180)
+            Collider item = array[i];
+            //If a collider is null, we've probably hit the end, right?
+            if (item == null)
+                return;
+            //if we do NOT use a limited blast angle OR the target is between the acceptable blast angle
+            if (!useLimitedAngle || Vector3.Angle(item.ClosestPoint(transform.position) - transform.position, transform.rotation * blastBaseDirection) < blastAngle)
             {
-                Vector3 direction = transform.rotation * RandomBlastDirection;
-                commands[i] = new(transform.position - direction * 0.02f, direction, qp, blastRadius);
+                Vector3[] directions = new Vector3[]
+                {
+                    (item.bounds.center - transform.position).normalized,
+                    ((item.bounds.center + (0.5f * item.bounds.extents.y * item.transform.up)) - transform.position).normalized,
+                    ((item.bounds.center - (0.5f * item.bounds.extents.y * item.transform.up)) - transform.position).normalized,
+                    ((item.bounds.center + (0.5f * item.bounds.extents.x * item.transform.right)) - transform.position).normalized,
+                    ((item.bounds.center - (0.5f * item.bounds.extents.x * item.transform.right)) - transform.position).normalized,
+                };
+
+                ExplosionData data = new()
+                {
+                    canDamageFriendlies = canDamageFriendlies,
+                    colliders = array,
+                    damageAtEdge = damageAtEdge,
+                    damageAtZero = damagePointBlank,
+                    damageOverRangeCurve = blastFalloff,
+                    damageSourceType = damageSourceType,
+                    explosionDirections = directions,
+                    explosionOrigin = transform.position,
+                    explosionRange = blastRadius,
+                    forceAtEdge = forceAtEdge,
+                    forceAtZero = forcePointBlank,
+                    ownerID = OwnerClientId,
+                    debuffsToApply = debuffsToApply,
+                };
+
+                ExplosionManager.AddExplosion(data);
             }
             else
             {
-                Vector3 direction = Random.onUnitSphere;
-                commands[i] = new(transform.position - direction * 0.02f, direction, qp, blastRadius);
-            }
-        }
-        NativeArray<RaycastHit> hits = new(rayCount, Allocator.TempJob);
-        JobHandle job = RaycastCommand.ScheduleBatch(commands, hits, 1);
-        job.Complete();
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            RaycastHit hit = hits[i];
-            //if we do not hit a collider, move on
-            if (hit.collider == null)
-            {
                 continue;
             }
-            if (hit.collider.attachedRigidbody != null)
-            {
-                float rangeLerp = blastFalloff.Evaluate(Mathf.InverseLerp(0, blastRadius, hit.distance));
-                float damage = Mathf.Lerp(damagePointBlank, damageAtEdge, rangeLerp);
-                float force = Mathf.Lerp(forcePointBlank, forceAtEdge, rangeLerp);
-                if (hitData.ContainsKey(hit.collider))
-                {
-
-                }
-                else
-                {
-                    hitData.TryAdd(hit.collider, new()
-                    {
-                        damageAccumulated = damage,
-                        forceAccumulated = force,
-                    });
-                }
-            }
-
         }
-
-        if(hitData.Count > 0)
-        {
-            foreach (KeyValuePair<Collider, ExplosionHitData> item in hitData)
-            {
-                if (item.Key.attachedRigidbody)
-                {
-                    item.Key.attachedRigidbody.AddExplosionForce(item.Value.forceAccumulated, transform.position, blastRadius, 0.5f, ForceMode.Impulse);
-                    
-                    if(item.Key.attachedRigidbody.TryGetComponent(out NetDamageable nd))
-                    {
-                        if(nd.receiveDamageFromTeamOrOwner || canDamageFriendlies || !NetworkPlayer.IsPlayerOnMyTeam(OwnerClientId, nd.OwnerClientId) || OwnerClientId == nd.OwnerClientId)
-                        {
-                            nd.ModifyHealth(item.Value.damageAccumulated, source, damageSourceType, false);
-                            if (!nd.IsOwnedByServer)
-                            {
-
-                            }
-
-                        }
-                    }
-
-                }
-            }
-        }
-
-        hits.Dispose();
-        commands.Dispose();
-
-
         if (despawnAfterExplosion)
         {
             StartCoroutine(DespawnAfterExplosion());
