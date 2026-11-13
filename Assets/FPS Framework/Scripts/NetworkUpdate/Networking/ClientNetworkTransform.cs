@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode.Components;
-using UnityEngine;
 
 
 public enum AuthorityMode : int
@@ -12,6 +9,6 @@ public enum AuthorityMode : int
 
 public class ClientNetworkTransform : NetworkTransform
 {
-    public AuthorityMode authorityMode = AuthorityMode.Client;
-    protected override bool OnIsServerAuthoritative() => authorityMode == AuthorityMode.Server;
+    public AuthorityMode authorityMode = global::AuthorityMode.Client;
+    protected override bool OnIsServerAuthoritative() => authorityMode == global::AuthorityMode.Server;
 }

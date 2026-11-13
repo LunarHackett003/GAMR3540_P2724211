@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9d5eebe68f8adf44adfb689793a9c22, type: 3}
   m_Name: ViewParams
   m_EditorClassIdentifier: 
-  lookSpeed: {x: 10, y: 10}
+  lookSpeed: {x: 0.2, y: 0.2}
   lookPitchClamp: 89
   aimLookModifier: 0.8
   aimModifierPerDegree: 0.99

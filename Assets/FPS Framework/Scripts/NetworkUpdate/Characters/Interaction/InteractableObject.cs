@@ -164,7 +164,7 @@ public class InteractableObject : LunarNetScript
             rb.position = throwOrigin;
             if(thrown)
             {
-                rb.velocity = throwDirection;
+                rb.linearVelocity = throwDirection;
             }
         }
 

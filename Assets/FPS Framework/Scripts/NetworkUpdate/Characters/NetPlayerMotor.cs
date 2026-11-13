@@ -1,12 +1,6 @@
-using Cinemachine;
-using Microsoft.Win32.SafeHandles;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
 
 public class NetPlayerMotor : LunarNetScript
 {
@@ -316,7 +310,7 @@ public class NetPlayerMotor : LunarNetScript
     }
     void CheckMoveState()
     {
-        rigidbody.drag = isGrounded ? (sliding ? moveParams.slideDamping : moveParams.walkDamping) 
+        rigidbody.linearDamping = isGrounded ? (sliding ? moveParams.slideDamping : moveParams.walkDamping) 
             : (currentAirborneIgnoreDampTime <= 0 ? 0 : moveParams.airborneDamping);
 
         if (sliding)
@@ -341,7 +335,7 @@ public class NetPlayerMotor : LunarNetScript
 
         if(sprinting || !isGrounded)
         {
-            float flatVelSqr = new Vector3(rigidbody.velocity.x, 0, rigidbody.velocity.z).sqrMagnitude;
+            float flatVelSqr = new Vector3(rigidbody.linearVelocity.x, 0, rigidbody.linearVelocity.z).sqrMagnitude;
             if(crouching && flatVelSqr > 4f)
             {
                 StartSlide();
@@ -367,7 +361,7 @@ public class NetPlayerMotor : LunarNetScript
     }
     void UpdateSlide()
     {
-        if (!crouchInput || rigidbody.velocity.sqrMagnitude < 4f)
+        if (!crouchInput || rigidbody.linearVelocity.sqrMagnitude < 4f)
         {
             StopSlide();
         }
@@ -394,7 +388,7 @@ public class NetPlayerMotor : LunarNetScript
                     playerEntity.Animator.TriggerAnimation("Jump", 0.2f, true);
                 }
                 jumpInput = false;
-                rigidbody.velocity.Scale(new(1, 0, 1));
+                rigidbody.linearVelocity.Scale(new(1, 0, 1));
                 rigidbody.AddForce(Vector3.up * moveParams.jumpForce, ForceMode.VelocityChange);
                 jumpsRemaining--;
             }
@@ -557,7 +551,7 @@ public class NetPlayerMotor : LunarNetScript
 
         if (mantleTime >= 1)
         {
-            rigidbody.velocity = transform.rotation * new Vector3(mantleParams.mantleDismountSpeed * moveInput.x, rigidbody.velocity.y, mantleParams.mantleDismountSpeed * moveInput.y);
+            rigidbody.linearVelocity = transform.rotation * new Vector3(mantleParams.mantleDismountSpeed * moveInput.x, rigidbody.linearVelocity.y, mantleParams.mantleDismountSpeed * moveInput.y);
         }
         mantling = false;
         yield break;
@@ -596,7 +590,7 @@ public class NetPlayerMotor : LunarNetScript
     void RotatePlayer()
     {
         Vector2 lookSpeed = viewParams.lookSpeed * (aiming ? viewParams.aimLookModifier : 1);
-        float aimPitchInput = Time.deltaTime * lookSpeed.y * lookInput.y;
+        float aimPitchInput = lookSpeed.y * lookInput.y;
         
         playerEntity.weaponController.UpdateAimPitch();
 
@@ -624,7 +618,7 @@ public class NetPlayerMotor : LunarNetScript
         lookPitch += playerEntity.weaponController.tempAimPitchCurr;
         if (lookInput.x != 0)
         {
-            transform.rotation *= Quaternion.Euler(0, lookInput.x * lookSpeed.x * Time.deltaTime, 0);
+            transform.rotation *= Quaternion.Euler(0, lookInput.x * lookSpeed.x, 0);
         }
         oldLook = new(transform.eulerAngles.x, lookPitch);
         if(lookDelta != oldLook)

@@ -226,16 +226,23 @@ public class NetPlayerEntity : NetEntity
             }
         }
     }
-    public override void OnNetworkDespawn()
+
+    public override void OnNetworkPreDespawn()
     {
+        base.OnNetworkPreDespawn();
+
         playersByID.Remove(OwnerClientId);
 
-        if(reviveItemInstance != null && IsServer)
+        if (reviveItemInstance != null && IsServer)
         {
             reviveItemInstance.Despawn();
         }
 
         NetworkPlayer.netPlayers[OwnerClientId].teamIndex.OnValueChanged -= UpdateMaterials;
+    }
+
+    public override void OnNetworkDespawn()
+    {
 
         base.OnNetworkDespawn();
     }
@@ -363,7 +370,7 @@ public class NetPlayerEntity : NetEntity
                 }
             }
             io.GrabbedCarriable();
-            io.rb.velocity = Vector3.zero;
+            io.rb.linearVelocity = Vector3.zero;
             io.rb.angularVelocity = Vector3.zero;
             weaponController.ShowWeapon(0, true);
             

@@ -20,7 +20,7 @@ public class JumpPad : LunarNetScript
         {
             if (setVelocity)
             {
-                other.attachedRigidbody.velocity = direction.up * jumpForce;
+                other.attachedRigidbody.linearVelocity = direction.up * jumpForce;
             }
             else
             {
