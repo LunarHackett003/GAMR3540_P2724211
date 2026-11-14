@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class NetPlayerMotor : LunarNetScript
 {
@@ -151,6 +152,8 @@ public class NetPlayerMotor : LunarNetScript
         {
             mainCamera = Camera.main;
         }
+
+
     }
     #region Update
     public override void LTimestep()
@@ -248,6 +251,7 @@ public class NetPlayerMotor : LunarNetScript
             lookInput = InputManager.LookInput;
             CheckAimState();
             RotatePlayer();
+
         }
         else
         {

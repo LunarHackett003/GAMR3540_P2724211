@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class BaseNetWeapon : LunarNetScript
 {
@@ -94,16 +95,23 @@ public class BaseNetWeapon : LunarNetScript
     public virtual bool Charging => chargeCoroutineRunning || ChargeInput || chargeHoldFrame;
 
     public bool isCurrentWeapon;
-
+    VisualEffect[] vfx;
     public void SetPropertyBlock(MaterialPropertyBlock block)
     {
+        vfx = new VisualEffect[0];
+
         if(renderers.Length == 0)
             renderers = GetComponentsInChildren<Renderer>();
-
+        if (vfx.Length == 0)
+            vfx = GetComponentsInChildren<VisualEffect>();
 
         for (int i = 0; i < renderers.Length; i++)
         {
-            renderers[i].SetPropertyBlock(block);
+                renderers[i].SetPropertyBlock(block);
+        }
+        for (int i = 0; i < vfx.Length; i++)
+        {
+            vfx[i].SetBool("UseReproject", IsOwner);
         }
 
     }
