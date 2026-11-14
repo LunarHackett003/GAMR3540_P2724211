@@ -136,8 +136,11 @@ public class NetEntity : NetDamageable
     }
     IEnumerator DespawnAfterDeath()
     {
-        yield return new WaitForSeconds(despawnAfterDeathTime);
-        NetworkObject.Despawn();
+        if (NetworkObject.IsSpawned)
+        {
+            yield return new WaitForSeconds(despawnAfterDeathTime);
+            NetworkObject.Despawn();
+        }
     }
 }
 

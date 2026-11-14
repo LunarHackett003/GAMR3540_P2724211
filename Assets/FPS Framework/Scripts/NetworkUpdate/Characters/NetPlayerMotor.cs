@@ -11,7 +11,7 @@ public class NetPlayerMotor : LunarNetScript
     [SerializeField] internal Rigidbody rigidbody;
     [SerializeField] NetPlayerEntity playerEntity;
     //[SerializeField] internal CinemachineVirtualCamera worldCamera, viewCamera;
-    [SerializeField] internal Camera mainCamera, viewCamera;
+    [SerializeField] internal Camera mainCamera;
     [SerializeField] internal Transform worldCameraTarget, viewCameraTarget, worldCameraPoint, viewCameraPoint;
 
 
@@ -151,9 +151,6 @@ public class NetPlayerMotor : LunarNetScript
         {
             mainCamera = Camera.main;
         }
-
-        viewCamera.enabled = IsOwner;
-
     }
     #region Update
     public override void LTimestep()
@@ -269,7 +266,6 @@ public class NetPlayerMotor : LunarNetScript
         if (IsOwner)
         {
             mainCamera.transform.SetPositionAndRotation(worldCameraPoint.position, Quaternion.LookRotation(worldCameraTarget.position - worldCameraPoint.position, worldCameraTarget.up));
-            viewCamera.transform.SetPositionAndRotation(worldCameraPoint.position, Quaternion.LookRotation(viewCameraTarget.position - viewCameraPoint.position, viewCameraTarget.up));
         }
     }
 

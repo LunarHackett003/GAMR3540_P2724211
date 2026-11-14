@@ -95,6 +95,21 @@ public class BaseNetWeapon : LunarNetScript
 
     public bool isCurrentWeapon;
 
+    public void SetPropertyBlock(MaterialPropertyBlock block)
+    {
+        if(renderers.Length == 0)
+            renderers = GetComponentsInChildren<Renderer>();
+
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].SetPropertyBlock(block);
+        }
+
+    }
+
+    [SerializeField] protected Renderer[] renderers;
+
     /// <summary>
     /// Calculates the damage that should be dealt at the supplied distance.
     /// </summary>
@@ -221,14 +236,16 @@ public class BaseNetWeapon : LunarNetScript
                 }
                 if (CurrentAmmo.Value <= 0)
                 {
-                    if (useAmmoPhases && currentAmmoPhase < ammoPhases)
+                    if (useAmmoPhases && currentAmmoPhase < ammoPhases -1)
                     {
                         TriggerAnimation(AMMOPHASE, TRIGGERTIMELONG, true);
                     }
-                    if(hasReloadAnimation && (!useEquipmentRecharge || equipmentCharges.Value > 0))
+                    else if (hasReloadAnimation && (!useEquipmentRecharge || equipmentCharges.Value > 0))
                     {
                         TriggerAnimation(EMPTYRELOAD, TRIGGERTIMESHORT, true);
                     }
+
+
                 }
             }
         }

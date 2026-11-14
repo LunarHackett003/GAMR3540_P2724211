@@ -14,6 +14,13 @@ public class NetPlayerWeaponController : NetWeaponController
     internal float currentFOV;
     [SerializeField] internal Transform weaponPositionOffset, weaponRotationInvert, weaponTargetTransform;
     internal float fovLerp = 0;
+    internal float viewmodelFOV;
+    //FOV Shader stuff
+    int _fovKey = -1;
+    int _scalingKey = -1;
+    [SerializeField] float defaultViewmodelScale = 0.5f;
+    MaterialPropertyBlock rendererBlock;
+    [SerializeField] protected Renderer[] localRenderers;
 
     internal override bool FireBlocked => base.FireBlocked || player.isDead.Value || player.heldInteraction || player.carryConfirmed;
 
@@ -29,6 +36,31 @@ public class NetPlayerWeaponController : NetWeaponController
         if (CurrentWeapon != null)
         {
             CurrentWeapon.transform.SetPositionAndRotation(weaponRotationInvert.position, weaponRotationInvert.rotation);
+        }
+    }
+    private void OnValidate()
+    {
+        if(_scalingKey != -1)
+        {
+            Shader.SetGlobalFloat(_scalingKey, defaultViewmodelScale);
+        }
+    }
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        _fovKey = Shader.PropertyToID("_FOV");
+        _scalingKey = Shader.PropertyToID("_ScalingFactor");
+
+        if (IsOwner)
+        {
+            Shader.SetGlobalFloat(_scalingKey, defaultViewmodelScale);
+        }
+        rendererBlock = new();
+        rendererBlock.SetFloat("_UseReproject", IsOwner ? 1f : 0f);
+
+        for (int i = 0; i < localRenderers.Length; i++)
+        {
+            localRenderers[i].SetPropertyBlock(rendererBlock);
         }
     }
 
@@ -72,9 +104,6 @@ public class NetPlayerWeaponController : NetWeaponController
                 }
             }
         }
-
-
-
         player.motor.aiming = secondaryInput && !player.motor.sliding;
 
         if (IsOwner)
@@ -156,7 +185,7 @@ public class NetPlayerWeaponController : NetWeaponController
 
     public void UpdateFOV()
     {
-
+        
         //The mother of all ternary statements...
         float fov =
             //Are we sliding
@@ -169,9 +198,11 @@ public class NetPlayerWeaponController : NetWeaponController
         fovLerp = Mathf.Lerp(fovLerp, fov + (CurrentWeapon != null ? CurrentWeapon.aimParams.aimFOV * aimLerp : 0), Time.deltaTime * player.motor.viewParams.fovMoveSpeed);
         currentFOV = player.motor.viewParams.baseFOV + fovLerp;
         //rbpm.viewCineCam.m_Lens.FieldOfView = Mathf.Lerp(rbpm.viewParams.viewmodelBaseFOV, rbpm.viewParams.viewmodelBaseFOV + currentWeapon.aimParams.viewmodelFOV, aimLerp);
-        player.motor.viewCamera.fieldOfView = player.motor.viewParams.viewmodelBaseFOV + 
-            (CurrentWeapon != null ? (CurrentWeapon.aimParams.viewmodelFOV * aimLerp) : 0);
+        //player.motor.viewCamera.fieldOfView = player.motor.viewParams.viewmodelBaseFOV + 
+        //    (CurrentWeapon != null ? (CurrentWeapon.aimParams.viewmodelFOV * aimLerp) : 0);
+        viewmodelFOV = player.motor.viewParams.viewmodelBaseFOV + (CurrentWeapon != null ? (CurrentWeapon.aimParams.viewmodelFOV * aimLerp) : 0);
         player.motor.mainCamera.fieldOfView = currentFOV;
+        Shader.SetGlobalFloat(_fovKey, viewmodelFOV);
     }
 
     [Rpc(SendTo.Everyone)]
@@ -195,4 +226,18 @@ public class NetPlayerWeaponController : NetWeaponController
         tempAimPitchTarg = Mathf.MoveTowardsAngle(tempAimPitchTarg, 0, rp.tempAimPitchDecay * Time.fixedDeltaTime);
         tempAimPitchCurr = Mathf.Lerp(tempAimPitchCurr, tempAimPitchTarg, rp.tempAimPitchSnappiness * Time.fixedDeltaTime);
     }
+
+    public override void Initialise()
+    {
+        base.Initialise();
+
+        if(weapons.Count > 0)
+        {
+            for (int i = 0; i < weapons.Count; i++)
+            {
+                weapons[i].SetPropertyBlock(rendererBlock);
+            }
+        }
+    }
+
 }

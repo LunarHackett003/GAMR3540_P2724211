@@ -143,6 +143,7 @@ public class NetWeaponController : LunarNetScript
         for (int i = 0; i < weapons.Count; i++)
         {
             weapons[i].transform.localScale = hideAll ? Vector3.zero : (i == indexToShow ? Vector3.one : Vector3.zero);
+            weapons[i].animator.enabled = hideAll ? true : (i == indexToShow);
         }
     }
 
